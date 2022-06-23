@@ -27,16 +27,17 @@ header {
     background-color: white;
     font-size: 16px;
     color: rgb(35, 35, 35);
-    width: 25px;
-    height: 25px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 .cart-icon-header-number .cart-icon-header {
-    height: 24px; width: 24px;
+    height: 28px; width: 28px;
     display: flex;
     align-items: center; justify-content: center;
 }

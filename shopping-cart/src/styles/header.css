@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text&display=swap');
+
+:root {
+    --header-color: #c62828 ;
+}
+
+header {
+    width: 100%;
+    display: flex;
+    align-items: center; justify-content: space-between;
+    background-color: var(--header-color);
+    box-shadow: 0 2px 12px rgb(0, 0, 0, 0.5);
+    font-size: 40px; font-weight: bolder;
+    padding: 1rem 5%;
+    color: white;
+    font-family: 'Crimson Text', serif;
+}
+
+/*-------------------------------------- Chart Icon */
+
+.cart-icon-header-number {
+    display: flex;
+    gap: 10px;
+}
+
+.cart-icon-header-number .number-cart-header{
+    background-color: white;
+    font-size: 16px;
+    color: rgb(35, 35, 35);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-icon-header-number .cart-icon-header {
+    height: 24px; width: 24px;
+    display: flex;
+    align-items: center; justify-content: center;
+}
+
+/*-------------------------------------- Navbar Icon */
+
+.display-navbar {
+    width: 45px; height: 40px;
+    border: 2px solid white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+}
+
+svg {
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}

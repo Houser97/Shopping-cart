@@ -1,12 +1,19 @@
+*{
+    list-style: none;
+    text-decoration: none;
+}
+
 .navbar {
     width: 14rem; height: 100%;
     display: flex;
     justify-content: center;
     background-color: rgb(49, 46, 46);
     transition: all 0.3s ease;
+    position: absolute;
+    z-index: 2;
 }
 
-.navbar-options {
+.navbar-options, .link {
     color: white;
     height: 40%; width: 120px;
     display: flex; flex-flow: column;

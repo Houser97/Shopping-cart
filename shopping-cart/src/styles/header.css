@@ -10,8 +10,8 @@ header {
     align-items: center; justify-content: space-between;
     background-color: var(--header-color);
     box-shadow: 0 2px 12px rgb(0, 0, 0, 0.5);
-    font-size: 40px; font-weight: bolder;
-    padding: 1rem 5%;
+    font-size: 60px; font-weight: bolder;
+    padding: 1rem 8%;
     color: white;
     font-family: 'Crimson Text', serif;
 }
@@ -21,23 +21,27 @@ header {
 .cart-icon-header-number {
     display: flex;
     gap: 10px;
+    position: relative;
+    z-index: 2;
 }
 
 .cart-icon-header-number .number-cart-header{
     background-color: white;
     font-size: 16px;
     color: rgb(35, 35, 35);
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    position: absolute;
+    top: -28px; right: -16px;
 }
 
 .cart-icon-header-number .cart-icon-header {
-    height: 28px; width: 28px;
+    height: 50px; width: 50px;
     display: flex;
     align-items: center; justify-content: center;
 }
@@ -45,9 +49,6 @@ header {
 /*-------------------------------------- Navbar Icon */
 
 .display-navbar {
-    width: 45px; height: 40px;
-    border: 2px solid white;
-    border-radius: 5px;
     display: none;
     align-items: center; justify-content: center;
     cursor: pointer;
@@ -59,13 +60,21 @@ svg {
     cursor: pointer;
 }
 
+.cart-svg {
+    height: 100%;
+    width: 100%;
+}
+
 /*-------------------------------------- Close Navbar Icon */
 
 .hide-navbar {
-    width: 45px; height: 40px;
-    border: 2px solid white;
-    border-radius: 5px;
     display: flex;
     align-items: center; justify-content: center;
     cursor: pointer;
+}
+
+.button-navbar {
+    width: 60px; height: 60px;
+    border: 3px solid white;
+    border-radius: 5px;
 }

@@ -29,6 +29,9 @@ const Shop = () => {
                                                     {image:Book,    name: "Book",    price: 15,  id:10},
                                                     {image:Phone,    name: "Phone",    price: 280,  id:11}])
     return(
+    <div className='shop-page'>
+        <div className='shop-title'>Shop</div>
+    
         <div className="shop-page">
             {           
                 imagesArray.map(
@@ -38,7 +41,8 @@ const Shop = () => {
                         )
                     }) 
             } 
-        </div>       
+        </div>  
+    </div>     
     )
         
 }

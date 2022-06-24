@@ -1,4 +1,10 @@
 .shop-page {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+}
+
+.shop-page .shop-page {
     width: 100%;
     padding: 2rem;
     display: grid;
@@ -6,4 +12,11 @@
     grid-template-rows: repeat(auto-fit, minmax(350px, 350px));
     gap: 40px;
     justify-content: center;
+}
+
+.shop-page .shop-title {
+    margin-top: 10px;
+    font-size: 70px;
+    color: rgb(49, 49, 49);
+    font-weight: 600;
 }

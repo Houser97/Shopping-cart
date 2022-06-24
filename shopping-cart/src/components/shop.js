@@ -16,7 +16,7 @@ import Phone from '../images/Phone.jpg';
 
 const Shop = () => {
 
-    const [imagesArray, setImagesArray] = useState([{image:Apple,   name: "Apple",   price: 10,  id: 0},
+    const [imagesArray] = useState([{image:Apple,   name: "Apple",   price: 10,  id: 0},
                                                     {image:Laptop,  name: "Laptop",  price: 500, id: 1},
                                                     {image:iPad,    name: "iPad",    price: 430, id: 2},
                                                     {image:PingPong,   name: "Ping Pong equipment",    price: 220, id: 3},

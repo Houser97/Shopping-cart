@@ -13,8 +13,10 @@ const Card = (props) => {
     },[numberOfProducts, currentId])
 
     function decrementProduct(e){
-        setNumberOfProducts(numberOfProducts - 1);
-        setCurrentId(e.target.id);
+        if (numberOfProducts !== 1) {
+            setNumberOfProducts(numberOfProducts - 1);
+            setCurrentId(e.target.id);
+        }
     }
     
     function incrementProduct(e){

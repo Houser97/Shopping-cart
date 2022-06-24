@@ -1,0 +1,85 @@
+.card {
+    width: 400px; height: 350px;
+    display: flex; flex-flow: column;
+    background-color: rgb(254, 254, 254);
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    position: relative;
+}
+
+.card .price-product{
+    position: absolute; top: -20px; right: -20px;
+    background-color: rgb(205, 193, 55);
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center; justify-content: center;
+}
+
+.card .card-image-section {
+    width: 100%; height: 60%;
+}
+
+img {
+    width: 100%; height: 100%;
+}
+
+.card .card-name-section{
+    height: 20%;
+    display: flex; align-items: center; justify-content: space-evenly;
+    font-size: 30px;
+}
+
+/*------------------------------------ Increase Decrease section */
+
+.card .card-decrase-increase{
+    height: 20%;
+    display: flex;
+    align-items: center; justify-content: center;
+    gap: 10px;
+}
+
+.button-IncDec{
+    height: 30px; width: 30px;
+    border-radius: 50%;
+    border: none;
+    font-size: 28px; font-weight: 600;
+    color: rgb(1, 1, 1);
+    display: flex;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+}
+
+.number-products {
+    border: 1px solid black;
+    width: 50px; height: 30px;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+/*------------------- Add products */
+
+.add-product {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center; justify-content: center;
+}
+
+.add-product .add-to-cart{
+    width: 100px;
+    height: 100%;
+    border-radius: 10px;
+    border: 1px solid black;
+    color: white;
+    background-color: green;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer;
+}
+

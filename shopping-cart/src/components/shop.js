@@ -37,7 +37,7 @@ const Shop = () => {
                 imagesArray.map(
                     function iterateImages(image, iterator){
                         return(
-                            <Card key = {iterator} image = {image.image} imageName = {image.name} price = {image.price} />
+                            <Card key = {iterator} image = {image.image} imageName = {image.name} price = {image.price} id = {image.id} />
                         )
                     }) 
             } 

@@ -47,8 +47,7 @@ img {
     height: 30px; width: 30px;
     border-radius: 50%;
     border: none;
-    font-size: 28px; font-weight: 600;
-    color: rgb(1, 1, 1);
+    color: rgb(3, 46, 126);
     display: flex;
     align-items: center; justify-content: center;
     cursor: pointer;

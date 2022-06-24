@@ -1,4 +1,9 @@
 .shop-page {
     width: 100%;
     padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(400px, 400px));
+    grid-template-rows: repeat(auto-fit, minmax(350px, 350px));
+    gap: 40px;
+    justify-content: center;
 }

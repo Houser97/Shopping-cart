@@ -1,15 +1,15 @@
 import '../styles/card.css';
-import Apple from '../images/Apple.jpg';
 
-const Card = () => {
+const Card = (props) => {
+    const {image, imageName, price} = props;
     return(
         <div className="card">
-            <div className='price-product'>$10.00</div>
+            <div className='price-product'>${price}</div>
             <div className="card-image-section">
-                <img src = {Apple} alt = "Apple"></img>
+                <img src = {image} alt = "Apple"></img>
             </div>
             <div className="card-name-section">
-                <div className='name-product'>Apple</div>
+                <div className='name-product'>{imageName}</div>
             </div>
             <div className="card-decrase-increase">
                 <button className='decrease-button button-IncDec'>

@@ -10,8 +10,8 @@ header {
     align-items: center; justify-content: space-between;
     background-color: var(--header-color);
     box-shadow: 0 2px 12px rgb(0, 0, 0, 0.5);
-    font-size: 60px; font-weight: bolder;
-    padding: 1rem 8%;
+    font-size: 50px; font-weight: bolder;
+    padding: 0.5rem 8%;
     color: white;
     font-family: 'Crimson Text', serif;
 }
@@ -29,19 +29,19 @@ header {
     background-color: white;
     font-size: 16px;
     color: rgb(35, 35, 35);
-    width: 32px;
-    height: 32px;
+    width: 29px;
+    height: 29px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     position: absolute;
-    top: -28px; right: -16px;
+    top: -14px; right: -25px;
 }
 
 .cart-icon-header-number .cart-icon-header {
-    height: 50px; width: 50px;
+    height: 40px; width: 40px;
     display: flex;
     align-items: center; justify-content: center;
 }
@@ -74,7 +74,7 @@ svg {
 }
 
 .button-navbar {
-    width: 60px; height: 60px;
+    width: 50px; height: 50px;
     border: 3px solid white;
     border-radius: 5px;
 }

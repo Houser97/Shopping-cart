@@ -1,8 +1,7 @@
 import '../styles/card.css';
 import { useState, useEffect } from 'react';
 
-const Card = (props) => {
-    const {image, imageName, price, id} = props;
+const Card = ({image, imageName, price, id}) => {
 
     const [numberOfProducts, setNumberOfProducts] = useState(1);
     const [currentId, setCurrentId] = useState(0);

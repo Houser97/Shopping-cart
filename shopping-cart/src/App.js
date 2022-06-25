@@ -5,6 +5,7 @@ import Home from './components/home';
 import Shop from './components/shop';
 import {useState} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import Cart from './components/cart';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Header numberItemsInCar = {itemsInCar}/>
         <div className='fullHeight'>
           <div className='app-body'>
+            <Cart submission = {[]} />
             <Navbar />
             <Routes>
               <Route path="/" element = {<Home />} />

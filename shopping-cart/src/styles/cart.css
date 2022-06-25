@@ -1,0 +1,21 @@
+.cart {
+    display: flex; flex-flow: column;
+    align-items: center; justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px; flex: 1;
+    background-color: rgb(224, 222, 226);
+    z-index: 5;
+    transition: all 0.3s ease;
+    padding: 50px 0px;
+}
+
+.cart .cart-content {
+    display: flex; flex-flow: column;
+}
+
+.no-submission {
+    display: flex;
+
+}

@@ -1,4 +1,5 @@
 import '../styles/cart.css'
+import CartCard from './cartCard';
 
 const Cart = ({submission}) => {
     const hasSubmissions = submission.length > 0;
@@ -7,7 +8,14 @@ const Cart = ({submission}) => {
             <div className='cart-content'>
             {
                 hasSubmissions ? (
-                    <div className='submissions'>Hi, there are submission</div>
+                    <div className='cart-content-submission'>
+                        <div className='products-section-cart'>
+                            <CartCard submission={submission} />
+                        </div>
+                        <div className='pay'>
+                            <button className='pay-button'>Pay</button>
+                        </div>
+                    </div>
                 ) 
                 : (
                 <h2 className='no-submission'> Cart empty</h2>)

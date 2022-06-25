@@ -29,12 +29,17 @@ const Header = (props) => {
         const cartSection = document.querySelector(".cart");
         const widthCart = cartSection.style.width;
         const cartContent = document.querySelector(".cart-content");
+        const SVG = document.querySelector(".cart-svg");
         if(widthCart !== "0px") {
             cartSection.style.width = "0px";
             cartContent.style.display = "none";
+            cartSection.style.padding = "0px";
+            SVG.style.color = "white";
         } else {
             cartSection.style.width = "300px";
             cartContent.style.display = "flex";
+            cartSection.style.padding = "30px 10px";
+            SVG.style.color = "green";
         };
     }
 

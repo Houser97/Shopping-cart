@@ -24,7 +24,6 @@ function App() {
 
     const product = {image: imgSrc, name: nameProduct, price: price, id: ID, quantity: quantityProducts}
     setProductsInCar([...productsInCar, product])
-    console.log(quantityProducts);
   }
 
   return (

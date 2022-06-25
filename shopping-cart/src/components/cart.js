@@ -10,7 +10,7 @@ const Cart = ({submission}) => {
                     <div className='submissions'>Hi, there are submission</div>
                 ) 
                 : (
-                <div className='no-submission'> No submission</div>)
+                <h2 className='no-submission'> Cart empty</h2>)
             }
             </div>
         </div>

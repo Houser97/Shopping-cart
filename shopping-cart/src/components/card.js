@@ -1,7 +1,7 @@
 import '../styles/card.css';
 import { useState, useEffect } from 'react';
 
-const Card = ({image, imageName, price, id}) => {
+const Card = ({image, imageName, price, id, addProduct}) => {
 
     const [numberOfProducts, setNumberOfProducts] = useState(1);
     const [currentId, setCurrentId] = useState(0);
@@ -27,7 +27,7 @@ const Card = ({image, imageName, price, id}) => {
     }
 
     return(
-        <div className="card">
+        <div id={`${id}-card`} className="card">
             <div className='price-product'>${price}</div>
             <div className="card-image-section">
                 <img src = {image} alt = "Apple"></img>
@@ -49,7 +49,7 @@ const Card = ({image, imageName, price, id}) => {
                 </button>
             </div>
             <div className='add-product'>
-                <button className='add-to-cart'>Add to cart</button>
+                <button id={id} className='add-to-cart' onClick={addProduct}>Add to cart</button>
             </div>
         </div>
     )

@@ -14,7 +14,7 @@ import Bread from '../images/Bread.jpg';
 import Guitar from '../images/Guitar.jpg';
 import Phone from '../images/Phone.jpg';
 
-const Shop = () => {
+const Shop = ({addProduct}) => {
 
     const [imagesArray] = useState([{image:Apple,   name: "Apple",   price: 10,  id: 0},
                                                     {image:Laptop,  name: "Laptop",  price: 500, id: 1},
@@ -37,7 +37,8 @@ const Shop = () => {
                 imagesArray.map(
                     function iterateImages(image, iterator){
                         return(
-                            <Card key = {iterator} image = {image.image} imageName = {image.name} price = {image.price} id = {image.id} />
+                            <Card key = {iterator} image = {image.image} imageName = {image.name} price = {image.price} id = {image.id} 
+                                  addProduct = {addProduct}/>
                         )
                     }) 
             } 

@@ -4,11 +4,13 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 300px; flex: 1;
+    width: 300px; height: 400px;
     background-color: rgb(224, 222, 226);
     z-index: 5;
     transition: all 0.3s ease;
     padding: 50px 0px;
+    border-bottom-left-radius: 20px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .cart .cart-content {
@@ -17,5 +19,5 @@
 
 .no-submission {
     display: flex;
-
+    color: rgb(58, 56, 56);
 }

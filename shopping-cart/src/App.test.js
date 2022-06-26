@@ -2,14 +2,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Card from './components/card';
-import CartCard from './components/cartCard';
 import Apple from './images/Apple.jpg';
 import Laptop from './images/Laptop.jpg';
 import Cart from './components/cart';
-import Shop from './components/shop';
-import App, { AddProductContext } from './App';
-import AppCurrentProductStateContext from './App';
-import { useContext } from 'react';
+import App from './App';
+
 
 describe('Card component tests', () => {
   it("Increments amount of products correctly", () =>{
@@ -67,14 +64,14 @@ describe('Card component tests', () => {
 })
 
 describe('Cart component tests', () => {
-  it('Render "Cart empty" when no products have been added to the cart', () => {
+  it('Renders "Cart empty" when no products have been added to the cart', () => {
     // set up props
     const submission = [];
     render(<Cart submission={submission} />);
     expect(screen.getByText("Cart empty")).toBeInTheDocument();
   })
 
-  it('Render all cart elements provided in the submission prop', () => {
+  it('Renders all cart elements provided in the submission prop', () => {
     // set up props
     const submission = [{image:Apple,   name: "Apple",   price: 10,  id: 0, quantity: 1},
                         {image:Laptop,  name: "Laptop",  price: 500, id: 1, quantity: 1}];

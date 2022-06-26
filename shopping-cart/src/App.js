@@ -14,6 +14,7 @@ function App() {
 
   const [itemsInCar, setItemsInCar] = useState(10);
   const [productsInCar, setProductsInCar] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const checkIfProductAlreadyInCar = (currentProductId) => {
     let productsIdInCar = []
@@ -40,6 +41,14 @@ function App() {
     setProductsInCar([...productsInCarHelper]);
   }
 
+  const changeTotalPrice = () => {
+    let totalPrice = 0;
+    productsInCar.forEach(product => {
+      totalPrice += parseInt(product.quantity) * parseInt(product.price);
+    })
+    setTotalPrice(totalPrice);
+  }
+
   const addProduct = (e) => {
     const ID = e.target.id;
     let productRaw = document.getElementById(`${ID}-card`);
@@ -59,6 +68,10 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    changeTotalPrice();
+  },[productsInCar, changeTotalPrice])
+
   return (
     <BrowserRouter>
       <AddProductContext.Provider value={addProduct}>
@@ -66,7 +79,7 @@ function App() {
           <Header numberItemsInCar = {itemsInCar}/>
           <div className='fullHeight'>
             <div className='app-body'>
-              <Cart submission = {productsInCar} />
+              <Cart submission = {productsInCar} totalPrice = {totalPrice} />
               <Navbar />
               <Routes>
                 <Route path="/" element = {<Home />} />

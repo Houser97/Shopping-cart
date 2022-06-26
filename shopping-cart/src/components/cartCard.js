@@ -15,9 +15,10 @@ const CartCard = ({submission}) => {
                         <div className='name-price-quantity'>
                             <div className='name-price'>
                                 <div className="name-cart">{name}</div>
-                                <div className="price-cart">{price}</div>
+                                <div className="price-cart">Unit price: ${price}</div>
+                                <div data-testid={`${iterator}-quantity-display`} className="quantity-cart">Quantity: {quantity}</div>
                             </div>
-                            <div data-testid={`${iterator}-quantity-display`} className="quantity-cart">{quantity}</div>
+                            
                         </div>
                     </div>
                 )

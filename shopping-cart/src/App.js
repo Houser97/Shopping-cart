@@ -12,6 +12,32 @@ function App() {
   const [itemsInCar, setItemsInCar] = useState(10);
   const [productsInCar, setProductsInCar] = useState([]);
 
+  function checkIfProductAlreadyInCar(currentProductId) {
+    let productsIdInCar = []
+    productsInCar.forEach(product => productsIdInCar.push(product.id));
+    const isProductAlreadyInCar = productsIdInCar.includes(currentProductId);
+    return isProductAlreadyInCar;
+  }
+
+  function addCurrentProductQuantity(productId, Quantity, newProduct){
+    let productsInCarHelper = [...productsInCar];
+    let iterator = 0;
+    let positionProduct = 0;
+    let quantityToAdd = parseInt(newProduct.quantity);
+
+    productsInCar.forEach(product => {
+      if(product.id === productId){
+       quantityToAdd += parseInt(product.quantity);
+       positionProduct = iterator;
+      }
+      iterator ++;
+    })
+    newProduct.quantity = quantityToAdd;
+    productsInCarHelper[positionProduct] = newProduct;
+    setProductsInCar([...productsInCarHelper]);
+    console.log(positionProduct);
+  }
+
   const addProduct = (e) => {
     const ID = e.target.id;
     let productRaw = document.getElementById(`${ID}-card`);
@@ -23,7 +49,12 @@ function App() {
     const quantityProducts = childs[3].childNodes[1].textContent;
 
     const product = {image: imgSrc, name: nameProduct, price: price, id: ID, quantity: quantityProducts}
-    setProductsInCar([...productsInCar, product])
+
+    if(checkIfProductAlreadyInCar(ID)){
+      addCurrentProductQuantity(ID, quantityProducts, product)
+    } else {
+      setProductsInCar([...productsInCar, product])
+    }
   }
 
   return (

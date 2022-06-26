@@ -1,7 +1,11 @@
 import '../styles/card.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import App from '../App';
+import { AddProductContext } from '../App';
 
-const Card = ({image, imageName, price, id, addProduct}) => {
+const Card = ({image, imageName, price, id}) => {
+
+    const addProduct = useContext(AddProductContext)
 
     const [numberOfProducts, setNumberOfProducts] = useState(1);
     const [currentId, setCurrentId] = useState(0);
@@ -49,7 +53,7 @@ const Card = ({image, imageName, price, id, addProduct}) => {
                 </button>
             </div>
             <div className='add-product'>
-                <button id={id} className='add-to-cart' onClick={addProduct}>Add to cart</button>
+                <button id={id} data-testid={`${id}-add-to-cart`}  className='add-to-cart' onClick={addProduct}>Add to cart</button>
             </div>
         </div>
     )

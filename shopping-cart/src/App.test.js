@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
-import App from './App';
 import Card from './components/card';
+import CartCard from './components/cartCard';
 import Apple from './images/Apple.jpg';
-
+import Laptop from './images/Laptop.jpg';
+import Cart from './components/cart';
+import Shop from './components/shop';
+import App, { AddProductContext } from './App';
+import AppCurrentProductStateContext from './App';
+import { useContext } from 'react';
 
 describe('Card component tests', () => {
   it("Increments amount of products correctly", () =>{
@@ -58,5 +63,47 @@ describe('Card component tests', () => {
     })
 
     expect(DIV.textContent).toBe("1");
+  })
+})
+
+describe('Cart component tests', () => {
+  it('Render "Cart empty" when no products have been added to the cart', () => {
+    // set up props
+    const submission = [];
+    render(<Cart submission={submission} />);
+    expect(screen.getByText("Cart empty")).toBeInTheDocument();
+  })
+
+  it('Render all cart elements provided in the submission prop', () => {
+    // set up props
+    const submission = [{image:Apple,   name: "Apple",   price: 10,  id: 0, quantity: 1},
+                        {image:Laptop,  name: "Laptop",  price: 500, id: 1, quantity: 1}];
+    render(<Cart submission={submission} />);
+    expect(screen.getByText("Apple") && screen.getByText("Laptop")).toBeInTheDocument();
+    expect(screen.getByTestId("1-quantity-display").textContent).toBe("1");
+  })
+
+  it('Renders laptop with quantity 1 when added to the cart', () => {
+    // set up props
+    const submission = [{image:Apple,   name: "Apple",   price: 10,  id: 0, quantity: 1},
+                        {image:Laptop,  name: "Laptop",  price: 500, id: 1, quantity: 1}];
+    render(<Cart submission={submission} />);
+    expect(screen.getByTestId("1-quantity-display").textContent).toBe("1");
+  })
+
+  it('Changes quantity of laptops if user adds the product when it is already in the cart', () => {
+    render(<App />);
+    const shopLink = screen.getByTestId("test-shop-link");
+    userEvent.click(shopLink);
+    const addProductToCart = screen.getByTestId("1-add-to-cart")
+
+    for(let j = 0; j<10; j++){
+      userEvent.click(addProductToCart);
+    }
+
+
+    const laptopQuantity = screen.getByTestId("0-quantity-display");
+  
+    expect(laptopQuantity.textContent).toBe("10");
   })
 })

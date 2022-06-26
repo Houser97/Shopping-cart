@@ -3,23 +3,26 @@ import Header from './components/header';
 import Navbar from './components/navbar';
 import Home from './components/home';
 import Shop from './components/shop';
-import {useState} from "react";
+import {useState, createContext, useEffect} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Cart from './components/cart';
+
+export const AddProductContext = createContext();
+export const AppCurrentProductStateContext = createContext();
 
 function App() {
 
   const [itemsInCar, setItemsInCar] = useState(10);
   const [productsInCar, setProductsInCar] = useState([]);
 
-  function checkIfProductAlreadyInCar(currentProductId) {
+  const checkIfProductAlreadyInCar = (currentProductId) => {
     let productsIdInCar = []
     productsInCar.forEach(product => productsIdInCar.push(product.id));
     const isProductAlreadyInCar = productsIdInCar.includes(currentProductId);
     return isProductAlreadyInCar;
   }
 
-  function addCurrentProductQuantity(productId, Quantity, newProduct){
+  const addCurrentProductQuantity = (productId, Quantity, newProduct) => {
     let productsInCarHelper = [...productsInCar];
     let iterator = 0;
     let positionProduct = 0;
@@ -35,7 +38,6 @@ function App() {
     newProduct.quantity = quantityToAdd;
     productsInCarHelper[positionProduct] = newProduct;
     setProductsInCar([...productsInCarHelper]);
-    console.log(positionProduct);
   }
 
   const addProduct = (e) => {
@@ -58,20 +60,22 @@ function App() {
   }
 
   return (
-    < BrowserRouter>
-      <div className="App">
-        <Header numberItemsInCar = {itemsInCar}/>
-        <div className='fullHeight'>
-          <div className='app-body'>
-            <Cart submission = {productsInCar} />
-            <Navbar />
-            <Routes>
-              <Route path="/" element = {<Home />} />
-              <Route path="/shop" element = {<Shop addProduct={addProduct}/>} />
-            </Routes>
+    <BrowserRouter>
+      <AddProductContext.Provider value={addProduct}>
+        <div className="App">
+          <Header numberItemsInCar = {itemsInCar}/>
+          <div className='fullHeight'>
+            <div className='app-body'>
+              <Cart submission = {productsInCar} />
+              <Navbar />
+              <Routes>
+                <Route path="/" element = {<Home />} />
+                <Route path="/shop" element = {<Shop />} />
+              </Routes>
+            </div>
           </div>
         </div>
-      </div>
+      </ AddProductContext.Provider>
     </BrowserRouter>
   );
 }

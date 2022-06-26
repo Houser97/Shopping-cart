@@ -77,7 +77,7 @@ describe('Cart component tests', () => {
                         {image:Laptop,  name: "Laptop",  price: 500, id: 1, quantity: 1}];
     render(<Cart submission={submission} />);
     expect(screen.getByText("Apple") && screen.getByText("Laptop")).toBeInTheDocument();
-    expect(screen.getByTestId("1-quantity-display").textContent).toBe("1");
+    expect(screen.getByTestId("1-quantity-display").textContent).toBe("Quantity: 1");
   })
 
   it('Renders laptop with quantity 1 when added to the cart', () => {
@@ -85,7 +85,7 @@ describe('Cart component tests', () => {
     const submission = [{image:Apple,   name: "Apple",   price: 10,  id: 0, quantity: 1},
                         {image:Laptop,  name: "Laptop",  price: 500, id: 1, quantity: 1}];
     render(<Cart submission={submission} />);
-    expect(screen.getByTestId("1-quantity-display").textContent).toBe("1");
+    expect(screen.getByTestId("1-quantity-display").textContent).toBe("Quantity: 1");
   })
 
   it('Changes quantity of laptops if user adds the product when it is already in the cart', () => {
@@ -101,6 +101,22 @@ describe('Cart component tests', () => {
 
     const laptopQuantity = screen.getByTestId("0-quantity-display");
   
-    expect(laptopQuantity.textContent).toBe("10");
+    expect(laptopQuantity.textContent).toBe("Quantity: 10");
+  })
+
+  it('Changes total price correctly when adding three laptops to the cart', () => {
+    render(<App />);
+    const shopLink = screen.getByTestId("test-shop-link");
+    userEvent.click(shopLink);
+    const addProductToCart = screen.getByTestId("1-add-to-cart")
+
+      for(let j = 0; j<3; j++){
+        userEvent.click(addProductToCart);
+      }
+  
+
+    const totalPrice = screen.getByTestId("total-price-id");
+  
+    expect(totalPrice.textContent).toBe("$1500");
   })
 })

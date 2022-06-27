@@ -12,7 +12,7 @@ export const AppCurrentProductStateContext = createContext();
 
 function App() {
 
-  const [itemsInCar, setItemsInCar] = useState(10);
+  const [itemsInCar, setItemsInCar] = useState(0);
   const [productsInCar, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -41,12 +41,21 @@ function App() {
     setProductsInCar([...productsInCarHelper]);
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const changeTotalPrice = () => {
     let totalPrice = 0;
     productsInCar.forEach(product => {
       totalPrice += parseInt(product.quantity) * parseInt(product.price);
     })
     setTotalPrice(totalPrice);
+  }
+
+  const updateTotalProductInCard = () => {
+    let products = 0;
+    productsInCar.forEach(product => {
+      products += parseInt(product.quantity);
+    })
+    setItemsInCar(products)
   }
 
   const addProduct = (e) => {
@@ -70,7 +79,9 @@ function App() {
 
   useEffect(() => {
     changeTotalPrice();
-  },[productsInCar, changeTotalPrice])
+    updateTotalProductInCard();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [changeTotalPrice, productsInCar])
 
   return (
     <BrowserRouter>

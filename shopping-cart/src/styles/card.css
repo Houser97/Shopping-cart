@@ -82,3 +82,6 @@ img {
     cursor: pointer;
 }
 
+.add-to-cart:active {
+    background-color: rgb(55, 164, 55);
+}

@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/shopping-cart/static/css/main.161c767e.css",
+    "main.js": "/shopping-cart/static/js/main.d21ec28e.js",
+    "static/js/787.d6fe38e8.chunk.js": "/shopping-cart/static/js/787.d6fe38e8.chunk.js",
+    "static/media/ShoppingItems.png": "/shopping-cart/static/media/ShoppingItems.383e2b8c87d8b211e989.png",
+    "static/media/Phone.jpg": "/shopping-cart/static/media/Phone.0d6efac1031e825855b9.jpg",
+    "static/media/PingPong.jpg": "/shopping-cart/static/media/PingPong.ff9cc8a846c3ad9df9ba.jpg",
+    "static/media/Guitar.jpg": "/shopping-cart/static/media/Guitar.52b1e4efd7fe534c4873.jpg",
+    "static/media/ShoppingCart.png": "/shopping-cart/static/media/ShoppingCart.3c7476d182525d7b8819.png",
+    "static/media/iPad.jpg": "/shopping-cart/static/media/iPad.45ecdb998cd02ff48255.jpg",
+    "static/media/Shoes.jpg": "/shopping-cart/static/media/Shoes.61b417e5ac4ce7a64de8.jpg",
+    "static/media/Watermelon.jpg": "/shopping-cart/static/media/Watermelon.9ab5c7f880575d5d0f1f.jpg",
+    "static/media/Apple.jpg": "/shopping-cart/static/media/Apple.63c7f4dde5596eeaaf1f.jpg",
+    "static/media/Laptop.jpg": "/shopping-cart/static/media/Laptop.de904ca2fedd7451ee13.jpg",
+    "static/media/Bread.jpg": "/shopping-cart/static/media/Bread.1a3ae60c0125845494c6.jpg",
+    "static/media/Smartwatch.jpg": "/shopping-cart/static/media/Smartwatch.7f9b0c5150057eb4d46b.jpg",
+    "static/media/Book.jpg": "/shopping-cart/static/media/Book.faef90e1c3a53535a057.jpg",
+    "static/media/Donut.jpg": "/shopping-cart/static/media/Donut.6251be0f5fb198828f61.jpg",
+    "index.html": "/shopping-cart/index.html",
+    "main.161c767e.css.map": "/shopping-cart/static/css/main.161c767e.css.map",
+    "main.d21ec28e.js.map": "/shopping-cart/static/js/main.d21ec28e.js.map",
+    "787.d6fe38e8.chunk.js.map": "/shopping-cart/static/js/787.d6fe38e8.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.161c767e.css",
+    "static/js/main.d21ec28e.js"
+  ]
+}

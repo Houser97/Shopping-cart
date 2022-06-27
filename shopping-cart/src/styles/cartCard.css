@@ -6,6 +6,7 @@
     background-color: white;
     border-left: 8px solid rebeccapurple;
     border-radius: 10px;
+    position: relative;
 }
 
 .name-price-quantity{
@@ -24,4 +25,16 @@
 
 .name-cart {
     font-weight: 600;
+}
+
+.remove-product {
+    display: none;
+    width: 15px; height: 15px;
+    position: absolute;
+    top: 2px; right: 5px;
+    z-index: 10;
+}
+
+.card-cart:hover .remove-product{
+    display: flex;
 }

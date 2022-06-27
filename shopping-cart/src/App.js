@@ -9,12 +9,27 @@ import Cart from './components/cart';
 
 export const AddProductContext = createContext();
 export const AppCurrentProductStateContext = createContext();
+export const RemoveElementContext = createContext();
 
 function App() {
 
   const [itemsInCar, setItemsInCar] = useState(0);
   const [productsInCar, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  const removeProductFromCart = (e) => {
+    const ID = e.target.id;
+    let productsInCarHelper = productsInCar;
+    let iterator = 0;
+    let elementPosition = 0;
+    productsInCar.forEach(product => {
+      if(product.id === ID){
+        elementPosition = iterator;
+      }
+      iterator ++;
+    })
+    setProductsInCar([...productsInCarHelper.slice(0,elementPosition), ...productsInCarHelper.slice(elementPosition+1)]);
+  }
 
   const checkIfProductAlreadyInCar = (currentProductId) => {
     let productsIdInCar = []
@@ -86,19 +101,21 @@ function App() {
   return (
     <BrowserRouter>
       <AddProductContext.Provider value={addProduct}>
-        <div className="App">
-          <Header numberItemsInCar = {itemsInCar}/>
-          <div className='fullHeight'>
-            <div className='app-body'>
-              <Cart submission = {productsInCar} totalPrice = {totalPrice} />
-              <Navbar />
-              <Routes>
-                <Route path="/" element = {<Home />} />
-                <Route path="/shop" element = {<Shop />} />
-              </Routes>
+        <RemoveElementContext.Provider value = {removeProductFromCart}>
+          <div className="App">
+            <Header numberItemsInCar = {itemsInCar}/>
+            <div className='fullHeight'>
+              <div className='app-body'>
+                <Cart submission = {productsInCar} totalPrice = {totalPrice} />
+                <Navbar />
+                <Routes>
+                  <Route path="/" element = {<Home />} />
+                  <Route path="/shop" element = {<Shop />} />
+                </Routes>
+              </div>
             </div>
           </div>
-        </div>
+        </RemoveElementContext.Provider>
       </ AddProductContext.Provider>
     </BrowserRouter>
   );

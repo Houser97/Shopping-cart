@@ -12,7 +12,7 @@ const Home = () => {
             </div>
             */}
             <div className='about-section'>
-                <div className='news-title'>HOME</div>
+                <div className='news-title'>Home</div>
                 <div className='text-image'>
                     <div className='text'>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras in ipsum non nisi vehicula tristique lacinia et libero. Sed vitae lorem eu orci ornare fermentum sed sit amet magna. Mauris sagittis augue vel pretium ullamcorper. In eget quam at ex condimentum tincidunt. Integer eget dictum leo.</p>

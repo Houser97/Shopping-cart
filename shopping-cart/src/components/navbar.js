@@ -6,7 +6,7 @@ const Navbar = () => {
     return(
         <div className='navbar'>
             <div className='navbar-options'>
-                <Link className='link' to = "Shopping-cart/">
+                <Link className='link' to = "/">
                     <div className='home option'>
                         <div className='svg-home'>
                             <svg viewBox="0 0 24 24">
@@ -16,7 +16,7 @@ const Navbar = () => {
                     <div className='home-text text'> Home</div>
                     </div>
                 </Link>
-                <Link  className='link' to = "Shopping-cart/shop">
+                <Link  className='link' to = "/shop">
                     <div data-testid="test-shop-link" className='shop option'>
                         <div className='svg-shop'>
                             <svg viewBox="0 0 24 24">

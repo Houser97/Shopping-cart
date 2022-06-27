@@ -110,7 +110,7 @@ function App() {
                 <Navbar />
                 <Routes>
                   <Route path="/" element = {<Home />} />
-                  <Route path="Shopping-cart/shop" element = {<Shop />} />
+                  <Route path="/shop" element = {<Shop />} />
                 </Routes>
               </div>
             </div>

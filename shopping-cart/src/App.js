@@ -99,7 +99,7 @@ function App() {
   }, [changeTotalPrice, productsInCar])
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/shopping'>
       <AddProductContext.Provider value={addProduct}>
         <RemoveElementContext.Provider value = {removeProductFromCart}>
           <div className="App">

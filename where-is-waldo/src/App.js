@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import './App.css';
-import image from './adventure-time.png'
+import image from './images/adventure-time.png';
+import Navbar from './components/header';
 
 
 function App() {
@@ -35,9 +36,9 @@ function App() {
     
       let distance = Math.sqrt(Math.pow(selectedX-solutionX,2)+Math.pow(selectedY-solutionY,2));
       /*console.log(`Y final: ${solutionY}`);
-      console.log(`distance: ${distance}`);*/
+      console.log(`distance: ${distance}`);
       console.log(`X solution: ${solutionX}`);
-      console.log(`Y solution: ${solutionY}`);
+      console.log(`Y solution: ${solutionY}`);*/
       console.log(`Distance: ${distance}`);
     }
 
@@ -53,14 +54,15 @@ function App() {
     checkIfSelected(relX,relY)
     
     /*console.log(`y: ${y}`);
-    console.log(`x: ${x}`);*/
+    console.log(`x: ${x}`);
     console.log(`x: ${relX}`);
-    console.log(`y: ${relY}`);
+    console.log(`y: ${relY}`);*/
   } 
 
 
   return (
     <div className="App">
+      <Navbar />
       <img src={image} alt='cartoon-network' className='img-project' ref={imgRef} onClick={eventDIV}></img>
       <div className='magic-div' ref={square}></div>
     </div>

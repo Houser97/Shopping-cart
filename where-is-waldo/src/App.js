@@ -45,7 +45,7 @@ function App() {
 
   const eventDIV = (e) => {
     let x = e.clientX;
-    let y = e.clientY;
+    let y = e.pageY;
 
     let relX;
     let relY;

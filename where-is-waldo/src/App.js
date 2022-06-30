@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import './App.css';
 import image from './images/adventure-time.png';
 import Navbar from './components/header';
+import Footer from './components/footer';
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
   function checkIfSelected(selectedX, selectedY){
     /* Finn coordinantes */
       let solutionX = 46;
-      let solutionY = 27;
+      let solutionY = 45;
     
       let distance = Math.sqrt(Math.pow(selectedX-solutionX,2)+Math.pow(selectedY-solutionY,2));
       /*console.log(`Y final: ${solutionY}`);
@@ -54,9 +55,9 @@ function App() {
     checkIfSelected(relX,relY)
     
     /*console.log(`y: ${y}`);
-    console.log(`x: ${x}`);
+    console.log(`x: ${x}`);*/
     console.log(`x: ${relX}`);
-    console.log(`y: ${relY}`);*/
+    console.log(`y: ${relY}`);
   } 
 
 
@@ -65,6 +66,7 @@ function App() {
       <Navbar />
       <img src={image} alt='cartoon-network' className='img-project' ref={imgRef} onClick={eventDIV}></img>
       <div className='magic-div' ref={square}></div>
+      <Footer />
     </div>
   );
 }

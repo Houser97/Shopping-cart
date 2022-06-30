@@ -1,0 +1,10 @@
+footer {
+    width: 100%; min-height: 40px;
+    background-color: rgb(4, 113, 238);
+    color: white;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Titan One', cursive;
+}

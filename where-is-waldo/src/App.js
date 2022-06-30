@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import './App.css';
 import image from './images/adventure-time.png';
 import Navbar from './components/header';
@@ -60,13 +60,20 @@ function App() {
     console.log(`y: ${relY}`);
   } 
 
+  useEffect(() => {
+    const fullHeight = document.querySelector(".full-height");
+    fullHeight.addEventListener("click", eventDIV);
+  })
+
 
   return (
     <div className="App">
-      <Navbar />
-      <img src={image} alt='cartoon-network' className='img-project' ref={imgRef} onClick={eventDIV}></img>
-      <div className='magic-div' ref={square}></div>
-      <Footer />
+      <div className='full-height'>
+        <Navbar />
+        <img src={image} alt='cartoon-network' className='img-project' ref={imgRef}></img>
+        <div className='magic-div' ref={square}></div>
+        <Footer />
+      </div>
     </div>
   );
 }

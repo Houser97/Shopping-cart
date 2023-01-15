@@ -1,16 +1,20 @@
+import { useContext } from 'react';
+import { CartContext } from '../App';
 import '../styles/Cart.css'
 import CartCard from './CartCard';
 
-const Cart = ({submission, totalPrice}) => {
-    const hasSubmissions = submission.length > 0;
+const Cart = ({toggleCart}) => {
+    const productsInCar = useContext(CartContext).productsInCar;
+    const totalPrice = useContext(CartContext).totalPrice;
+    const isEmpty = productsInCar.length > 0;
     return(
-        <div className="cart">
+        <div className={`cart ${toggleCart ? 'show-cart':''}`}>
             <div className='cart-content'>
             {
-                hasSubmissions ? (
+                isEmpty ? (
                     <div className='cart-content-submission'>
                         <div className='products-section-cart'>
-                            <CartCard submission={submission} />
+                            <CartCard submission={productsInCar} />
                         </div>
                         <div className='DIV-total-price'>
                             <div className='total-price'>Total price:</div>

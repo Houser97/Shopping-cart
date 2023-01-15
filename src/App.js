@@ -1,15 +1,11 @@
 import './App.css';
-import Header from './components/header';
-import Navbar from './components/navbar';
-import Home from './components/home';
-import Shop from './components/shop';
+import Header from './components/Header';
+import Home from './components/Home';
+import Shop from './components/Shop';
 import {useState, createContext, useEffect} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import Cart from './components/cart';
 
-export const AddProductContext = createContext();
-export const AppCurrentProductStateContext = createContext();
-export const RemoveElementContext = createContext();
+export const CartContext = createContext()
 
 function App() {
 
@@ -17,7 +13,7 @@ function App() {
   const [productsInCar, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  const removeProductFromCart = (e) => {
+  const removeProduct = (e) => {
     const ID = e.target.id;
     let productsInCarHelper = productsInCar;
     let iterator = 0;
@@ -98,25 +94,19 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeTotalPrice, productsInCar])
 
+  const cartContextValue = {productsInCar, totalPrice, addProduct, removeProduct}
+
   return (
     <BrowserRouter basename='Shopping-cart/'>
-      <AddProductContext.Provider value={addProduct}>
-        <RemoveElementContext.Provider value = {removeProductFromCart}>
-          <div className="App">
-            <Header numberItemsInCar = {itemsInCar}/>
-            <div className='fullHeight'>
-              <div className='app-body'>
-                <Cart submission = {productsInCar} totalPrice = {totalPrice} />
-                <Navbar />
-                <Routes>
-                  <Route path="/" element = {<Home />} />
-                  <Route path="/shop" element = {<Shop />} />
-                </Routes>
-              </div>
-            </div>
-          </div>
-        </RemoveElementContext.Provider>
-      </ AddProductContext.Provider>
+      <CartContext.Provider value = {cartContextValue}>
+        <div className="App">
+          <Header numberItemsInCar = {itemsInCar}/>
+          <Routes>
+            <Route path="/" element = {<Home />} />
+            <Route path="/shop" element = {<Shop />} />
+          </Routes>
+        </div>
+      </CartContext.Provider>
     </BrowserRouter>
   );
 }

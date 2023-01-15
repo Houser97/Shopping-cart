@@ -1,5 +1,5 @@
-import '../styles/shop.css';
-import Card from './card';
+import '../styles/Shop.css';
+import Card from './Card';
 import { productsData } from '../assets/constants';
 
 const Shop = () => {

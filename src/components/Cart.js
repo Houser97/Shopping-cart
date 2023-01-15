@@ -1,5 +1,5 @@
-import '../styles/cart.css'
-import CartCard from './cartCard';
+import '../styles/Cart.css'
+import CartCard from './CartCard';
 
 const Cart = ({submission, totalPrice}) => {
     const hasSubmissions = submission.length > 0;

@@ -1,4 +1,4 @@
-import '../styles/home.css';
+import '../styles/Home.css';
 import Imagen from './ShoppingCart.png'
 import Items from './ShoppingItems.png'
 

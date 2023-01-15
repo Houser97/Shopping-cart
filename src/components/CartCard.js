@@ -1,4 +1,4 @@
-import '../styles/cartCard.css'
+import '../styles/CartCard.css'
 import { RemoveElementContext } from '../App';
 import { useContext } from 'react';
 

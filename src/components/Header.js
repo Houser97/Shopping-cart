@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import '../styles/header.css';
+import '../styles/Header.css';
 import Navbar from './Navbar';
 import ToggleBtn from './ToggleBtn';
 

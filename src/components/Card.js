@@ -1,4 +1,4 @@
-import '../styles/card.css';
+import '../styles/Card.css';
 import { useState, useEffect, useContext } from 'react';
 import App from '../App';
 import { AddProductContext } from '../App';

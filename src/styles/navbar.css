@@ -9,10 +9,16 @@
     display: flex;
     justify-content: center;
     background-color: rgb(49, 46, 46);
-    transition: all 0.3s ease;
     position: absolute;
-    z-index: 2;
-    
+    z-index: 20;
+    transition: transform 250ms ease-in-out;
+    left: 0px;
+    transform: translateX(-100%);
+    top: 100%;
+}
+
+.show-navbar{
+    transform: translateX(0%);
 }
 
 .navbar-options, .link {

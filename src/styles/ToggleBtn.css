@@ -1,0 +1,20 @@
+.toggle-button{
+    width: 44px;
+    height: 44px;
+    position: relative;
+    cursor: pointer;
+}
+
+.ToggleBtn-svg{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    pointer-events: none;
+}
+
+.hide-svg{
+    opacity: 0;
+}

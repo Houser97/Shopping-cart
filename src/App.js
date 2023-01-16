@@ -19,13 +19,12 @@ function App() {
   }
 
   const addCurrentProductQuantity = (newQuantity, productId) => {
-    const productsHelper = [...productsInCar]
+    const productsHelper = structuredClone(productsInCar)
     const productIndex = productsHelper.findIndex(product => product.id === productId)
     productsHelper[productIndex].quantity += newQuantity
     setProductsInCar([...productsHelper]);
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const changeTotalPrice = () => {
     setTotalPrice(productsInCar.reduce((acc, current) => acc + current.quantity*current.price, 0));
   }

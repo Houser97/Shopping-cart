@@ -27,15 +27,11 @@ function App() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const changeTotalPrice = () => {
-    let totalPrice = 0;
-    productsInCar.forEach(product => {
-      totalPrice += parseInt(product.quantity) * parseInt(product.price);
-    })
-    setTotalPrice(totalPrice);
+    setTotalPrice(productsInCar.reduce((acc, current) => acc + current.quantity*current.price, 0));
   }
 
   const updateTotalProductInCard = () => {
-    setItemsInCar(productsInCar.reduce((acc, current) => acc + current, 0))
+    setItemsInCar(productsInCar.reduce((acc, current) => acc + current.quantity, 0))
   }
 
   const addProduct = (numberOfProducts, id) => {

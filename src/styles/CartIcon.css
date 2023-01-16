@@ -30,3 +30,7 @@
 .cart-icon-header-number > div {
     pointer-events: none;
 }
+
+.open{
+    color: rgb(222, 152, 22);
+}

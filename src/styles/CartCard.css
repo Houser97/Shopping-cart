@@ -7,6 +7,8 @@
     border-left: 8px solid rebeccapurple;
     border-radius: 10px;
     position: relative;
+    font-size: 10px;
+    color: black;
 }
 
 .name-price-quantity{

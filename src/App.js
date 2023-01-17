@@ -57,13 +57,13 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeTotalPrice, productsInCar])
 
-  const cartContextValue = {productsInCar, totalPrice, addProduct, removeProduct}
+  const cartContextValue = {productsInCar, totalPrice, itemsInCar ,addProduct, removeProduct}
 
   return (
     <BrowserRouter basename='Shopping-cart/'>
       <CartContext.Provider value = {cartContextValue}>
         <div className="App">
-          <Header numberItemsInCar = {itemsInCar}/>
+          <Header />
           <Routes>
             <Route path="/" element = {<Home />} />
             <Route path="/shop" element = {<Shop />} />

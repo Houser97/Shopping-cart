@@ -3,6 +3,7 @@
   flex-flow: column;
   text-align: center;
   height: 100%;
+  overflow-x: hidden;
 }
 
 .fullHeight {

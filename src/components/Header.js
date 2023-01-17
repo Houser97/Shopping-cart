@@ -1,12 +1,11 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import '../styles/Header.css';
 import Cart from './Cart';
 import CartIcon from './CartIcon';
 import Navbar from './Navbar';
 import ToggleBtn from './ToggleBtn';
 
-const Header = (props) => {
-    const {numberItemsInCar} = props;
+const Header = () => {
 
     const [toggleNavbar, setToggleNavbar] = useState(false);
     const [toggleCart, setToggleCart] = useState(false);
@@ -16,7 +15,7 @@ const Header = (props) => {
             <ToggleBtn toggle={toggleNavbar} setToggle = {setToggleNavbar}/>
             <Navbar toggle = {toggleNavbar} />
             <h1 className="title-project">Shopping Cart</h1>
-            <CartIcon numberItemsInCar={numberItemsInCar} setToggleCart = {setToggleCart}/>
+            <CartIcon setToggleCart = {setToggleCart} toggle = {toggleCart}/>
             <Cart toggleCart={toggleCart} />
         </header>
     )

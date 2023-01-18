@@ -10,7 +10,7 @@ export const CartContext = createContext()
 
 function App() {
 
-  const [itemsInCar, setItemsInCar] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [productsInCar, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -30,7 +30,7 @@ function App() {
   }
 
   const updateTotalProductInCard = () => {
-    setItemsInCar(productsInCar.reduce((acc, current) => acc + current.quantity, 0))
+    setTotalProducts(productsInCar.reduce((acc, current) => acc + current.quantity, 0))
   }
 
   const addProduct = (numberOfProducts, id) => {
@@ -57,7 +57,7 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeTotalPrice, productsInCar])
 
-  const cartContextValue = {productsInCar, totalPrice, itemsInCar ,addProduct, removeProduct}
+  const cartContextValue = {productsInCar, totalPrice, totalProducts ,addProduct, removeProduct}
 
   return (
     <BrowserRouter basename='Shopping-cart/'>

@@ -8,8 +8,8 @@
     width: 100%;
     padding: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(400px, 400px));
-    grid-template-rows: repeat(auto-fit, minmax(350px, 350px));
+    grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
     gap: 40px;
     justify-content: center;
 }

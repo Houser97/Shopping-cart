@@ -46,8 +46,7 @@ function App() {
     }
   }
 
-  const removeProduct = (e) => {
-    const id = e.target.id;
+  const removeProduct = (id) => {
     setProductsInCar(oldArray => oldArray.filter(product => product.id !== id))
   } 
 

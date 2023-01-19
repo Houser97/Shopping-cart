@@ -1,10 +1,13 @@
 import '../styles/Home.css';
-import main from '../assets/Home/main.jpg'
+import CardItemPromotion from './CardItemPromotion';
 
 const Home = () => {
     return(
         <div className="home-page">
-            <img className='home-main-img' src={main}></img>
+            <section className='presentation'>
+                <img className='home-main-img' ></img>
+                <CardItemPromotion />
+            </section>
         </div>
     )
 }

@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text&display=swap');
 
+:root {
+  --header-color: #161b22;
+  --header-height: 80px
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

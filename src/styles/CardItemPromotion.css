@@ -1,0 +1,25 @@
+.cardItemPromotion{
+    height: 250px;
+    width: 200px;
+    background-color: #fcc902;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cardItemPromotion img {
+    width: 100%;
+    height: auto;
+    align-self: flex-end;
+    justify-self: flex-end;
+}
+
+.section_promotion{
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.offer_duration{
+    font-size: 20px;
+}

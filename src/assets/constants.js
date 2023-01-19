@@ -11,6 +11,11 @@ import Bread from './images/Bread.jpg';
 import Guitar from './images/Guitar.jpg';
 import Phone from './images/Phone.jpg';
 
+import Controller from './Home/ControllerPlay.png';
+import Cell from './Home/cell.png';
+import Headphones from './Home/Headphones.png';
+import LaptopPromotion from './Home/laptop.png'
+
 export const productsData = [
     {image:Apple,   name: "Apple",   price: 10,  id: 0},
     {image:Laptop,  name: "Laptop",  price: 500, id: 1},
@@ -24,4 +29,27 @@ export const productsData = [
     {image:WaterMelon,   name: "Watermelon",    price: 10, id: 9},
     {image:Book,    name: "Book",    price: 15,  id:10},
     {image:Phone,    name: "Phone",    price: 280,  id:11}
+]
+
+export const itemsPromotion = [
+    {
+        image: Controller,
+        price: '$50',
+        section: 'VR Video Games'
+    },
+    {
+        image: Cell,
+        price: '$250',
+        section: 'Cellphones'
+    },
+    {
+        image: Headphones,
+        price: '$100',
+        section: 'Headphones'
+    },
+    {
+        image: LaptopPromotion,
+        price: '$400',
+        section: 'Laptops'
+    },
 ]

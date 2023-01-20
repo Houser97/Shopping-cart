@@ -1,18 +1,24 @@
 .cardItemPromotion{
-    height: 250px;
-    width: 200px;
+    height: 100%;
+    width: 100%;
     background-color: #fcc902;
     padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+    padding-bottom: 30px;
 }
 
 .cardItemPromotion img {
-    width: 100%;
+    width: 240px;
     height: auto;
-    align-self: flex-end;
-    justify-self: flex-end;
+    transition: transform 250ms ease-in-out;
+}
+
+.cardItemPromotion:hover img {
+    transform: scale(1.1);
 }
 
 .section_promotion{

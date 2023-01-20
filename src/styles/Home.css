@@ -2,29 +2,31 @@
     width: 100%;
     display: flex;
     flex-flow: column;
-
+    background-color: #091F44;
+    padding: 30px 60px;
 }
 
 .home-main-img{
-    width: 50%;
+    width: 100%;
     height: auto;
+    align-self: center;
 }
 
 .presentation{
-    min-width: 50vh;
-    height: 100vh;
-    background-color: #091F44;
+    background-color: white;
     margin-top: var(--header-height);
-    padding: 0px 50px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
 }
 
 .promotions-grid{
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 230px));
-    grid-template-rows: repeat(auto-fit, minmax(300px, 320px));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(320px, 1fr));
+    grid-auto-rows: minmax(320px, 1fr);
     gap: 10px;
-    background-color: white;
-    padding: 10px;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    margin-top: 10px;
 }

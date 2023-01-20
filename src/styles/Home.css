@@ -4,3 +4,27 @@
     flex-flow: column;
 
 }
+
+.home-main-img{
+    width: 50%;
+    height: auto;
+}
+
+.presentation{
+    min-width: 50vh;
+    height: 100vh;
+    background-color: #091F44;
+    margin-top: var(--header-height);
+    padding: 0px 50px;
+}
+
+.promotions-grid{
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 230px));
+    grid-template-rows: repeat(auto-fit, minmax(300px, 320px));
+    gap: 10px;
+    background-color: white;
+    padding: 10px;
+    justify-content: space-evenly;
+}

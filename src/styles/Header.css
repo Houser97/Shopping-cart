@@ -14,3 +14,20 @@ header {
     position: fixed;
     z-index: 10;
 }
+
+@media (max-width: 600px) {
+    header{
+        padding: 0px 30px;
+    }
+
+    .title-project{
+        font-size: 30px;
+        margin: 0px 10px;
+    }
+}
+
+@media (max-width: 350px) {
+    .title-project{
+        font-size: 26px;
+    }
+}

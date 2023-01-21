@@ -34,3 +34,15 @@
 .open{
     color: rgb(222, 152, 22);
 }
+
+@media (max-width: 600px) {
+    .cart-icon-header-number .number-cart-header{
+        width: 24px;
+        height: 24px;
+        top: -15px; right: -20px;
+    }
+    
+    .cart-icon-header-number .cart-icon-header {
+        height: 31px; width: 31px;
+    }
+}

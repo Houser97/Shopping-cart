@@ -18,3 +18,10 @@
 .hide-svg{
     opacity: 0;
 }
+
+@media (max-width: 600px) {
+    .toggle-button{
+        width: 34px;
+        height: 34px;
+    }
+}

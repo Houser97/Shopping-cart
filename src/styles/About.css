@@ -1,0 +1,21 @@
+.about{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(200px, 400px)); 
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    padding: 40px 60px;
+    background-color: #091F44;
+    color: #fcc902;
+}
+
+.about .about-text{
+    align-self: center;
+}
+
+.about .about-text div {
+    font-size: 20px;
+    font-weight: 600;
+}

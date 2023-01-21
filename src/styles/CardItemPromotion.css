@@ -12,7 +12,7 @@
 }
 
 .cardItemPromotion img {
-    width: 240px;
+    width: 200px;
     height: auto;
     transition: transform 250ms ease-in-out;
 }
@@ -28,4 +28,44 @@
 
 .offer_duration{
     font-size: 20px;
+}
+
+@media (max-width: 750px) {
+    .section_promotion{
+        font-size: 20px;
+    }
+    
+    .offer_duration{
+        font-size: 16px;
+    }
+
+    .cardItemPromotion img {
+        width: 180px;
+        height: auto;
+    }
+}
+
+@media (max-width: 500px) {
+    .cardItemPromotion{
+        flex-direction: row;
+    }
+
+    .section_promotion{
+        font-size: 18px;
+    }
+    
+    .offer_duration{
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .cardItemPromotion{
+        padding: 0px;
+    }
+
+    .cardItemPromotion img {
+        width: 150px;
+        height: auto;
+    }
 }

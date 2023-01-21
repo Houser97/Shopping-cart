@@ -9,29 +9,33 @@ const Home = () => {
     return(
         <div className="home-page">
             <section className='presentation'>
-                <picture className='home-main-img'>
-                    <source 
-                        srcSet={Banner}
-                        media="(min-width: 600px)"
-                    />
-                    <img 
-                        src={BannerVertical}
-                        alt="Banner"
-                    ></img>
-                </picture>
-                <div className='promotions-grid'>
-                    {
-                        itemsPromotion.map((item, index) => {
-                            return(
-                                <CardItemPromotion 
-                                key={`promotion-${index}`} 
-                                {...item} />
-                            )
-                        })
-                    }
+                <div className='presentation-subcontainer'>
+                    <picture className='home-main-img'>
+                        <source 
+                            srcSet={Banner}
+                            media="(min-width: 600px)"
+                        />
+                        <img 
+                            src={BannerVertical}
+                            alt="Banner"
+                        ></img>
+                    </picture>
+                    <div className='promotions-grid'>
+                        {
+                            itemsPromotion.map((item, index) => {
+                                return(
+                                    <CardItemPromotion 
+                                    key={`promotion-${index}`} 
+                                    {...item} />
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             </section>
-            <CardIncentive />
+            <section className='incentives'>
+                <CardIncentive />
+            </section>
         </div>
     )
 }

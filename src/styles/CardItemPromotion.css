@@ -45,7 +45,7 @@
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
     .cardItemPromotion{
         flex-direction: row;
     }
@@ -65,7 +65,7 @@
     }
 
     .cardItemPromotion img {
-        width: 150px;
+        width: 140px;
         height: auto;
     }
 }

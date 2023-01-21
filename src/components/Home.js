@@ -3,22 +3,22 @@ import CardItemPromotion from './CardItemPromotion';
 import { itemsPromotion } from '../assets/constants'
 import Banner from '../assets/Home/banner.jpg'
 import CardIncentive from './CardIncentive';
-import useWindowSize from '../hooks/windowSizeHook';
-import { useEffect, useState } from 'react';
-import HomeLottie from './HomeLottie';
+import BannerVertical from '../assets/Home/bannerVertical2.jpg'
 
 const Home = () => {
-    const windowSize = useWindowSize();
-    const [isMobile, setIsMobile] = useState(windowSize.width < 500);
-
-    useEffect(() => {
-        setIsMobile(windowSize.width < 500)
-    }, [windowSize])
-
     return(
         <div className="home-page">
             <section className='presentation'>
-                {isMobile ? <HomeLottie /> : <img className='home-main-img' src={Banner} alt='Banner'></img>}
+                <picture className='home-main-img'>
+                    <source 
+                        srcSet={Banner}
+                        media="(min-width: 600px)"
+                    />
+                    <img 
+                        src={BannerVertical}
+                        alt="Banner"
+                    ></img>
+                </picture>
                 <div className='promotions-grid'>
                     {
                         itemsPromotion.map((item, index) => {

@@ -5,6 +5,7 @@ import Banner from '../assets/Home/banner.jpg'
 import CardIncentive from './CardIncentive';
 import useWindowSize from '../hooks/windowSizeHook';
 import { useEffect, useState } from 'react';
+import HomeLottie from './HomeLottie';
 
 const Home = () => {
     const windowSize = useWindowSize();
@@ -17,7 +18,7 @@ const Home = () => {
     return(
         <div className="home-page">
             <section className='presentation'>
-                <img className='home-main-img' src={Banner} alt='Banner'></img>
+                {isMobile ? <HomeLottie /> : <img className='home-main-img' src={Banner} alt='Banner'></img>}
                 <div className='promotions-grid'>
                     {
                         itemsPromotion.map((item, index) => {

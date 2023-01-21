@@ -1,0 +1,35 @@
+.home-main-img{
+    width: 100%;
+    height: auto;
+    align-self: center;
+}
+
+.presentation{
+    background-color: #091F44;
+    padding: 30px 60px;
+    margin-top: var(--header-height);
+}
+
+.presentation-subcontainer{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.promotions-grid{
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(180px, 1fr));
+    grid-auto-rows: minmax(180px, 1fr);
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+    .presentation {
+        padding: 30px 20px;
+    }
+}

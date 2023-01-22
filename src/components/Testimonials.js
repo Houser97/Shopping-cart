@@ -5,9 +5,9 @@ import TestimonialCard from './TestimonialCard'
 
 const Testimonials = () => {
   return (
-    <section className='about'>
+    <section className='testimonials'>
         <HomeLottie />
-        <div className='about-text'>
+        <div className='testimonials-subcontainer'>
             <h2>Testimonials</h2>
             <div className='testimonials-grid'>
               <TestimonialCard />

@@ -1,4 +1,4 @@
-.about{
+.testimonials{
     display: grid;
     grid-template-columns: minmax(200px, 400px) minmax(200px, 1fr);
     grid-template-rows: repeat(auto-fit, minmax(200px, 500px)); 
@@ -11,18 +11,13 @@
     gap: 30px;
 }
 
-.about h2{
+.testimonials h2{
     margin-bottom: 30px;
 }
 
-.about .about-text{
+.testimonials .testimonials-subcontainer{
     align-self: center;
     height: 100%;
-}
-
-.about .about-text div {
-    font-size: 20px;
-    font-weight: 600;
 }
 
 .testimonials-grid{

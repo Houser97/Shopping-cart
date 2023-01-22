@@ -1,5 +1,5 @@
 import '../styles/Home.css';
-import About from './About';
+import Testimonials from './Testimonials';
 import Incentives from './Incentives';
 import Presentation from './Presentation';
 
@@ -8,7 +8,7 @@ const Home = () => {
         <div className="home-page">
             <Presentation />
             <Incentives />
-            <About />
+            <Testimonials />
         </div>
     )
 }

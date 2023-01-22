@@ -1,9 +1,9 @@
 import React from 'react'
 import HomeLottie from './HomeLottie'
-import '../styles/About.css'
+import '../styles/Testimonials.css'
 import TestimonialCard from './TestimonialCard'
 
-const About = () => {
+const Testimonials = () => {
   return (
     <section className='about'>
         <HomeLottie />
@@ -22,4 +22,4 @@ const About = () => {
   )
 }
 
-export default About
+export default Testimonials

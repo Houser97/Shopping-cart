@@ -4,9 +4,9 @@
     display: grid;
     justify-content: center;
     align-items: center;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(180px, 1fr));
-    grid-auto-rows: minmax(180px, 1fr);
-    padding: 120px 50px;
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-rows: minmax(250px, 1fr);
+    padding: 40px 100px;
+    gap: 40px;
 }

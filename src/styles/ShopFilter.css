@@ -1,0 +1,14 @@
+.shop-filter{
+    width: 100%;
+    position: sticky;
+    top: var(--header-height);
+    z-index: 10;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.fixed-container{
+    position: sticky;
+}

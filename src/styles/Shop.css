@@ -2,6 +2,8 @@
     display: flex;
     flex-flow: column;
     width: 100%;
+    margin-top: var(--header-height);
+    background-color: white;
 }
 
 .shop-page .shop-page {

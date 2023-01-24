@@ -4,6 +4,7 @@ import Banner from '../assets/Home/banner.jpg'
 import { itemsPromotion } from '../assets/constants'
 import CardItemPromotion from './CardItemPromotion';
 import '../styles/Presentation.css'
+import Credits from './Credits';
 
 const Presentation = () => {
   return (
@@ -18,6 +19,7 @@ const Presentation = () => {
                     src={BannerVertical}
                     alt="Banner"
                 ></img>
+                <Credits />
             </picture>
             <div className='promotions-grid'>
                 {

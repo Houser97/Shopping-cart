@@ -17,7 +17,7 @@ const TestimonialCard = () => {
 
 
         <h3>Lorem</h3>
-        <div id='testimonial-text'>
+        <div className='testimonial-text'>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacinia nunc eget felis volutpat pretium. 
         </div>
     </div>

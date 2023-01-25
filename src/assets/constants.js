@@ -17,18 +17,18 @@ import Headphones from './Home/Headphones.png';
 import LaptopPromotion from './Home/laptop.png'
 
 export const productsData = [
-    {image:Apple,   name: "Apple",   price: 10,  id: 0},
-    {image:Laptop,  name: "Laptop",  price: 500, id: 1},
-    {image:iPad,    name: "iPad",    price: 430, id: 2},
-    {image:PingPong,   name: "Ping Pong equipment",    price: 220, id: 3},
-    {image:Shoes,   name: "Shoes",   price: 100, id: 4},
-    {image:Watch,   name: "Smart watch",    price: 240, id: 5},
-    {image:Donut,   name: "Donut",   price: 3,   id: 6},
-    {image:Guitar,  name: "Guitar",  price: 150, id: 7},
-    {image:Bread,   name: "Bread",   price: 2,   id: 8},
-    {image:WaterMelon,   name: "Watermelon",    price: 10, id: 9},
-    {image:Book,    name: "Book",    price: 15,  id:10},
-    {image:Phone,    name: "Phone",    price: 280,  id:11}
+    {image:Apple,   name: "Apple",   price: 10,  id: 0, categories:['']},
+    {image:Laptop,  name: "Laptop",  price: 500, id: 1, categories:['Electronics']},
+    {image:iPad,    name: "iPad",    price: 430, id: 2, categories:['Electronics']},
+    {image:PingPong, name: "Ping Pong equipment", price: 220, id: 3, categories:['']},
+    {image:Shoes,   name: "Shoes",   price: 100, id: 4, categories:['Electronics']},
+    {image:Watch,   name: "Smart watch",    price: 240, id: 5, categories:['Electronics']},
+    {image:Donut,   name: "Donut",   price: 3,   id: 6, categories:['']},
+    {image:Guitar,  name: "Guitar",  price: 150, id: 7, categories:['Electronics', 'Music']},
+    {image:Bread,   name: "Bread",   price: 2,   id: 8, categories:['']},
+    {image:WaterMelon,   name: "Watermelon",    price: 10, id: 9, categories:['']},
+    {image:Book,    name: "Book",    price: 15,  id:10, categories:['']},
+    {image:Phone,    name: "Phone",    price: 280,  id:11, categories:['Electronics']}
 ]
 
 export const itemsPromotion = [

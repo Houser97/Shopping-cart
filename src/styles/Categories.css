@@ -7,5 +7,15 @@
 }
 
 .category-item{
-    margin-right: 20px;
+    padding: 5px 10px;
+}
+
+.category-item:hover{
+    background-color: #fcc902;
+    height: min-content;
+}
+
+.selected{
+    background-color: #091F44;  
+    color: white;
 }

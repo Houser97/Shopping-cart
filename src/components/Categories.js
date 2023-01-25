@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '../styles/Categories.css'
+import { FilterShopContext } from './Shop'
 
 const Categories = () => {
+
+    const setFilterCategory = useContext(FilterShopContext).setFilterCategory;
 
     const categoriesList = ['Videogames','Electronics','Music']
 
@@ -12,7 +15,12 @@ const Categories = () => {
             {
                 categoriesList.map((category, index) => {
                     return(
-                        <div key={`category-item-${index}`} className='category-item'>{category}</div>
+                        <div 
+                        key={`category-item-${index}`} 
+                        className='category-item'
+                        onClick={() => setFilterCategory(category)}>
+                                {category}
+                        </div>
                     )
                 })
             }

@@ -5,10 +5,12 @@ import { FilterShopContext } from './Shop'
 const Categories = () => {
 
     const setFilterCategory = useContext(FilterShopContext).setFilterCategory;
+    const currentFilter = useContext(FilterShopContext).filterCategory;
     const [categoryPreviousIndex, setCategoryPreviousIndex] = useState(null);
     const categoriesArray = useRef([])
 
     const categoriesList = ['Videogames','Electronics','Music']
+
     const setCategoryBackground = (index) => {
         if(categoryPreviousIndex || categoryPreviousIndex === 0 ){
             categoriesArray.current[categoryPreviousIndex].classList.remove("selected")
@@ -22,8 +24,14 @@ const Categories = () => {
             categoriesArray.current[index].classList.remove("selected")
             categoriesArray.current[index].classList.add("category-item") 
         }
+    }
 
-
+    const updateFilter = (category) => {
+        if(currentFilter === category){
+            setFilterCategory('all')
+        } else {
+            setFilterCategory(category)
+        }
     }
 
   return (
@@ -38,7 +46,7 @@ const Categories = () => {
                         className='category-item'
                         ref={((category) => categoriesArray.current[index] = category)}
                         onClick={() => {
-                            setFilterCategory(category);
+                            updateFilter(category);
                             setCategoryBackground(index);
                         }}>
                             {category}

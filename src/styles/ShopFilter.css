@@ -8,11 +8,11 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(200px, 1fr));
     justify-content: center;
-    padding: 10px 0px;
+    padding: 15px 0px;
 }
 
 .shop-filter h3{
-    font-size: 25px;
+    font-size: 33px;
     margin-bottom: 5px;
 }
 

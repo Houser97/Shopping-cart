@@ -6,13 +6,14 @@
     justify-content: center;
 }
 
-.category-item{
+.categories-list div {
     padding: 5px 10px;
+    height: min-content;
+    margin-right: 10px;
 }
 
 .category-item:hover{
     background-color: #fcc902;
-    height: min-content;
 }
 
 .selected{

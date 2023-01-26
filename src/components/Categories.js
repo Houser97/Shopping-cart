@@ -13,11 +13,17 @@ const Categories = () => {
         if(categoryPreviousIndex || categoryPreviousIndex === 0 ){
             categoriesArray.current[categoryPreviousIndex].classList.remove("selected")
             categoriesArray.current[categoryPreviousIndex].classList.add("category-item")
-            console.log(categoriesArray.current)
         }
-        categoriesArray.current[index].classList.add("selected")
-        categoriesArray.current[index].classList.remove("category-item")
-        setCategoryPreviousIndex(index)
+        if(categoryPreviousIndex !== index){
+            categoriesArray.current[index].classList.add("selected")
+            categoriesArray.current[index].classList.remove("category-item")
+            setCategoryPreviousIndex(index)
+        } else {
+            categoriesArray.current[index].classList.remove("selected")
+            categoriesArray.current[index].classList.add("category-item") 
+        }
+
+
     }
 
   return (

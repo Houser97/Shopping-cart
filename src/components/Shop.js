@@ -15,11 +15,13 @@ const Shop = () => {
         if(filterCategory !== 'all'){
             const productsDataCopy = structuredClone(productsData)
             setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filterCategory)))
+        } else {
+            setItemsToShow(productsData)
         }
     }, [filterCategory])
     
 
-    const contextProvider = {setFilterCategory}
+    const contextProvider = {setFilterCategory, filterCategory}
 
     return(
     <div className='shop-page'>

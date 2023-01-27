@@ -1,0 +1,32 @@
+.price-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.prices-range{
+    width: 200px;
+    position: relative;
+}
+
+#slider{
+    -webkit-appearance: none;
+    width: 100%;
+    outline: none;
+    border-radius: 10px;
+}
+
+/*Se selecciona el selector*/
+/*Se hace invisible para poder agregar uno personalizado*/
+#slider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    position: relative;
+    z-index: 3;
+    cursor: pointer;
+    background-color: #fcc902;
+    border-radius: 20px;
+}

@@ -30,3 +30,17 @@
     background-color: #fcc902;
     border-radius: 20px;
 }
+
+/*Se selecciona el contenedor del selector*/
+.selector{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    bottom: 0;
+    background-color: #fcc902;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+    border-radius: 50%;
+}

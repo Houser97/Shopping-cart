@@ -5,14 +5,17 @@ import '../styles/Prices.css'
 const Prices = () => {
     
     const slider = useRef(null);
+    const selector = useRef(null)
 
     useEffect(() => {
         slider.current.addEventListener('change',(e)=>{
-            console.log(e.target.value);
+            
         });
             
         slider.current.addEventListener('input',(e)=>{
-            console.log('input');
+            const relativeValue = Math.floor(e.target.value*slider.current.offsetWidth/199.9)/10
+            selector.current.style.left = `${relativeValue}px`
+            console.log(relativeValue);
         });
 
         return () => {
@@ -32,6 +35,7 @@ const Prices = () => {
         <h3>Prices</h3>
         <div className='prices-range'>
             <input ref={slider} type="range" min="0" max="2000" id='slider' defaultValue="1000"></input>
+            <div ref={selector} className='selector'></div>
         </div>
     </div>
   )

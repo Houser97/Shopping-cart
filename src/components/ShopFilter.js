@@ -1,16 +1,13 @@
 import React from 'react'
 import '../styles/ShopFilter.css'
 import Categories from './Categories'
+import Prices from './Prices'
 
 const ShopFilter = () => {
   return (
     <div className='shop-filter'>
         <Categories />
-        <div className='price filter-subsection'>
-            <h3>Prices</h3>
-            <div className='prices-list'>
-            </div>
-        </div>
+        <Prices />
     </div>
   )
 }

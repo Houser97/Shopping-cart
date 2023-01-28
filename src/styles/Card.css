@@ -10,7 +10,7 @@
 
 .card .price-product{
     position: absolute; top: -20px; right: -20px;
-    background-color: rgb(205, 193, 55);
+    background-color: #fcc902;
     height: 80px;
     width: 80px;
     border-radius: 50%;

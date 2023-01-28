@@ -1,29 +1,33 @@
 {
   "files": {
-    "main.css": "/Shopping-cart/static/css/main.161c767e.css",
-    "main.js": "/Shopping-cart/static/js/main.c5fd0649.js",
+    "main.css": "/Shopping-cart/static/css/main.26ced4c1.css",
+    "main.js": "/Shopping-cart/static/js/main.6aa6b85e.js",
     "static/js/787.d6fe38e8.chunk.js": "/Shopping-cart/static/js/787.d6fe38e8.chunk.js",
-    "static/media/ShoppingItems.png": "/Shopping-cart/static/media/ShoppingItems.383e2b8c87d8b211e989.png",
+    "static/media/cell.png": "/Shopping-cart/static/media/cell.4a05a2ca6ba0f6470183.png",
     "static/media/Phone.jpg": "/Shopping-cart/static/media/Phone.0d6efac1031e825855b9.jpg",
     "static/media/PingPong.jpg": "/Shopping-cart/static/media/PingPong.ff9cc8a846c3ad9df9ba.jpg",
     "static/media/Guitar.jpg": "/Shopping-cart/static/media/Guitar.52b1e4efd7fe534c4873.jpg",
-    "static/media/ShoppingCart.png": "/Shopping-cart/static/media/ShoppingCart.3c7476d182525d7b8819.png",
     "static/media/iPad.jpg": "/Shopping-cart/static/media/iPad.45ecdb998cd02ff48255.jpg",
     "static/media/Shoes.jpg": "/Shopping-cart/static/media/Shoes.61b417e5ac4ce7a64de8.jpg",
+    "static/media/bannerVertical2.jpg": "/Shopping-cart/static/media/bannerVertical2.80685abd71475b2d3aa6.jpg",
     "static/media/Watermelon.jpg": "/Shopping-cart/static/media/Watermelon.9ab5c7f880575d5d0f1f.jpg",
+    "static/media/Headphones.png": "/Shopping-cart/static/media/Headphones.8891523c0fe21ff745d2.png",
     "static/media/Apple.jpg": "/Shopping-cart/static/media/Apple.63c7f4dde5596eeaaf1f.jpg",
     "static/media/Laptop.jpg": "/Shopping-cart/static/media/Laptop.de904ca2fedd7451ee13.jpg",
     "static/media/Bread.jpg": "/Shopping-cart/static/media/Bread.1a3ae60c0125845494c6.jpg",
     "static/media/Smartwatch.jpg": "/Shopping-cart/static/media/Smartwatch.7f9b0c5150057eb4d46b.jpg",
+    "static/media/banner.jpg": "/Shopping-cart/static/media/banner.d69a4045fc7aec3c80f0.jpg",
     "static/media/Book.jpg": "/Shopping-cart/static/media/Book.faef90e1c3a53535a057.jpg",
+    "static/media/laptop.png": "/Shopping-cart/static/media/laptop.62e6241b39618d759a3f.png",
     "static/media/Donut.jpg": "/Shopping-cart/static/media/Donut.6251be0f5fb198828f61.jpg",
+    "static/media/ControllerPlay.png": "/Shopping-cart/static/media/ControllerPlay.aea705f3b67c205b677c.png",
     "index.html": "/Shopping-cart/index.html",
-    "main.161c767e.css.map": "/Shopping-cart/static/css/main.161c767e.css.map",
-    "main.c5fd0649.js.map": "/Shopping-cart/static/js/main.c5fd0649.js.map",
+    "main.26ced4c1.css.map": "/Shopping-cart/static/css/main.26ced4c1.css.map",
+    "main.6aa6b85e.js.map": "/Shopping-cart/static/js/main.6aa6b85e.js.map",
     "787.d6fe38e8.chunk.js.map": "/Shopping-cart/static/js/787.d6fe38e8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.161c767e.css",
-    "static/js/main.c5fd0649.js"
+    "static/css/main.26ced4c1.css",
+    "static/js/main.6aa6b85e.js"
   ]
 }

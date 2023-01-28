@@ -1,17 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useRef } from 'react'
 import '../styles/Prices.css'
+import { FilterShopContext } from './Shop';
 
 const Prices = () => {
     
     const slider = useRef(null);
     const value = useRef(null);
 
+    const setFilter = useContext(FilterShopContext).setFilter;
 
     useEffect(() => {
         const helper = slider.current;
         slider.current.addEventListener('change',(e)=>{
-            
+            setFilter(prevState => ({
+                ...prevState,
+                price: e.target.value
+            }))
         });
             
         slider.current.addEventListener('input', (e)=>{
@@ -34,8 +39,8 @@ const Prices = () => {
     <div className='price-container filter-subsection'>
         <h3>Prices</h3>
         <div className='prices-range'>
-            <input ref={slider} type="range" min="0" max="2000" id='slider' defaultValue="1000"></input>
-            <span ref={value} className='value'>$1000</span>
+            <input ref={slider} type="range" min="0" max="600" id='slider' defaultValue="300"></input>
+            <span ref={value} className='value'>$300</span>
         </div>
     </div>
   )

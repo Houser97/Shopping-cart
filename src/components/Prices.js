@@ -8,6 +8,7 @@ const Prices = () => {
     const selector = useRef(null)
 
     useEffect(() => {
+        const helper = slider.current;
         slider.current.addEventListener('change',(e)=>{
             
         });
@@ -19,11 +20,11 @@ const Prices = () => {
         });
 
         return () => {
-            slider.current.removeEventListener('change',(e)=>{
+            helper.removeEventListener('change',(e)=>{
                 console.log('change');
             });
                 
-            slider.current.removeEventListener('input',(e)=>{
+            helper.removeEventListener('input',(e)=>{
                 console.log('input');
             });
         }

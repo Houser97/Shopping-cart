@@ -8,20 +8,20 @@ export const FilterShopContext = createContext();
 
 const Shop = () => {
 
-    const [filterCategory, setFilterCategory] = useState('all');
+    const [filter, setFilter] = useState({category: 'all', price: 300});
     const [itemsToShow, setItemsToShow] = useState(productsData)
 
     useEffect(() => {
-        if(filterCategory !== 'all'){
-            const productsDataCopy = structuredClone(productsData)
-            setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filterCategory)))
+        const productsDataCopy = structuredClone(productsData)
+        if(filter.category !== 'all'){
+            setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filter.category) && product.price <= filter.price))
         } else {
-            setItemsToShow(productsData)
+            setItemsToShow(productsDataCopy.filter(product => product.price <= filter.price))
         }
-    }, [filterCategory])
+    }, [filter])
     
 
-    const contextProvider = {setFilterCategory, filterCategory}
+    const contextProvider = {setFilter, filter}
 
     return(
     <div className='shop-page'>

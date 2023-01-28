@@ -4,8 +4,8 @@ import { FilterShopContext } from './Shop'
 
 const Categories = () => {
 
-    const setFilterCategory = useContext(FilterShopContext).setFilterCategory;
-    const currentFilter = useContext(FilterShopContext).filterCategory;
+    const setFilter = useContext(FilterShopContext).setFilter;
+    const filter = useContext(FilterShopContext).filter;
     const [categoryPreviousIndex, setCategoryPreviousIndex] = useState(null);
     const categoriesArray = useRef([])
 
@@ -27,10 +27,16 @@ const Categories = () => {
     }
 
     const updateFilter = (category) => {
-        if(currentFilter === category){
-            setFilterCategory('all')
+        if(filter.category === category){
+            setFilter(prevState => ({
+                ...prevState,
+                category: "all"
+            }))
         } else {
-            setFilterCategory(category)
+            setFilter(prevState => ({
+                ...prevState,
+                category
+            }))
         }
     }
 

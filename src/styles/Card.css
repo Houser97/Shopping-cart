@@ -32,7 +32,7 @@ img {
 .card .card-name-section{
     height: 20%;
     display: flex; align-items: center; justify-content: space-evenly;
-    font-size: 30px;
+    font-size: 25px;
 }
 
 /*------------------------------------ Increase Decrease section */
@@ -42,6 +42,7 @@ img {
     display: flex;
     align-items: center; justify-content: center;
     gap: 10px;
+    margin: 10px 0px 15px 0px;
 }
 
 .button-IncDec{
@@ -74,15 +75,10 @@ img {
 
 .add-product .add-to-cart{
     width: 100px;
-    height: 100%;
     border-radius: 10px;
-    border: 1px solid black;
-    color: white;
-    background-color: green;
+    border: 1px solid #ff8f00;
+    background-color: #ffa41c;
     font-size: 16px; font-weight: 600;
     cursor: pointer;
-}
-
-.add-to-cart:active {
-    background-color: rgb(55, 164, 55);
+    padding: 10px;
 }

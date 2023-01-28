@@ -4,6 +4,7 @@
     justify-content: center;
     flex-direction: column;
     width: 100%;
+    margin-left: 10px;
 }
 
 .prices-range{
@@ -49,7 +50,7 @@
 @media (max-width: 1000px) {
     .prices-range{
         flex-direction: column;
-        padding: 0px 30px;
+        padding: 0px 15px;
     }
     
     .value{
@@ -65,5 +66,15 @@
     #slider::-webkit-slider-thumb{
         height: 12px;
         width: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .prices-range{
+        padding: 10px;
+    }
+
+    #slider{
+        margin: 10px 0px;
     }
 }

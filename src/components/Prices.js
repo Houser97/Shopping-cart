@@ -5,6 +5,7 @@ import '../styles/Prices.css'
 const Prices = () => {
     
     const slider = useRef(null);
+    const value = useRef(null);
 
 
     useEffect(() => {
@@ -13,8 +14,8 @@ const Prices = () => {
             
         });
             
-        slider.current.addEventListener('input',(e)=>{
-
+        slider.current.addEventListener('input', (e)=>{
+            value.current.textContent = `$${e.target.value}`
         });
 
         return () => {
@@ -34,6 +35,7 @@ const Prices = () => {
         <h3>Prices</h3>
         <div className='prices-range'>
             <input ref={slider} type="range" min="0" max="2000" id='slider' defaultValue="1000"></input>
+            <span ref={value} className='value'>$1000</span>
         </div>
     </div>
   )

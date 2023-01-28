@@ -6,17 +6,34 @@
     background-color: #091F44;  
     color: white;
     display: grid;
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, minmax(0px, 1fr));
     justify-content: center;
     padding: 15px 0px;
-}
-
-.shop-filter h3{
-    font-size: 33px;
-    margin-bottom: 5px;
 }
 
 .shop-filter div {
     font-size: 20px;
     font-weight: 600;
+}
+
+@media (max-width: 800px) {
+    .shop-filter h3{
+        font-size: 24px;
+    }
+    
+    .shop-filter div {
+        font-size: 16px;
+    }
+
+    .shop-filter h3{
+        margin-bottom: 10px;
+    }
+}
+
+
+@media (max-width: 650px) {
+    /*Media query coincide con la de Categories*/
+    .shop-filter h3{
+        margin-bottom: 0px;
+    }
 }

@@ -16,31 +16,21 @@
     width: 100%;
     outline: none;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 /*Se selecciona el selector*/
 /*Se hace invisible para poder agregar uno personalizado*/
 #slider::-webkit-slider-thumb{
     -webkit-appearance: none;
-    height: 20px;
-    width: 20px;
-    position: relative;
+    height: 15px;
+    width: 15px;
     z-index: 3;
     cursor: pointer;
     background-color: #fcc902;
     border-radius: 20px;
-}
-
-/*Se selecciona el contenedor del selector*/
-.selector{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    bottom: 0;
-    background-color: #fcc902;
-    width: 20px;
-    height: 20px;
-    z-index: 2;
-    border-radius: 50%;
+    box-shadow: -207px 0 0 200px #fcc902; /*Box shadow simula progress
+    bar al darlo un offset lejano y un ancho largo, además de que el slider
+    debe contener overflow hidden*/
+    border: 3px solid #000000;
 }

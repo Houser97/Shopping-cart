@@ -7,13 +7,23 @@
 }
 
 .prices-range{
-    width: 200px;
+    width: 100%;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    padding: 0px 120px;
+    align-items: center;
+    justify-content: center;
+}
+
+.value{
+    margin-left: 30px;
 }
 
 #slider{
     -webkit-appearance: none;
-    width: 100%;
+    width: 300px;
+    height: 15px;
     outline: none;
     border-radius: 10px;
     overflow: hidden;
@@ -29,7 +39,7 @@
     cursor: pointer;
     background-color: #fcc902;
     border-radius: 20px;
-    box-shadow: -207px 0 0 200px #fcc902; /*Box shadow simula progress
+    box-shadow: -407px 0 0 400px #fcc902; /*Box shadow simula progress
     bar al darlo un offset lejano y un ancho largo, además de que el slider
     debe contener overflow hidden*/
     border: 3px solid #000000;

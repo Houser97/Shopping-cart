@@ -27,12 +27,8 @@ const Card = ({image, name, price, id}) => {
     return(
         <div className="card">
             <div className='price-product'>${price}</div>
-            <div className="card-image-section">
-                <img src = {image} alt = "Apple"></img>
-            </div>
-            <div className="card-name-section">
-                <div className='name-product'>{name}</div>
-            </div>
+            <img src = {image} alt = "Apple"></img>
+            <div className='name-product'>{name}</div>
             <div className="card-decrase-increase">
                 <button className='decrease-button button-IncDec' onClick={() => dispatch({type: 'decrement'})}>
                     <svg className='minus-svg svg-IncDec' viewBox="0 0 24 24">
@@ -46,9 +42,7 @@ const Card = ({image, name, price, id}) => {
                     </svg>
                 </button>
             </div>
-            <div className='add-product'>
-                <button className='add-to-cart' onClick={() => addProduct(state.numberOfProducts, id)}>Add to cart</button>
-            </div>
+            <button className='add-to-cart' onClick={() => addProduct(state.numberOfProducts, id)}>Add to cart</button>
         </div>
     )
 }

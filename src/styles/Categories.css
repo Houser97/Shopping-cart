@@ -23,3 +23,15 @@
     background-color: #fcc902;
     color: black;
 }
+
+@media (max-width: 650px) {
+    .categories-list{
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    .categories-list div {
+        padding: 5px;
+        margin-right: 0px;
+    }
+}

@@ -2,14 +2,15 @@ import GodOfWar from './images/godOfWar.jpg';
 import Laptop from './images/Laptop.jpg';
 import iPad from './images/iPad.jpg';
 import Gears from './images/gears.jpg';
-import Shoes from './images/Shoes.jpg';
+import xbox from './images/xbox.jpg';
 import Book from './images/Book.jpg';
 import Watch from './images/Smartwatch.jpg';
 import RedDead from './images/RedDead.jpg';
 import Spiderman from './images/spiderman.jpg';
-import Bread from './images/Bread.jpg';
+import PS5 from './images/ps5.jpg';
 import Guitar from './images/Guitar.jpg';
-import Phone from './images/Phone.jpg';
+import iPhone from './images/Phone.jpg';
+import samPhone from './images/samPhone.jpg';
 
 import Controller from './Home/ControllerPlay.png';
 import Cell from './Home/cell.png';
@@ -18,17 +19,17 @@ import LaptopPromotion from './Home/laptop.png'
 
 export const productsData = [
     {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames']},
-    {image:Laptop,  name: "Laptop",  price: 500, id: 1, categories:['Electronics']},
-    {image:iPad,    name: "iPad",    price: 430, id: 2, categories:['Electronics']},
+    {image:Laptop,  name: "HP Victus Gaming 2022",  price: 600, id: 1, categories:['Electronics']},
+    {image:iPad,    name: "iPad",    price: 529, id: 2, categories:['Electronics']},
     {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames']},
-    {image:Shoes,   name: "Shoes",   price: 100, id: 4, categories:['Electronics']},
+    {image:xbox,   name: "Xbox Series X",   price: 499, id: 4, categories:['Electronics', 'Videogames']},
     {image:Watch,   name: "Smart watch",    price: 240, id: 5, categories:['Electronics']},
     {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames']},
     {image:Guitar,  name: "Guitar",  price: 150, id: 7, categories:['Electronics', 'Music']},
-    {image:Bread,   name: "Bread",   price: 2,   id: 8, categories:['']},
+    {image:PS5,   name: "PS5 Console",   price: 499,   id: 8, categories:['Electronics', 'Videogames']},
     {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames']},
-    {image:Book,    name: "Book",    price: 15,  id:10, categories:['']},
-    {image:Phone,    name: "Phone",    price: 280,  id:11, categories:['Electronics']}
+    {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics']},
+    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics']}
 ]
 
 export const itemsPromotion = [

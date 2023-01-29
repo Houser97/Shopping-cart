@@ -3,14 +3,15 @@ import Laptop from './images/Laptop.jpg';
 import iPad from './images/iPad.jpg';
 import Gears from './images/gears.jpg';
 import xbox from './images/xbox.jpg';
-import Book from './images/Book.jpg';
-import Watch from './images/Smartwatch.jpg';
+import tShirt from './images/tShirt.jpg';
+import Blouse from './images/blouse.jpg';
 import RedDead from './images/RedDead.jpg';
 import Spiderman from './images/spiderman.jpg';
 import PS5 from './images/ps5.jpg';
-import Guitar from './images/Guitar.jpg';
+import Shoes from './images/Shoes.jpg';
 import iPhone from './images/Phone.jpg';
 import samPhone from './images/samPhone.jpg';
+import Pants from './images/pants.jpg';
 
 import Controller from './Home/ControllerPlay.png';
 import Cell from './Home/cell.png';
@@ -23,13 +24,15 @@ export const productsData = [
     {image:iPad,    name: "iPad",    price: 529, id: 2, categories:['Electronics']},
     {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames']},
     {image:xbox,   name: "Xbox Series X",   price: 499, id: 4, categories:['Electronics', 'Videogames']},
-    {image:Watch,   name: "Smart watch",    price: 240, id: 5, categories:['Electronics']},
+    {image:tShirt,   name: "5 t-shirts",    price: 50, id: 5, categories:['Clothes']},
     {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames']},
-    {image:Guitar,  name: "Guitar",  price: 150, id: 7, categories:['Electronics', 'Music']},
+    {image:Shoes,  name: "Shoes",  price: 70, id: 7, categories:['Clothes']},
     {image:PS5,   name: "PS5 Console",   price: 499,   id: 8, categories:['Electronics', 'Videogames']},
     {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames']},
     {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics']},
-    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics']}
+    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics']},
+    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:11, categories:['Clothes']},
+    {image:Pants,    name: "Pants",    price: 30,  id:11, categories:['Clothes']}
 ]
 
 export const itemsPromotion = [

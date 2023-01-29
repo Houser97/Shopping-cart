@@ -8,7 +8,7 @@ export const FilterShopContext = createContext();
 
 const Shop = () => {
 
-    const [filter, setFilter] = useState({category: 'all', price: 300});
+    const [filter, setFilter] = useState({category: 'all', price: 500});
     const [itemsToShow, setItemsToShow] = useState(productsData)
 
     useEffect(() => {

@@ -39,8 +39,8 @@ const Prices = () => {
     <div className='price-container filter-subsection'>
         <h3>Prices</h3>
         <div className='prices-range'>
-            <input ref={slider} type="range" min="0" max="600" id='slider' defaultValue="300"></input>
-            <span ref={value} className='value'>$300</span>
+            <input ref={slider} type="range" min="0" max="1000" id='slider' defaultValue="500"></input>
+            <span ref={value} className='value'>$500</span>
         </div>
     </div>
   )

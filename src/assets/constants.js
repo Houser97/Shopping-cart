@@ -1,12 +1,12 @@
-import Apple from './images/Apple.jpg';
+import GodOfWar from './images/godOfWar.jpg';
 import Laptop from './images/Laptop.jpg';
 import iPad from './images/iPad.jpg';
-import PingPong from './images/PingPong.jpg';
+import Gears from './images/gears.jpg';
 import Shoes from './images/Shoes.jpg';
 import Book from './images/Book.jpg';
 import Watch from './images/Smartwatch.jpg';
-import WaterMelon from './images/Watermelon.jpg';
-import Donut from './images/Donut.jpg';
+import RedDead from './images/RedDead.jpg';
+import Spiderman from './images/spiderman.jpg';
 import Bread from './images/Bread.jpg';
 import Guitar from './images/Guitar.jpg';
 import Phone from './images/Phone.jpg';
@@ -17,16 +17,16 @@ import Headphones from './Home/Headphones.png';
 import LaptopPromotion from './Home/laptop.png'
 
 export const productsData = [
-    {image:Apple,   name: "Apple",   price: 10,  id: 0, categories:['']},
+    {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames']},
     {image:Laptop,  name: "Laptop",  price: 500, id: 1, categories:['Electronics']},
     {image:iPad,    name: "iPad",    price: 430, id: 2, categories:['Electronics']},
-    {image:PingPong, name: "Ping Pong equipment", price: 220, id: 3, categories:['']},
+    {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames']},
     {image:Shoes,   name: "Shoes",   price: 100, id: 4, categories:['Electronics']},
     {image:Watch,   name: "Smart watch",    price: 240, id: 5, categories:['Electronics']},
-    {image:Donut,   name: "Donut",   price: 3,   id: 6, categories:['']},
+    {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames']},
     {image:Guitar,  name: "Guitar",  price: 150, id: 7, categories:['Electronics', 'Music']},
     {image:Bread,   name: "Bread",   price: 2,   id: 8, categories:['']},
-    {image:WaterMelon,   name: "Watermelon",    price: 10, id: 9, categories:['']},
+    {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames']},
     {image:Book,    name: "Book",    price: 15,  id:10, categories:['']},
     {image:Phone,    name: "Phone",    price: 280,  id:11, categories:['Electronics']}
 ]

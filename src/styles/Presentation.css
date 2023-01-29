@@ -5,6 +5,11 @@
     position: relative;
 }
 
+.home-main-img img {
+    width: 100%;
+    height: auto;
+}
+
 .presentation{
     background-color: #091F44;
     padding: 30px 60px;

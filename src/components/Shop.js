@@ -29,13 +29,17 @@ const Shop = () => {
             <div className='shop-title'>Shop</div>
             <ShopFilter />
             <div className="shop-page">
-                {           
-                    itemsToShow.map(
-                        function iterateImages(product, iterator){
-                            return(
-                                <Card key = {iterator} {...product} />
-                            )
-                        }) 
+                {   itemsToShow.length > 0 ? (    
+                        itemsToShow.map(
+                            function iterateImages(product, iterator){
+                                return(
+                                    <Card key = {iterator} {...product} />
+                                )
+                            }) 
+                    ):
+                    (
+                        <div className='no-items'>No items match current filter</div>
+                    )
                 } 
             </div>  
         </FilterShopContext.Provider>

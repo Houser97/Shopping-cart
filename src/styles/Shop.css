@@ -25,6 +25,12 @@
     padding: 20px 0px;
 }
 
+.no-items{
+    font-size: 50px;
+    font-family: 600;
+    align-self: center;
+}
+
 @media (max-width: 800px) {
     .shop-page .shop-page {
         padding: 50px 40px;

@@ -2,7 +2,7 @@
 
 :root {
   --header-color: #161b22;
-  --header-height: 80px
+  --header-height: 80px;
 }
 
 * {
@@ -16,6 +16,10 @@ html,
 #root, 
 body {
   height: 100%;
+}
+
+:root{
+  color-scheme: light only;
 }
 
 body {

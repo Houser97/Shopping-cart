@@ -9,7 +9,7 @@ const Categories = () => {
     const [categoryPreviousIndex, setCategoryPreviousIndex] = useState(null);
     const categoriesArray = useRef([])
 
-    const categoriesList = ['Videogames','Electronics','Music']
+    const categoriesList = ['Videogames','Electronics','Clothes']
 
     const setCategoryBackground = (index) => {
         if(categoryPreviousIndex || categoryPreviousIndex === 0 ){

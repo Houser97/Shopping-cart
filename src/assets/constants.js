@@ -31,8 +31,8 @@ export const productsData = [
     {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames']},
     {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics']},
     {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics']},
-    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:11, categories:['Clothes']},
-    {image:Pants,    name: "Pants",    price: 30,  id:11, categories:['Clothes']}
+    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:12, categories:['Clothes']},
+    {image:Pants,    name: "Pants",    price: 30,  id:13, categories:['Clothes']}
 ]
 
 export const itemsPromotion = [

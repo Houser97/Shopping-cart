@@ -1,11 +1,9 @@
 .card-cart {
     display: flex; flex-flow: row;
     align-items: center; justify-content: space-between;
-    width: 100%; max-height: 90px;
-    border: 1px solid black;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     background-color: white;
-    border-left: 8px solid rebeccapurple;
-    border-radius: 10px;
     position: relative;
     font-size: 10px;
     color: black;
@@ -17,12 +15,9 @@
     justify-content: space-evenly; align-items: center;
 }
 
-.image-cart-product {
-    width: 100px; height: 100%;
-}
-
 .image-cart{
-    border-right: 1px solid black;
+    height: 110px;
+    width: auto;
 }
 
 .name-cart {

@@ -5,6 +5,7 @@ import Shop from './components/Shop';
 import {useState, createContext, useEffect} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import { productsData } from './assets/constants';
+import ProductData from './components/ProductData';
 
 export const CartContext = createContext()
 
@@ -66,6 +67,7 @@ function App() {
           <Routes>
             <Route path="/" element = {<Home />} />
             <Route path="/shop" element = {<Shop />} />
+            <Route path="/product/:id" element = {<ProductData />} />
           </Routes>
         </div>
       </CartContext.Provider>

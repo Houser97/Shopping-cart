@@ -1,0 +1,13 @@
+.rate-container{
+    display: flex;
+    min-width: 100px;
+    justify-content: space-evenly;
+}
+
+.rate-container input{
+    -webkit-appearance: none;
+    appearance: none;
+    height: 40px;
+    width: 20px;
+    position: relative;
+}

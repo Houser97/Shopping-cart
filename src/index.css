@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-header{
+    background-color: #161b22;
+  }
+}
+
 :root {
   --header-color: #161b22;
   --header-height: 80px;

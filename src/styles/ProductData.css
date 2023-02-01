@@ -1,0 +1,16 @@
+.productData-container{
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 300px minmax(200px, 300px);
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--header-height);
+}
+
+.productData-container img{
+    align-self: center;
+    justify-self: center;
+    width: 300px;
+    height: auto;
+}

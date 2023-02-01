@@ -2,6 +2,9 @@
     display: flex;
     min-width: 100px;
     justify-content: space-evenly;
+    flex-direction: row-reverse;
+    /*row reverse para que al hacer hover en estrellas lo amarillo se
+    llene desde la izquierda.*/
 }
 
 .rate-container input{
@@ -10,4 +13,16 @@
     height: 40px;
     width: 20px;
     position: relative;
+    cursor: pointer;
+}
+
+.rate-container input::before{
+    content: '\f005';
+    position: absolute;
+    font-family: fontAwesome;
+}
+
+.rate-container input:hover ~ input::before,
+.rate-container input:hover::before{
+    color: #fcc902;
 }

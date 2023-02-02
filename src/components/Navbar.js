@@ -7,8 +7,9 @@ const Navbar = ({toggle}) => {
         <nav className={`flex justify-center absolute left-0 top-full bg-header 
         z-20 px-10 transition-transform duration-300 h-[300px] w-[14rem] rounded-br-2xl
         ${toggle ? 'translate-x-0':'-translate-x-full'} `}>
-            <div className='navbar-options'>
-                <Link className='link' to = "/">
+            <div>
+                <Link className='flex flex-col justify-evenly 
+                items-start text-white h-full font-bold text-2xl' to = "/">
                     <div className='home option'>
                         <div className='svg-home'>
                             <svg viewBox="0 0 24 24">
@@ -18,7 +19,8 @@ const Navbar = ({toggle}) => {
                     <div className='home-text text'> Home</div>
                     </div>
                 </Link>
-                <Link  className='link' to = "/shop">
+                <Link  className='flex flex-col justify-evenly 
+                items-start text-white h-full font-bold text-2xl' to = "/shop">
                     <div data-testid="test-shop-link" className='shop option'>
                         <div className='svg-shop'>
                             <svg viewBox="0 0 24 24">

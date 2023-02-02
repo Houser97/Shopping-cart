@@ -4,7 +4,9 @@ import {Link} from 'react-router-dom';
 const Navbar = ({toggle}) => {
 
     return(
-        <nav className={`navbar ${toggle ? 'show-navbar':''}`}>
+        <nav className={`flex justify-center absolute left-0 top-full bg-header 
+        z-20 px-10 transition-transform duration-300 h-[300px] w-[14rem] rounded-br-2xl
+        ${toggle ? 'translate-x-0':'-translate-x-full'} `}>
             <div className='navbar-options'>
                 <Link className='link' to = "/">
                     <div className='home option'>

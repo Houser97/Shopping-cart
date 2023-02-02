@@ -23,6 +23,8 @@
 }
 
 .rate-container input:hover ~ input::before,
-.rate-container input:hover::before{
+.rate-container input:hover::before,
+.rate-container input:checked ~ input::before,
+.rate-container input:checked::before{
     color: #fcc902;
 }

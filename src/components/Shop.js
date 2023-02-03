@@ -33,7 +33,9 @@ const Shop = () => {
                         itemsToShow.map(
                             function iterateImages(product, iterator){
                                 return(
-                                    <Card key = {iterator} {...product} />
+                                    <Card key = {iterator} 
+                                    {...product} 
+                                    isLazy={iterator > 1} />
                                 )
                             }) 
                     ):

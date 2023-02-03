@@ -2,18 +2,10 @@
   display: flex;
   flex-flow: column;
   text-align: center;
-  height: 100%;
   overflow-x: hidden;
 }
 
-.fullHeight {
-  display: flex;
-  flex-flow: column;
-  flex: 1;
-}
-
 .app-body {
-  height: 100%;
   width: 100%;
   display: flex;
   position: relative;

@@ -3,6 +3,7 @@
     min-width: 100px;
     justify-content: space-evenly;
     flex-direction: row-reverse;
+    margin: 10px 0px;
     /*row reverse para que al hacer hover en estrellas lo amarillo se
     llene desde la izquierda.*/
 }

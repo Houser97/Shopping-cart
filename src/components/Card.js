@@ -1,6 +1,7 @@
 import '../styles/Card.css';
 import { useContext, useReducer } from 'react';
 import { CartContext } from '../App';
+import StarRate from './StarRate';
 
 const initialState = {numberOfProducts: 1}
 
@@ -18,7 +19,7 @@ function reducer(state, action){
     }
 }
 
-const Card = ({image, name, price, id}) => {
+const Card = ({image, name, price, id, isLazy}) => {
 
     const addProduct = useContext(CartContext).addProduct
 
@@ -27,9 +28,10 @@ const Card = ({image, name, price, id}) => {
     return(
         <div className="card">
             <div className='price-product'>${price}</div>
-            <img src = {image} alt = "Apple"></img>
+            <img src = {image} alt = "Apple" loading={`${isLazy ? 'lazy':''}`}></img>
             <div className='product-data'>
                 <div className='name-product'>{name}</div>
+                <StarRate product={name} />
                 <div className="card-decrase-increase">
                     <button className='decrease-button button-IncDec' onClick={() => dispatch({type: 'decrement'})}>
                         <svg className='minus-svg svg-IncDec' viewBox="0 0 24 24">

@@ -1,6 +1,7 @@
 import '../styles/Card.css';
 import { useContext, useReducer } from 'react';
 import { CartContext } from '../App';
+import {Link} from 'react-router-dom';
 import StarRate from './StarRate';
 
 const initialState = {numberOfProducts: 1}
@@ -46,6 +47,7 @@ const Card = ({image, name, price, id, isLazy}) => {
                     </button>
                 </div>
                 <button className='add-to-cart' onClick={() => addProduct(state.numberOfProducts, id)}>Add to cart</button>
+                <Link to={`/${id}/review`}>review</Link>
             </div>
         </div>
     )

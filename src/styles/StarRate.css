@@ -1,7 +1,8 @@
 .rate-container{
     display: flex;
-    min-width: 100px;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 200px;
     flex-direction: row-reverse;
     margin: 10px 0px;
     /*row reverse para que al hacer hover en estrellas lo amarillo se
@@ -15,6 +16,9 @@
     width: 20px;
     position: relative;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .rate-container input::before{

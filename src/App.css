@@ -1,12 +1,3 @@
 .App {
   display: flex;
-  flex-flow: column;
-  text-align: center;
-  overflow-x: hidden;
-}
-
-.app-body {
-  width: 100%;
-  display: flex;
-  position: relative;
 }

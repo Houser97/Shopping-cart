@@ -8,10 +8,10 @@ import Blouse from './images/blouse.jpg';
 import RedDead from './images/RedDead.jpg';
 import Spiderman from './images/spiderman.jpg';
 import PS5 from './images/ps5.jpg';
-import Shoes from './images/Shoes.jpg';
+import Shoes from './images/shoes.jpg';
 import iPhone from './images/Phone.jpg';
 import samPhone from './images/samPhone.jpg';
-import Pants from './images/pants.jpg';
+import Hat from './images/hat.jpg';
 
 import Controller from './Home/ControllerPlay.png';
 import Cell from './Home/cell.png';
@@ -32,7 +32,7 @@ export const productsData = [
     {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics']},
     {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics']},
     {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:12, categories:['Clothes']},
-    {image:Pants,    name: "Pants",    price: 30,  id:13, categories:['Clothes']}
+    {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes']}
 ]
 
 export const itemsPromotion = [

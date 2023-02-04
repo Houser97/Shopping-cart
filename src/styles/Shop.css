@@ -1,4 +1,4 @@
-.shop-page {
+.shop {
     display: flex;
     flex-flow: column;
     width: 100%;
@@ -6,7 +6,7 @@
     background-color: white;
 }
 
-.shop-page .shop-page {
+.shop .shop-cards {
     width: 100%;
     padding: 50px 80px;
     display: grid;
@@ -17,12 +17,13 @@
     margin: 0px;
 }
 
-.shop-page .shop-title {
+.shop .shop-title {
     font-size: 70px;
     font-weight: 600;
     background-color: #091F44;  
     color: white;
     padding: 20px 0px;
+    text-align: center;
 }
 
 .no-items{
@@ -32,14 +33,18 @@
 }
 
 @media (max-width: 800px) {
-    .shop-page .shop-page {
+    .shop .shop-cards {
         padding: 50px 40px;
     }
 }
 
 @media (max-width: 600px) {
-    .shop-page .shop-page {
-        grid-template-columns: repeat(auto-fit,minmax(250px, 280px));
+    /*La media query cambia valores mínimos para que la tarjeta se acomode.
+    Se debe cuidar que el valor mínimo trabaje bien con la imagen y columna 
+    de la tarjeta*/
+    .shop .shop-cards {
+        grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
         grid-template-rows: repeat(auto-fit, minmax(0px, 1fr));
+        padding: 50px 20px;
     }
 }

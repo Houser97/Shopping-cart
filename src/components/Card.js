@@ -47,7 +47,7 @@ const Card = ({image, name, price, id, isLazy}) => {
                     </button>
                 </div>
                 <button className='add-to-cart' onClick={() => addProduct(state.numberOfProducts, id)}>Add to cart</button>
-                <Link to={`/${id}/review`}>review</Link>
+                <Link className='review' to={`/${id}/review`}>Review</Link>
             </div>
         </div>
     )

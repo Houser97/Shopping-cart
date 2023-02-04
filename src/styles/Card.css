@@ -36,20 +36,19 @@
 }
 
 .card img {
-    width: auto; height: 210px;
+    width: auto; height: 230px;
 }
 
 .card .name-product{
-    height: 20%;
     display: flex; align-items: center; justify-content: space-evenly;
     font-size: 25px;
     text-align: center;
+    font-weight: 600;
 }
 
 /*------------------------------------ Increase Decrease section */
 
 .card .card-decrase-increase{
-    height: 20%;
     display: flex;
     align-items: center; justify-content: center;
     gap: 10px;
@@ -84,7 +83,18 @@
     background-color: #ffa41c;
     font-size: 16px; font-weight: 600;
     cursor: pointer;
-    padding: 10px;
+    padding: 6px;
+}
+
+.review{
+    width: 100px;
+    background-color: #091F44;
+    color: white;
+    padding: 6px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-top: 10px;
+    text-align: center;
 }
 
 @media (max-width: 600px) {
@@ -93,6 +103,7 @@
         tanto vertical como horizontalmente.*/
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
         grid-template-rows: repeat(auto-fit, minmax(0px, 1fr));
+        grid-auto-rows: minmax(0px, 1fr);
     }
 
     .card img {
@@ -104,7 +115,6 @@
     }
 
     .card .name-product{
-        height: 20%;
         display: flex; align-items: center; justify-content: space-evenly;
         font-size: 18px;
     }

@@ -1,7 +1,5 @@
 .shop-filter{
     width: 100%;
-    position: sticky;
-    top: var(--header-height);
     z-index: 5;
     background-color: #091F44;  
     color: white;
@@ -18,6 +16,7 @@
 
 .shop-filter h3{
     margin-bottom: 10px;
+    text-align: center;
 }
 
 @media (max-width: 800px) {

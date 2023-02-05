@@ -25,14 +25,36 @@
     height: 40px; width: 40px;
     display: flex;
     align-items: center; justify-content: center;
+
 }
 
 .cart-icon-header-number > div {
     pointer-events: none;
 }
 
-.open{
-    color: rgb(222, 152, 22);
+.cart-svg{
+    position: absolute;
+    transition: transform 250ms ease-in-out 0s, opacity 250ms ease-in-out 0s;
+}
+
+.cart-open{
+    transform: translateX(0%);
+    opacity: 1;
+}
+
+.cart-close{
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.open .cart-close{
+    transform: translateX(0%);
+    opacity: 1;
+}
+
+.open .cart-open{
+    transform: translateX(100%);
+    opacity: 0;
 }
 
 @media (max-width: 600px) {

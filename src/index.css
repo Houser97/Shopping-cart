@@ -13,6 +13,8 @@
 :root {
   --header-color: #161b22;
   --header-height: 80px;
+  --blue-color: #091F44;
+  --yellow-color: #fcc902;
 }
 
 * {
@@ -20,16 +22,13 @@
   padding: 0;
   margin: 0;
   font-family: 'Crimson Text', serif;
+  color-scheme: light only;
 }
 
 html,
 #root, 
 body {
-  height: 100%;
-}
-
-:root{
-  color-scheme: light only;
+  height: auto;
 }
 
 body {

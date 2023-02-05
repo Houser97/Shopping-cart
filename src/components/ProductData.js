@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { productsData } from '../assets/constants'
 import '../styles/ProductData.css'
+import StarRate from './StarRate'
 
 const ProductData = () => {
     const [product, setProduct] = useState(null);
@@ -17,11 +18,20 @@ const ProductData = () => {
     }, [])
 
   return (
-    <div className='flex justify-center items-center bg-[var(--blue-color)] w-full py-28 px-2 sm:px-8 md:px-20'>
+    <div className='flex justify-center items-center bg-[var(--blue-color)] w-full py-28 px-2 sm:px-8 md:px-14'>
       <div className='flex flex-col bg-white rounded-lg p-6 w-full'>
-        <div className='grid auto-rows-auto grid-cols-1 2sm:grid-cols-[minmax(200px,max-content),minmax(300px,1fr)]'>
-          <img className='max-w-[300px] w-full justify-self-center' src={product ? product.image : ''}></img>
-          <h1 className='w-full text-center text-4xl sm:text-5xl'>{product ? product.name : ''}</h1>
+        <div className='grid auto-rows-auto grid-cols-1 2sm:grid-cols-[minmax(200px,max-content),minmax(300px,1fr)] gap-5'>
+          <img className='max-w-[300px] w-full justify-self-center self-center' src={product ? product.image : ''}></img>
+          <div className='flex flex-col w-full h-full justify-between items-center p-1 md:p-10'>
+            <h1 className='w-full text-center text-4xl md:text-5xl'>{product ? product.name : ''}</h1>
+            <div className='flex w-full px-1 justify-evenly text-3xl sm:px-4 sm:text-4xl my-5'>
+              <StarRate product={product ? product.name : ''} />
+            </div>
+            <div className='flex flex-row w-full justify-evenly'>
+              <button className='bg-[#ffa41c] font-bold p-2 w-24 rounded-lg'>Add to cart</button>
+              <Link className='bg-[var(--blue-color)] font-bold rounded-lg text-white w-24 p-2 text-center' to={`/${id}/review`}>Review</Link>
+            </div>
+          </div>
         </div>
         <div className='w-full font-bold text-4xl text-center'>Reviews</div>
       </div>

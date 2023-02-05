@@ -2,9 +2,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-width: 200px;
+    min-width: 100px;
+    max-width: 200px;
+    width: 100%;
     flex-direction: row-reverse;
-    margin: 10px 0px;
+
     /*row reverse para que al hacer hover en estrellas lo amarillo se
     llene desde la izquierda.*/
 }
@@ -19,6 +21,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #091F44;
 }
 
 .rate-container input::before{

@@ -30,7 +30,9 @@ const Card = ({image, name, price, id, isLazy}) => {
         auto-rows-fr w-full h-full gap-2 gap-x-6 p-2 relative bg-white shadow-cardShadow 2sm:grid-cols-[max-content_minmax(300px,1fr)]">
             <div className='flex flex-row justify-center items-center absolute top-[-15px] left-[-15px] bg-[var(--yellow-color)] w-16 h-16 
             rounded-full text-xl font-bold text-black'>${price}</div>
-            <img className='max-w-[230px] w-full h-auto self-center justify-self-center 2sm:max-w-auto 2sm:w-auto 2sm:h-[230px] 2sm:justify-self-start' src = {image} alt = "Apple" loading={`${isLazy ? 'lazy':''}`}></img>
+            <Link className='justify-self-center self-center' to={`/product/${id}`}>
+                <img className='max-w-[230px] w-full h-auto self-center justify-self-center 2sm:max-w-auto 2sm:w-auto 2sm:h-[230px] 2sm:justify-self-start' src = {image} alt = "Apple" loading={`${isLazy ? 'lazy':''}`}></img>
+            </Link>
             <div className='flex flex-col justify-evenly items-center w-full'>
                 <div className='text-xl text-center font-bold'>{name}</div>
                 <StarRate product={name} />

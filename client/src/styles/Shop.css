@@ -6,7 +6,7 @@
     background-color: white;
 }
 
-.shop .shop-cards {
+.shop-cards {
     width: 100%;
     padding: 50px 80px;
     display: grid;
@@ -17,7 +17,7 @@
     margin: 0px;
 }
 
-.shop .shop-title {
+.shop-title {
     font-size: 70px;
     font-weight: 600;
     background-color: #091F44;  
@@ -33,7 +33,7 @@
 }
 
 @media (max-width: 800px) {
-    .shop .shop-cards {
+    .shop-cards {
         padding: 50px 40px;
     }
 }
@@ -42,7 +42,7 @@
     /*La media query cambia valores mínimos para que la tarjeta se acomode.
     Se debe cuidar que el valor mínimo trabaje bien con la imagen y columna 
     de la tarjeta*/
-    .shop .shop-cards {
+    .shop-cards {
         grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
         grid-template-rows: repeat(auto-fit, minmax(0px, 1fr));
         padding: 50px 20px;

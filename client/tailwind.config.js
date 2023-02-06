@@ -15,6 +15,33 @@ module.exports = {
       boxShadow: {
         'cardShadow': 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
       },
+      keyframes:{
+        svgAnimation: {
+          '0%': {
+              transform: 'translateX(20%)'
+          },
+      
+          '20%': {
+              transform: 'translateX(-20%)'
+          },
+      
+          '40%': {
+              transform: 'translateX(10%)'
+          },
+      
+          '60%': {
+              transform: 'translateX(-10%)'
+          },
+      
+          '80%': {
+              transform: 'translateX(5%)'
+          },
+      
+          '100%': {
+              transform: 'translateX(0%)'
+          }
+        }
+      }
     }
   },
   plugins: [],

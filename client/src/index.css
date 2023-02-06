@@ -5,9 +5,15 @@
 @tailwind utilities;
 
 @layer utilities {
-  .bg-header{
-    background-color: #161b22;
+  .incentive-svg path {
+    fill: #fcca02;
   }
+
+  .incentive-svg{
+    width: 60px;
+    height: 60px;
+    margin-top: 20px;
+}
 }
 
 :root {

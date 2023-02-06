@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import Lottie from 'lottie-web'
-import '../styles/HomeLottie.css'
 import animation from '../assets/Animations/homeAnimation.json'
 
 const HomeLottie = () => {
@@ -20,7 +19,7 @@ const HomeLottie = () => {
     }, [])
     
   return (
-    <div ref={lottieContainer} className='home-lottie'>HomeLottie</div>
+    <div ref={lottieContainer} className='w-full h-full'></div>
   )
 }
 

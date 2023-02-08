@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { productsData } from '../assets/constants'
 import '../styles/ProductData.css'
+import ReviewCard from './ReviewCard'
 import StarRate from './StarRate'
 
 const ProductData = () => {
@@ -19,7 +20,7 @@ const ProductData = () => {
 
   return (
     <div className='flex justify-center items-center bg-[var(--blue-color)] w-full py-28 px-2 sm:px-8 md:px-14'>
-      <div className='flex flex-col bg-white rounded-lg p-6 w-full'>
+      <div className='flex flex-col bg-white rounded-lg w-full p-2 sm:p-6'>
         <div className='grid auto-rows-auto grid-cols-1 2sm:grid-cols-[minmax(200px,max-content),minmax(300px,1fr)] gap-5'>
           <img className='max-w-[300px] w-full justify-self-center self-center' src={product ? product.image : ''}></img>
           <div className='flex flex-col w-full h-full justify-between items-center p-1 md:p-10'>
@@ -34,6 +35,11 @@ const ProductData = () => {
           </div>
         </div>
         <div className='w-full font-bold text-4xl text-center'>Reviews</div>
+        <div className='flex flex-col justify-evenly w-full bg-slate-200 rounded-lg p-2 sm:p-5'>
+          <ReviewCard />
+          <ReviewCard />
+          <ReviewCard />
+        </div>
       </div>
     </div>
   )

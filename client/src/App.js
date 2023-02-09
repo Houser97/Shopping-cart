@@ -7,6 +7,8 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import { productsData } from './assets/constants';
 import ProductData from './components/ProductData';
 import ReviewForm from './components/ReviewForm';
+import SignUpForm from './components/SignUpForm';
+import LoginForm from './components/LoginForm';
 
 export const CartContext = createContext()
 
@@ -70,6 +72,8 @@ function App() {
             <Route path="/shop" element = {<Shop />} />
             <Route path="/product/:id" element = {<ProductData />} />
             <Route path="/:id/review" element = {<ReviewForm />} />
+            <Route path="/sign-up" element = {<SignUpForm />} />
+            <Route path="/login" element = {<LoginForm />} />
           </Routes>
         </div>
       </CartContext.Provider>

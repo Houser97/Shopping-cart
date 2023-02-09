@@ -1,15 +1,20 @@
 import React from 'react'
 import HomeLottie from './HomeLottie'
-import '../styles/Testimonials.css'
 import TestimonialCard from './TestimonialCard'
 
 const Testimonials = () => {
   return (
-    <section className='testimonials'>
+    <section className='grid grid-cols-[minmax(200px,1fr)] 
+    grid-rows-[minmax(200px,1fr)_minmax(200px,400px)] gap-3 py-7 px-6
+    bg-[var(--blue-color)] text-[var(--yellow-color)] w-full lg:px-14
+    lg:grid-cols-[minmax(200px,400px)_minmax(200px,1fr)]
+    lg:grid-rows-[repeat(auto-fit,minmax(200px,500px))]'>
         <HomeLottie />
-        <div className='testimonials-subcontainer'>
-            <h2>Testimonials</h2>
-            <div className='testimonials-grid'>
+        <div className='self-center h-full row-start-1 lg:row-auto'>
+            <h2 className='mb-7 text-center'>Testimonials</h2>
+            <div className='grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]
+            grid-rows-[repeat(auto-fit,minmax(150px,200px))] auto-rows-[minmax(150px,200px)] w-full
+            gap-7 '>
               <TestimonialCard />
               <TestimonialCard />
               <TestimonialCard />

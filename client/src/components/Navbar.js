@@ -1,11 +1,16 @@
 import '../styles/Navbar.css';
 import {Link} from 'react-router-dom';
+import AuthButtons from './AuthButtons';
+import { useContext } from 'react';
+import { CartContext } from '../App';
 
 const Navbar = ({toggle}) => {
 
+    const user = useContext(CartContext).user;
+
     return(
         <nav className={`flex flex-col justify-center items-center absolute left-0 top-full bg-[var(--header-color)] 
-        z-20 px-10 transition-transform duration-300 h-[300px] w-[14rem] rounded-br-2xl
+        z-20 px-10 py-12 transition-transform duration-300 h-max w-[14rem] rounded-br-2xl gap-12
         ${toggle ? 'translate-x-0':'-translate-x-full'} `}>
 
                 <Link className='flex flex-col justify-evenly 
@@ -27,6 +32,12 @@ const Navbar = ({toggle}) => {
                         <div className='shop-text text'>Shop</div>
                     </div>
                 </Link>
+                {user ?  '' 
+                        :
+                    <div className='flex flex-col w-full items-center md:hidden'>
+                        <AuthButtons />
+                    </div>
+                }
         </nav>
     )
 }

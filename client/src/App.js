@@ -17,6 +17,7 @@ function App() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [productsInCar, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [user, setUser] = useState(null);
 
   const checkIfProductAlreadyInCar = (productId) => {
     return productsInCar.some(product => product.id === productId);
@@ -60,7 +61,7 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeTotalPrice, productsInCar])
 
-  const cartContextValue = {productsInCar, totalPrice, totalProducts ,addProduct, removeProduct}
+  const cartContextValue = {productsInCar, totalPrice, totalProducts ,addProduct, removeProduct, user, setUser}
 
   return (
     <BrowserRouter basename='Shopping-cart/'>

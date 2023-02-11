@@ -5,6 +5,7 @@ const SignUpForm = () => {
     const [email, setEmail] = useState(null);
     const [pwd, setPwd] = useState(null);
     const [username, setUsername] = useState(null);
+    const [validationErrors, setValidationErrors] = useState([]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -14,13 +15,20 @@ const SignUpForm = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({email, pwd, username})
-        }).then(data => data.json()).then(data => console.log(data))
+        })
+        .then(data => data.json())
+        .then(data => {
+            if(Array.isArray(data)){
+                setValidationErrors(data)
+            }
+            console.log(data)
+        })
     }
 
   return (
     <div className='flex flex-row justify-center items-center 
     pt-[var(--header-height)] min-h-screen bg-[var(--blue-color)] w-full p-5'>
-        <form className='flex flex-col bg-white rounded-md w-full max-w-lg text-xl p-7 items-center'
+        <form className='flex flex-col bg-white rounded-md w-full max-w-lg text-lg p-6 items-center justify-center mt-5 sm:text-xl'
         onSubmit={(e) => handleSubmit(e)}>
             <div className='flex flex-col w-full'>
                 <label htmlFor='email' className='font-bold'>E-mail</label>
@@ -41,6 +49,18 @@ const SignUpForm = () => {
                 outline-[var(--blue-color)]' onChange={(e) => setUsername(e.target.value)} required></input>
             </div>
             <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-bold'>Sign up</button>
+            {validationErrors.length > 0 ? 
+                <ul className='list-disc list-inside text-base text-justify sm:text-xl'>
+                    {
+                    validationErrors.map((error, index) => {
+                        return(
+                            <li key={`error-${index}`} className='list-disc list-inside w-full'>{error.msg}</li>
+                        )
+                    })}
+                </ul>
+                :
+                <div className='hidden'></div>
+            }
         </form>
     </div>
   )

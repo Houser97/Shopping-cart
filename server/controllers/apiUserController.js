@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const {body, validationResult} = require('express-validator');
 const bcryptjs = require('bcryptjs');
+const passport = require('passport')
 
 exports.check_email = [
     body('email', 'E-mail must be a valid address.').isEmail()
@@ -61,3 +62,43 @@ exports.create_user = [
         })
     }
 ]
+
+exports.login = [
+    body('email', 'Email must be a valid address.')
+    .isEmail()
+    .trim()
+    .escape()
+    .normalizeEmail(),
+
+    (req, res) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) return res.json(errors.array());
+        passport.authenticate('local', {
+            successRedirect: '/api/check_user_status',
+            failureRedirect: '/api/login_failure'
+        })
+    }
+]
+
+exports.check_user_status = (req, res) => {
+    if(req.user){
+        return res.json({
+            username: req.user.username,
+            id: req.user._id,
+            cart: req.user.cart
+        })
+    } else {
+        return res.json(false)
+    }
+}
+
+exports.login_failure = (req, res) => {
+    return res.json([{msg: 'Email or password are incorrect.'}])
+}
+
+exports.logout = (req, res) => {
+    req.logout((err) => {
+        if(err) return res.json(false);
+        return res.json(true)
+    })
+}

@@ -16,7 +16,7 @@ exports.check_email = [
                 if(err) return res.json(err);
                 if(!user) next()
                 else {
-                    return res.json('Email in use')
+                    return res.json([{msg:'Email has already been used.'}])
                 }
                 
             })
@@ -27,10 +27,12 @@ exports.check_email = [
 exports.create_user = [
     body('pwd', 'Password must not be empty.')
         .isLength({min:4}).withMessage('Password must contain at least 4 characters.')
+        .matches('[A-Z]').withMessage('Password must contain at least 1 upper letter.')
+        .matches('[0-9]').withMessage('Password must contain at least 1 number.')
         .trim()
         .escape(),
     body('username', 'Username must not be empty.')
-        .isLength({min:4, max:12}).withMessage('Username must contain at between 4 and 12 characters.')
+        .isLength({min:4, max:12}).withMessage('Username must contain between 4 and 12 characters.')
         .trim()
         .escape(),
 
@@ -51,6 +53,7 @@ exports.create_user = [
                     return res.json({
                         email: user.email,
                         cart: user.cart,
+                        username: user.username,
                         id: user._id
                     })
                 })

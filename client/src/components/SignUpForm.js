@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { CartContext } from '../App';
 
 const SignUpForm = () => {
 
@@ -6,6 +8,10 @@ const SignUpForm = () => {
     const [pwd, setPwd] = useState(null);
     const [username, setUsername] = useState(null);
     const [validationErrors, setValidationErrors] = useState([]);
+
+    const setUser = useContext(CartContext).setUser;
+
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -21,7 +27,10 @@ const SignUpForm = () => {
             if(Array.isArray(data)){
                 setValidationErrors(data)
             }
-            console.log(data)
+            else {
+                setUser(data);
+                navigate('/');
+            }
         })
     }
 

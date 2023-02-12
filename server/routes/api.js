@@ -9,5 +9,13 @@ router.post('/create_review',apiReviewController.create_review);
 
 router.post('/create_user', apiUserController.check_email ,apiUserController.create_user);
 
+router.post('/login', apiUserController.login);
+
+router.get('/check_user_status', apiUserController.check_user_status);
+
+router.get('/login_failure', apiUserController.login_failure);
+
+router.get('/logout', apiUserController.logout);
+
 module.exports = router;
 

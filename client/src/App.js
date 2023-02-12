@@ -10,7 +10,8 @@ import ReviewForm from './components/ReviewForm';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 
-export const CartContext = createContext()
+export const CartContext = createContext();
+const API = 'http://localhost:5000/api';
 
 function App() {
 
@@ -61,7 +62,7 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeTotalPrice, productsInCar])
 
-  const cartContextValue = {productsInCar, totalPrice, totalProducts ,addProduct, removeProduct, user, setUser}
+  const cartContextValue = {productsInCar, totalPrice, totalProducts ,addProduct, removeProduct, user, setUser, API}
 
   return (
     <BrowserRouter basename='Shopping-cart/'>

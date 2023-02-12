@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import AuthButtons from './AuthButtons';
 import { useContext } from 'react';
 import { CartContext } from '../App';
+import LogoutBtn from './LogoutBtn';
 
 const Navbar = ({toggle}) => {
 
@@ -32,7 +33,8 @@ const Navbar = ({toggle}) => {
                         <div className='shop-text text'>Shop</div>
                     </div>
                 </Link>
-                {user ?  '' 
+                {user ?  
+                    <LogoutBtn /> 
                         :
                     <div className='flex flex-col w-full items-center md:hidden'>
                         <AuthButtons />

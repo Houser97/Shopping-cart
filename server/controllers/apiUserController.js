@@ -69,26 +69,21 @@ exports.login = [
     .trim()
     .escape()
     .normalizeEmail(),
-
-    (req, res) => {
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) return res.json(errors.array());
-        passport.authenticate('local', {
-            successRedirect: '/api/check_user_status',
-            failureRedirect: '/api/login_failure'
-        })
-    }
+    passport.authenticate('local', {
+        successRedirect: '/api/check_user_status',
+        failureRedirect: '/api/login_failure'
+    })
 ]
 
 exports.check_user_status = (req, res) => {
-    if(req.user){
+    if(req.isAuthenticated()){
         return res.json({
             username: req.user.username,
             id: req.user._id,
             cart: req.user.cart
         })
     } else {
-        return res.json(false)
+        return res.json(null)
     }
 }
 

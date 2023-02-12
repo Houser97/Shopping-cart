@@ -8,6 +8,8 @@ const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const User = require('./models/user')
+const bcryptjs = require('bcryptjs');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -29,8 +31,32 @@ db.on('error', console.error.bind((console, 'MongoDB connection error: ')))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+passport.use(
+  new LocalStrategy({usernameField: 'email'},(email, password, done) => {
+    User.findOne({email}, (err, user) => {
+      if(err) return done(err);
+      if(!user) return done(null, false, {message:'Incorrect username'});
+      bcryptjs.compare(password, user.password, (err, res) => {
+        if(res) return done(null, user);
+        else return done(null, false, {message: 'Incorrect password'});
+      })
+    })
+  })
+)
+
+//Creación de Cookie para mantener usuario en sesión.
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+})
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user)
+  })
+})
+
 //PASSPORT
-app.use(session({secret:'cats', resave:false, saveUninitialized: true}));
+app.use(session({secret:'cats', resave: false, saveUninitialized: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({extended: false}));

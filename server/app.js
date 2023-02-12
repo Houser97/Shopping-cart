@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -16,10 +15,14 @@ var usersRouter = require('./routes/users');
 const apiRouter = require('./routes/api');
 
 var app = express();
-app.use(cors())
 
 if(process.env.NODE_ENV !== 'production'){
   require('dotenv').config();
+  const cors = require('cors');
+  app.use(  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }))
 }
 
 const MongoDB = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.cjswbgn.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`
@@ -70,6 +73,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'))
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

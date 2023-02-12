@@ -12,13 +12,14 @@ const SignUpForm = () => {
     const [validationErrors, setValidationErrors] = useState([]);
 
     const setUser = useContext(CartContext).setUser;
+    const API = useContext(CartContext).API;
 
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if(pwdMatch){
-            fetch(`http://localhost:5000/api/create_user`, {
+            fetch(`${API}/create_user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

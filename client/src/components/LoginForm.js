@@ -9,12 +9,13 @@ const LoginForm = () => {
   const [validationErrors, setValidationErrors] = useState([]);
 
   const setUser = useContext(CartContext).setUser;
+  const API = useContext(CartContext).API;
 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
       e.preventDefault();
-      fetch(`http://localhost:5000/api/login`, {
+      fetch(`${API}/login`, {
           method: 'POST',
           credentials: 'include',
           headers: {

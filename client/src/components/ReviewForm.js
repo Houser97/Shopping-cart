@@ -25,6 +25,7 @@ const ReviewForm = () => {
                     <StarRate product={item ? item.name : ''} isCustomizable={true} />
                 </div>
                 <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 outline-none rounded-md'></textarea>
+                <input type='hidden' name='itemId' value={id}></input>
                 <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
                 px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
             </form>

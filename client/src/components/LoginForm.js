@@ -5,7 +5,7 @@ import { CartContext } from '../App';
 const LoginForm = () => {
 
   const [email, setEmail] = useState(null);
-  const [pwd, setPwd] = useState(null);
+  const [password, setPwd] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
 
   const setUser = useContext(CartContext).setUser;
@@ -16,19 +16,19 @@ const LoginForm = () => {
       e.preventDefault();
       fetch(`http://localhost:5000/api/login`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
               'Content-Type': 'application/json'
           },
-          body: JSON.stringify({email, pwd})
+          body: JSON.stringify({email, password})
       })
       .then(data => data.json())
       .then(data => {
           if(Array.isArray(data)){
-              setValidationErrors(data)
-          }
-          else {
-              setUser(data);
-              navigate('/');
+            setValidationErrors(data)
+          } else {
+            setUser(data);
+            navigate('/')
           }
       }) 
   }
@@ -40,13 +40,13 @@ const LoginForm = () => {
         onSubmit={(e) => handleSubmit(e)}>
             <div className='flex flex-col w-full'>
                 <label htmlFor='email' className='font-bold'>E-mail</label>
-                <input type='email' id='email' name='email' 
+                <input type='email' id='email'
                 className='border-slate-500 border-2 rounded-md p-1 px-3 
                 outline-[var(--blue-color)]' onChange={(e) => setEmail(e.target.value)} required></input>
             </div>
             <div className='flex flex-col mt-4 w-full'>
                 <label htmlFor='password' className='font-bold'>Password</label>
-                <input type='password' id='password' name='pwd'
+                <input type='password' id='password'
                 className='border-slate-500 border-2 rounded-md p-1 px-3 
                 outline-[var(--blue-color)]' onChange={(e) => setPwd(e.target.value)} required></input>
             </div>

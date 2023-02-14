@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../App';
+import LoginMessage from './LoginMessage';
 
 const LoginForm = () => {
 
@@ -8,6 +9,7 @@ const LoginForm = () => {
   const [password, setPwd] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
 
+  const user = useContext(CartContext).user;
   const setUser = useContext(CartContext).setUser;
   const API = useContext(CartContext).API;
 
@@ -33,7 +35,11 @@ const LoginForm = () => {
           }
       }) 
   }
-
+  if(user){
+    return(
+        <LoginMessage />
+    )
+  }
   return (
     <div className='flex flex-row justify-center items-center 
     pt-[var(--header-height)] min-h-screen bg-[var(--blue-color)] w-full p-5'>

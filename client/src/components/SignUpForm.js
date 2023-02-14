@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../App';
+import LoginMessage from './LoginMessage';
 
 const SignUpForm = () => {
 
@@ -11,6 +12,7 @@ const SignUpForm = () => {
     const [username, setUsername] = useState(null);
     const [validationErrors, setValidationErrors] = useState([]);
 
+    const user = useContext(CartContext).user;
     const setUser = useContext(CartContext).setUser;
     const API = useContext(CartContext).API;
 
@@ -44,6 +46,12 @@ const SignUpForm = () => {
     useEffect(() => {
         setPwdMatch(repeatPwd === pwd)
     }, [repeatPwd])
+
+    if(user){
+        return(
+            <LoginMessage />
+        )
+    }
 
   return (
     <div className='flex flex-row justify-center items-center 

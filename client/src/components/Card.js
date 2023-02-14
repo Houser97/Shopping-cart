@@ -1,7 +1,7 @@
-import { useContext, useReducer } from 'react';
-import { CartContext } from '../App';
+import { useReducer } from 'react';
 import {Link} from 'react-router-dom';
 import StarRate from './StarRate';
+import ProductBtns from './ProductBtns';
 
 const initialState = {numberOfProducts: 1}
 
@@ -20,8 +20,6 @@ function reducer(state, action){
 }
 
 const Card = ({image, name, price, id, isLazy}) => {
-
-    const addProduct = useContext(CartContext).addProduct
 
     const [state, dispatch] = useReducer(reducer, initialState)
     
@@ -49,8 +47,7 @@ const Card = ({image, name, price, id, isLazy}) => {
                         </svg>
                     </button>
                 </div>
-                <button className='bg-[#ffa41c] font-bold p-2 w-24 rounded-lg' onClick={() => addProduct(state.numberOfProducts, id)}>Add to cart</button>
-                <Link className='bg-[var(--blue-color)] font-bold rounded-lg text-white w-24 p-2 text-center my-2' to={`/${id}/review`}>Review</Link>
+            <ProductBtns productId = {id} reduceState = {state} />
             </div>
         </div>
     )

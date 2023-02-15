@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { productsData } from '../assets/constants'
 import { CartContext } from '../App';
 import StarRate from './StarRate'
 
 const ReviewForm = () => {
+
+    const navigate = useNavigate();
 
     const [item, setItem] = useState(null);
     const [comment, setComment] = useState(null);
@@ -17,13 +19,30 @@ const ReviewForm = () => {
     useEffect(() => {
         setItem(productsData.filter(product => product.id === parseInt(id))[0])
     }, [])
+
+    const createReview = (e) => {
+        e.preventDefault()
+        fetch(`${API}/create_review`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({itemId: id, comment, authorId: user.id, rating})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data){
+                navigate('/')
+            }
+        })
+    }
     
   return (
     <div className='flex justify-center items-center w-full min-h-screen px-3 py-20 bg-[#091F44] mt-10 xs:px-10'>
         <div className='grid grid-rows-[min-content,minmax(0,1fr)] grid-cols-1 justify-center 
         items-center gap-5 p-5 px-6 w-full bg-white rounded-2xl md:grid-cols-[minmax(0,350px),minmax(350px,1fr)] md:pl-20 md:p-10'>
             <img className='w-full max-w-[350px] justify-self-center h-auto md:mr-10' src={item ? item.image : ''} alt='product'></img>
-            <form className='flex flex-col w-full h-full text-3xl justify-around'>
+            <form className='flex flex-col w-full h-full text-3xl justify-around' onSubmit={(e) => createReview(e)}>
                 <h1 className='w-full text-center md:text-5xl'>{item ? item.name : ''}</h1>
                 <div className='flex w-full px-10 justify-center text-3xl my-5 md:text-4xl'>
                     <StarRate product={item ? item.name : ''} isCustomizable={true} setRating={setRating} />

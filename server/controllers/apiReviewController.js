@@ -13,14 +13,16 @@ exports.create_review = [
 
     (req, res, next) => {
         const errors = validationResult(req);
-        if(!errors.isEmpy()) return res.json(errors.array());
-        const Review = new Review({
-            author: req.user.username,
+        if(!errors.isEmpty()) return res.json(errors.array());
+        const review = new Review({
+            author: req.body.authorId,
             item: req.body.itemId,
             rating: req.body.rating,
+            likes: [],
+            dislikes: [],
             comment: req.body.comment
         }).save((err) => {
-            if(err) return res.json(err);
+            if(err) return res.json(false);
             return res.json(true);
         });
     }

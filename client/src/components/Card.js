@@ -1,8 +1,9 @@
-import { useReducer } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import {Link} from 'react-router-dom';
 import StarRate from './StarRate';
 import ProductBtns from './ProductBtns';
 import IncDecProduct from './IncDecProduct';
+import { CartContext } from '../App';
 
 const initialState = {numberOfProducts: 1}
 
@@ -23,6 +24,19 @@ function reducer(state, action){
 const Card = ({image, name, price, id, isLazy}) => {
 
     const [state, dispatch] = useReducer(reducer, initialState)
+    const [reviews, setReviews] = useState([]);
+    const [rating, setRating] = useState(0);
+    const API = useContext(CartContext).API;
+
+    useEffect(() => {
+        fetch(`http://localhost:5000/api/${id}/get_reviews`)
+        .then(data => data.json())
+        .then(data => {
+            if(data.length > 0){
+                setRating(Math.round(data.reduce((acc,current) => acc + current.rating, 0)/data.length))
+            }
+        })
+    }, [])  
     
     return(
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] grid-rows-[repeat(auto-fit,minmax(0px,max-content))] 
@@ -34,7 +48,7 @@ const Card = ({image, name, price, id, isLazy}) => {
             </Link>
             <div className='flex flex-col justify-evenly items-center w-full'>
                 <div className='text-xl text-center font-bold 2sm:text-2xl'>{name}</div>
-                <StarRate product={name} />
+                <StarRate product={name} rating = {rating} />
                 <IncDecProduct dispatch={dispatch} state={state} />
                 <ProductBtns productId = {id} reduceState = {state} />
             </div>

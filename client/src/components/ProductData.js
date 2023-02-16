@@ -8,6 +8,7 @@ import StarRate from './StarRate'
 
 const ProductData = () => {
     const [product, setProduct] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const {id} = useParams();
 
     useEffect(() => {
@@ -16,6 +17,13 @@ const ProductData = () => {
       }  
 
       handleProduct(productsData.filter(product => product.id === parseInt(id))[0])      
+    }, [])
+
+    useEffect(() => {
+      fetch(`http://localhost:5000/api/${id}/get_reviews`)
+      .then(data => data.json())
+      .then(data => {
+        setReviews(data)})
     }, [])
 
   return (
@@ -33,9 +41,11 @@ const ProductData = () => {
         </div>
         <div className='w-full font-bold text-4xl text-center'>Reviews</div>
         <div className='flex flex-col justify-evenly w-full bg-slate-200 rounded-lg p-2 sm:p-5'>
-          <ReviewCard />
-          <ReviewCard />
-          <ReviewCard />
+          {reviews.map((review,index) => {
+            return(
+              <ReviewCard key={`review-card-${index}`} {...review} />
+            )
+          })}
         </div>
       </div>
     </div>

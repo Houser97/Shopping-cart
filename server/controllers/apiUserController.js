@@ -93,7 +93,7 @@ exports.login_failure = (req, res) => {
 
 exports.logout = (req, res) => {
     req.logout((err) => {
-        if(err) return res.json(false);
-        return res.json(true)
+        if(err) return res.json(err);
+        return res.json(true);
     })
 }

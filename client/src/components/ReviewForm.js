@@ -11,6 +11,7 @@ const ReviewForm = () => {
     const [item, setItem] = useState(null);
     const [comment, setComment] = useState(null);
     const [rating, setRating] = useState(0);
+    const [alreadyReviewed, setAlreadyReviewed] = useState(false)
 
     const {id} = useParams()
     const API = useContext(CartContext).API;
@@ -19,6 +20,18 @@ const ReviewForm = () => {
     useEffect(() => {
         setItem(productsData.filter(product => product.id === parseInt(id))[0])
     }, [])
+
+    useEffect(() => {
+        fetch(`http://localhost:5000/api/${id}/get_reviews`)
+        .then(data => data.json())
+        .then(data => {
+            data.forEach((review) => {
+                if(review.author._id === user.id){
+                    setAlreadyReviewed(true)
+                }
+            })
+        })
+    }, [])  
 
     const createReview = (e) => {
         e.preventDefault()
@@ -42,6 +55,7 @@ const ReviewForm = () => {
         <div className='grid grid-rows-[min-content,minmax(0,1fr)] grid-cols-1 justify-center 
         items-center gap-5 p-5 px-6 w-full bg-white rounded-2xl md:grid-cols-[minmax(0,350px),minmax(350px,1fr)] md:pl-20 md:p-10'>
             <img className='w-full max-w-[350px] justify-self-center h-auto md:mr-10' src={item ? item.image : ''} alt='product'></img>
+            { !alreadyReviewed ?
             <form className='flex flex-col w-full h-full text-3xl justify-around' onSubmit={(e) => createReview(e)}>
                 <h1 className='w-full text-center md:text-5xl'>{item ? item.name : ''}</h1>
                 <div className='flex w-full px-10 justify-center text-3xl my-5 md:text-4xl'>
@@ -52,6 +66,9 @@ const ReviewForm = () => {
                 <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
                 px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
             </form>
+            :
+            <div className='flex flex-row w-full h-full text-3xl text-center font-bold items-center justify-center my-10 2sm:text-5xl'>You have already reviewed this article</div>
+            }
         </div>
     </div>
   )

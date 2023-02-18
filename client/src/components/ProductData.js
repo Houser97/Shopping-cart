@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { CartContext } from '../App'
 import { productsData } from '../assets/constants'
+import useRatingAverage from '../hooks/ratingAverageHook'
 import '../styles/ProductData.css'
 import ProductBtns from './ProductBtns'
 import ReviewCard from './ReviewCard'
@@ -10,6 +12,9 @@ const ProductData = () => {
     const [product, setProduct] = useState(null);
     const [reviews, setReviews] = useState([]);
     const {id} = useParams();
+    const API = useContext(CartContext).API
+
+    const ratingAverage = useRatingAverage(API, id)
 
     useEffect(() => {
       const handleProduct = (product) => {
@@ -20,7 +25,7 @@ const ProductData = () => {
     }, [])
 
     useEffect(() => {
-      fetch(`http://localhost:5000/api/${id}/get_reviews`)
+      fetch(`${API}/${id}/get_reviews`)
       .then(data => data.json())
       .then(data => {
         setReviews(data)})
@@ -34,7 +39,7 @@ const ProductData = () => {
           <div className='flex flex-col w-full h-full justify-evenly items-center p-1 md:p-10'>
             <h1 className='w-full text-center text-4xl md:text-5xl'>{product ? product.name : ''}</h1>
             <div className='flex w-full px-1 justify-evenly text-3xl sm:px-4 sm:text-4xl my-5'>
-              <StarRate product={product ? product.name : ''} />
+              <StarRate product={product ? product.name : ''} rating = {ratingAverage} />
             </div>
             <ProductBtns productId={parseInt(id)} />
           </div>

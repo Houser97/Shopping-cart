@@ -5,9 +5,11 @@ const apiUserController = require('../controllers/apiUserController')
 
 router.get('/:itemId/get_reviews', apiReviewController.get_reviews);
 
-router.post('/create_review',apiReviewController.create_review);
+router.post('/create_review', apiReviewController.create_review);
 
-router.post('/create_user', apiUserController.check_email ,apiUserController.create_user);
+router.post('/update_review', apiReviewController.update_review);
+
+router.post('/create_user', apiUserController.check_email, apiUserController.create_user);
 
 router.post('/login', apiUserController.login);
 

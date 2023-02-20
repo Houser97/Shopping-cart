@@ -48,7 +48,12 @@ const ProductData = () => {
         <div className='flex flex-col justify-evenly w-full bg-slate-200 rounded-lg p-2 sm:p-5'>
           {reviews.map((review,index) => {
             return(
-              <ReviewCard key={`review-card-${index}`} {...review} />
+              <ReviewCard 
+              key={`review-card-${index}`} 
+              {...review} 
+              productId = {id}
+              setReviews = {setReviews}
+              />
             )
           })}
         </div>

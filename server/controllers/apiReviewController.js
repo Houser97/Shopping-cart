@@ -30,3 +30,26 @@ exports.create_review = [
         });
     }
 ]
+
+exports.update_review = [
+    body('userId', 'You must be logged in to like reviews'),
+
+    (req, res) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) return res.json(errors.array())
+        const review = new Review({
+            _id: req.body.id,
+            author: req.body.userId,
+            item: req.body.productId,
+            rating: req.body.rating,
+            date: req.body.date,
+            likes: req.body.likes, //El arreglo actualizado se pasa desde el cliente.
+            dislikes: req.body.dislikes,
+            comment: req.body.comment
+        })
+        Review.findByIdAndUpdate(req.body.id, review, {new: true}, (err, newReview) => {
+            if(err) return res.json('Error')
+            return res.json(newReview)
+        })
+    }
+]

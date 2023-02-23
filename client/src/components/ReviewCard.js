@@ -9,17 +9,45 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date, _id, produc
     const [localLikes, setLocalLikes] = useState(likes)
     const [localDislikes, setLocalDislikes] = useState(dislikes);
 
+    const removeUserFromArray = (user, array) => {
+        const indexUser = array.indexOf(user.id)
+        array.splice(indexUser,1)
+        return array
+    }
+
+    const updateLikesDislikes = (mainArray, secondaryArray) => {
+        let result = {mainResult: [...mainArray], secondaryResult: [...secondaryArray]}
+        if(mainArray.includes(user.id)){
+            result.mainResult = removeUserFromArray(user, [...mainArray])
+        } else {
+            mainArray.push(user.id)
+            if(secondaryArray.includes(user.id)){
+                result.secondaryResult = removeUserFromArray(user, [...secondaryArray])
+            }
+        }
+        return result
+    }
+    
     const updateReviewLikes = (e) => {
         const isLike = e.target.getAttribute('data') === 'like'
         if(user){
-            const likesCopy = [...localLikes]
-            if(localLikes.includes(user.id)){
-                const indexUser = localLikes.indexOf(user.id)
-                likesCopy.splice(indexUser,1)
+            let likesCopy = [...localLikes]
+            let dislikesCopy = [...localDislikes]
+            let likesDislikes = {}
+            if(isLike){
+                likesDislikes = updateLikesDislikes(likesCopy, dislikesCopy)
+                console.log(likesDislikes.secondaryResult)
+                likesCopy = likesDislikes.mainResult
+                dislikesCopy = likesDislikes.secondaryResult
+                setLocalLikes(likesCopy)
+                setLocalDislikes(dislikesCopy)
             } else {
-                likesCopy.push(user.id)
+                likesDislikes = updateLikesDislikes(dislikesCopy, likesCopy)
+                likesCopy = likesDislikes.secondaryResult
+                dislikesCopy = likesDislikes.mainResult
+                setLocalLikes(likesCopy)
+                setLocalDislikes(dislikesCopy)
             }
-            setLocalLikes(likesCopy)
             fetch(`${API}/update_review`, {
                 method: 'POST',
                 headers: {
@@ -32,7 +60,7 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date, _id, produc
                     rating: parseFloat(rating),
                     date: new Date(date),
                     comment,
-                    dislikes,
+                    dislikes: dislikesCopy,
                     likes: likesCopy
                 })
             })

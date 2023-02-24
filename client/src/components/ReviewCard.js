@@ -9,70 +9,56 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date, _id, produc
     const [localLikes, setLocalLikes] = useState(likes)
     const [localDislikes, setLocalDislikes] = useState(dislikes);
 
-    const removeUserFromArray = (user, array) => {
-        const indexUser = array.indexOf(user.id)
-        array.splice(indexUser,1)
-        return array
-    }
-
-    const updateLikesDislikes = (mainArray, secondaryArray) => {
-        let result = {mainResult: [...mainArray], secondaryResult: [...secondaryArray]}
-        if(mainArray.includes(user.id)){
-            result.mainResult = removeUserFromArray(user, [...mainArray])
+    const updateLikesDislikes = (mainSet, secondarySet) => {
+        if(mainSet.has(user.id)){
+            mainSet.delete(user.id)
         } else {
-            mainArray.push(user.id)
-            if(secondaryArray.includes(user.id)){
-                result.secondaryResult = removeUserFromArray(user, [...secondaryArray])
-            }
+            mainSet.add(user.id)
+            secondarySet.delete(user.id)
         }
-        return result
     }
     
     const updateReviewLikes = (e) => {
         const isLike = e.target.getAttribute('data') === 'like'
-        if(user){
-            let likesCopy = [...localLikes]
-            let dislikesCopy = [...localDislikes]
-            let likesDislikes = {}
-            if(isLike){
-                likesDislikes = updateLikesDislikes(likesCopy, dislikesCopy)
-                console.log(likesDislikes.secondaryResult)
-                likesCopy = likesDislikes.mainResult
-                dislikesCopy = likesDislikes.secondaryResult
-                setLocalLikes(likesCopy)
-                setLocalDislikes(dislikesCopy)
-            } else {
-                likesDislikes = updateLikesDislikes(dislikesCopy, likesCopy)
-                likesCopy = likesDislikes.secondaryResult
-                dislikesCopy = likesDislikes.mainResult
-                setLocalLikes(likesCopy)
-                setLocalDislikes(dislikesCopy)
-            }
-            fetch(`${API}/update_review`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: _id,
-                    author: user.id,
-                    item: parseInt(productId),
-                    rating: parseFloat(rating),
-                    date: new Date(date),
-                    comment,
-                    dislikes: dislikesCopy,
-                    likes: likesCopy
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                setReviews(oldArray => {
-                    const index = oldArray.findIndex(review => review._id === _id)
-                    oldArray[index] = data
-                    return oldArray
-                })
-            })
+
+        if(!user) return
+
+        let likesSet = new Set(localLikes)
+        let dislikesSet = new Set(localDislikes)
+
+        if(isLike){
+            updateLikesDislikes(likesSet, dislikesSet)
+        } else {
+            updateLikesDislikes(dislikesSet, likesSet)
         }
+        
+        fetch(`${API}/update_review`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: _id,
+                author: user.id,
+                item: parseInt(productId),
+                rating: parseFloat(rating),
+                date: new Date(date),
+                comment,
+                dislikes: Array.from(dislikesSet),
+                likes: Array.from(likesSet)
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            setReviews(oldArray => {
+                const index = oldArray.findIndex(review => review._id === _id)
+                oldArray[index] = data
+                return oldArray
+            })
+
+            setLocalLikes(Array.from(likesSet));
+            setLocalDislikes(Array.from(dislikesSet));
+        })
     }
   return (
     <div className='flex flex-col w-full justify-evenly bg-white mb-3 rounded-lg p-3 sm:px-9'>

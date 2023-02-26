@@ -19,6 +19,11 @@ function App() {
   const [productsInCar, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [user, setUser] = useState(null);
+  /*Estado con estructura general de productos con rating actualizado. */
+  const [globalUpdatedProducts, setGlobalUpdatedProducts] = useState(structuredClone(productsData))
+  const [globalReviews, setGlobalReviews] = useState([]) 
+  /*Sirve para actualizar reviews apenas se haga un post */
+  const [updateReviews, setUpdateReviews] = useState(false)
 
   const checkIfProductAlreadyInCar = (productId) => {
     return productsInCar.some(product => product.id === productId);
@@ -62,7 +67,42 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeTotalPrice, productsInCar])
 
-  const cartContextValue = {productsInCar, totalPrice, totalProducts ,addProduct, removeProduct, user, setUser, API}
+  const getAverageRating = (reviews, products) => {
+    const reviewsById = reviews.reduce((acc, current) => {
+        if(!acc[current.item]){
+            acc[current.item] = {count: 0, sum: 0}
+        }
+
+        acc[current.item].count += 1
+        acc[current.item].sum += current.rating
+
+        return acc;
+    }, {})
+
+    const updatedProducts = products.map((productObject) => {
+        const { count, sum } = reviewsById[productObject.id] || {}
+        if(count){
+            productObject.rating = Math.round(sum/count)
+        }
+        return productObject
+    })
+    return updatedProducts
+  }
+
+  /*Obtener todas las reviews y calcular rating promedio para cada producto. */
+  useEffect(() => {
+    fetch(`${API}/get_reviews`)
+    .then(data => data.json())
+    .then(reviews => {
+        setGlobalReviews(reviews)
+        setGlobalUpdatedProducts(getAverageRating(reviews, globalUpdatedProducts))
+    })
+  }, [updateReviews]) 
+
+  const cartContextValue = {productsInCar, totalPrice, totalProducts,
+    addProduct, removeProduct, user, setUser, API, 
+    setGlobalReviews, globalReviews ,setGlobalUpdatedProducts, 
+    globalUpdatedProducts, setUpdateReviews}
 
   return (
     <BrowserRouter basename='Shopping-cart/'>

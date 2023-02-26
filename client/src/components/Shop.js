@@ -8,56 +8,22 @@ export const FilterShopContext = createContext();
 
 const Shop = () => {
 
+    const updatedProducts = useContext(CartContext).globalUpdatedProducts
+
     const [filter, setFilter] = useState({category: 'all', price: 500});
-    /*Estado con estructura general de productos con rating actualizado. */
-    const [updatedProducts, setUpdatedProducts] = useState(structuredClone(productsData))
     const [itemsToShow, setItemsToShow] = useState(structuredClone(updatedProducts))
-    const [reviews, setReviews] = useState([])
-
-    const API = useContext(CartContext).API;
-
-    const getAverageRating = (reviews, products) => {
-        const reviewsById = reviews.reduce((acc, current) => {
-            if(!acc[current.item]){
-                acc[current.item] = {count: 0, sum: 0}
-            }
-
-            acc[current.item].count += 1
-            acc[current.item].sum += current.rating
-
-            return acc;
-        }, {})
-
-        const updatedProducts = products.map((productObject) => {
-            const { count, sum } = reviewsById[productObject.id] || {}
-            if(count){
-                productObject.rating = Math.round(sum/count)
-            }
-            return productObject
-        })
-        return updatedProducts
-    }
-
-/*Obtener todas las reviews y calcular rating promedio para cada producto. */
-    useEffect(() => {
-        fetch(`${API}/get_reviews`)
-        .then(data => data.json())
-        .then(reviews => {
-            setReviews(reviews)
-            setUpdatedProducts(getAverageRating(reviews, updatedProducts))
-        })
-    }, []) 
 
     useEffect(() => {
+        console.log(updatedProducts)
         const productsDataCopy = structuredClone(updatedProducts)
         if(filter.category !== 'all'){
             setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filter.category) && product.price <= filter.price))
         } else {
             setItemsToShow(productsDataCopy.filter(product => product.price <= filter.price))
         }
-    }, [reviews ,filter.price, filter.category])
+    }, [updatedProducts, filter.price, filter.category])
     
-    const contextProvider = {setFilter, filter, reviews}
+    const contextProvider = {setFilter, filter}
 
     return(
     <div className='flex flex-col mt-[var(--header-height)] w-full bg-white'>

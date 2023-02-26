@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartContext } from '../App'
-import { productsData } from '../assets/constants'
-import useRatingAverage from '../hooks/ratingAverageHook'
 import '../styles/ProductData.css'
 import ProductBtns from './ProductBtns'
 import ReviewCard from './ReviewCard'
@@ -10,25 +8,22 @@ import StarRate from './StarRate'
 
 const ProductData = () => {
     const [product, setProduct] = useState(null);
-    const [reviews, setReviews] = useState([]);
+    const [localReviews, setLocalReviews] = useState([])
     const {id} = useParams();
-    const API = useContext(CartContext).API
-
-    const ratingAverage = useRatingAverage(API, id)
+    const reviews = useContext(CartContext).globalReviews;
+    const updatedProducts = useContext(CartContext).globalUpdatedProducts;
 
     useEffect(() => {
       const handleProduct = (product) => {
         setProduct(product)
       }  
 
-      handleProduct(productsData.filter(product => product.id === parseInt(id))[0])      
-    }, [])
+      const handleReviews = (reviewProduct) => {
+        setLocalReviews(reviewProduct)
+      }
 
-    useEffect(() => {
-      fetch(`${API}/${id}/get_reviews`)
-      .then(data => data.json())
-      .then(data => {
-        setReviews(data)})
+      handleProduct(updatedProducts.filter(product => product.id === parseInt(id))[0])  
+      handleReviews(reviews.filter((review) => review.item === parseInt(id)))    
     }, [])
 
   return (
@@ -39,23 +34,26 @@ const ProductData = () => {
           <div className='flex flex-col w-full h-full justify-evenly items-center p-1 md:p-10'>
             <h1 className='w-full text-center text-4xl md:text-5xl'>{product ? product.name : ''}</h1>
             <div className='flex w-full px-1 justify-evenly text-3xl sm:px-4 sm:text-4xl my-5'>
-              <StarRate product={product ? product.name : ''} rating = {ratingAverage} />
+              <StarRate product={product ? product.name : ''} rating = {product ? product.rating : 0} />
             </div>
             <ProductBtns productId={parseInt(id)} />
           </div>
         </div>
         <div className='w-full font-bold text-4xl text-center'>Reviews</div>
         <div className='flex flex-col justify-evenly w-full bg-slate-200 rounded-lg p-2 sm:p-5'>
-          {reviews.map((review,index) => {
+          { localReviews.length > 0 ?
+          localReviews.map((review,index) => {
             return(
               <ReviewCard 
               key={`review-card-${index}`} 
               {...review} 
               productId = {id}
-              setReviews = {setReviews}
               />
             )
-          })}
+          })
+          :
+          <div className='text-4xl text-black w-full text-center font-bold py-12'>This product has no reviews.</div>
+        }
         </div>
       </div>
     </div>

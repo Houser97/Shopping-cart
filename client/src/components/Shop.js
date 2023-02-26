@@ -9,28 +9,42 @@ export const FilterShopContext = createContext();
 const Shop = () => {
 
     const [filter, setFilter] = useState({category: 'all', price: 500});
-    const [itemsToShow, setItemsToShow] = useState(productsData)
+    /*Estado con estructura general de productos con rating actualizado. */
+    const [updatedProducts, setUpdatedProducts] = useState(structuredClone(productsData))
+    const [itemsToShow, setItemsToShow] = useState(structuredClone(updatedProducts))
     const [reviews, setReviews] = useState([])
 
     const API = useContext(CartContext).API;
 
+    const getAverageRating = (reviews, products) => {
+        products.forEach((productObject) => {
+            let productReviews = reviews.filter((reviewObject) => reviewObject.item === productObject.id)
+            if(productReviews.length > 0){
+                const averageRating = Math.round(productReviews.reduce((acc, current) => acc + current.rating, 0)/productReviews.length)
+                productObject.rating = averageRating
+            }
+        })
+        return products
+    }
+
+/*Obtener todas las reviews y calcular rating promedio para cada producto. */
     useEffect(() => {
-        const productsDataCopy = structuredClone(productsData)
+        fetch(`${API}/get_reviews`)
+        .then(data => data.json())
+        .then(reviews => {
+            setReviews(reviews)
+            setUpdatedProducts(getAverageRating(reviews, structuredClone(updatedProducts)))
+        })
+    }, []) 
+
+    useEffect(() => {
+        const productsDataCopy = structuredClone(updatedProducts)
         if(filter.category !== 'all'){
             setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filter.category) && product.price <= filter.price))
         } else {
             setItemsToShow(productsDataCopy.filter(product => product.price <= filter.price))
         }
-    }, [filter.price, filter.category])
-
-
-    useEffect(() => {
-        fetch(`${API}/get_reviews`)
-        .then(data => data.json())
-        .then(data => {
-            setReviews(data)
-        })
-    }, [filter.category, filter.price]) 
+    }, [reviews ,filter.price, filter.category])
     
     const contextProvider = {setFilter, filter, reviews}
 

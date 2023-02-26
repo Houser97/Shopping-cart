@@ -19,20 +19,20 @@ import Headphones from './Home/Headphones.png';
 import LaptopPromotion from './Home/laptop.png'
 
 export const productsData = [
-    {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames']},
-    {image:Laptop,  name: "HP Victus Gaming 2022",  price: 600, id: 1, categories:['Electronics']},
-    {image:iPad,    name: "iPad",    price: 529, id: 2, categories:['Electronics']},
-    {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames']},
-    {image:xbox,   name: "Xbox Series X",   price: 499, id: 4, categories:['Electronics', 'Videogames']},
-    {image:tShirt,   name: "5 t-shirts",    price: 50, id: 5, categories:['Clothes']},
-    {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames']},
-    {image:Shoes,  name: "Shoes",  price: 70, id: 7, categories:['Clothes']},
-    {image:PS5,   name: "PS5 Console",   price: 499,   id: 8, categories:['Electronics', 'Videogames']},
-    {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames']},
-    {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics']},
-    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics']},
-    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:12, categories:['Clothes']},
-    {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes']}
+    {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames'], rating: 0},
+    {image:Laptop,  name: "HP Victus Gaming 2022",  price: 600, id: 1, categories:['Electronics'], rating: 0},
+    {image:iPad,    name: "iPad",    price: 529, id: 2, categories:['Electronics'], rating: 0},
+    {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames'], rating: 0},
+    {image:xbox,   name: "Xbox Series X",   price: 499, id: 4, categories:['Electronics', 'Videogames'], rating: 0},
+    {image:tShirt,   name: "5 t-shirts",    price: 50, id: 5, categories:['Clothes'], rating: 0},
+    {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames'], rating: 0},
+    {image:Shoes,  name: "Shoes",  price: 70, id: 7, categories:['Clothes'], rating: 0},
+    {image:PS5,   name: "PS5 Console",   price: 499,   id: 8, categories:['Electronics', 'Videogames'], rating: 0},
+    {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames'], rating: 0},
+    {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics'], rating: 0},
+    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics'], rating: 0},
+    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:12, categories:['Clothes'], rating: 0},
+    {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes'], rating: 0}
 ]
 
 export const itemsPromotion = [

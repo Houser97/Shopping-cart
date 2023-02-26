@@ -1,10 +1,8 @@
-import { useContext, useEffect, useReducer, useState } from 'react';
+import { useReducer } from 'react';
 import {Link} from 'react-router-dom';
 import StarRate from './StarRate';
 import ProductBtns from './ProductBtns';
 import IncDecProduct from './IncDecProduct';
-import { CartContext } from '../App';
-import { FilterShopContext } from './Shop';
 
 const initialState = {numberOfProducts: 1}
 
@@ -22,20 +20,9 @@ function reducer(state, action){
     }
 }
 
-const Card = ({image, name, price, id, isLazy}) => {
+const Card = ({image, name, price, id, isLazy, rating}) => {
 
     const [state, dispatch] = useReducer(reducer, initialState)
-    const [rating, setRating] = useState(0)
-    const reviews = useContext(FilterShopContext).reviews
-
-    useEffect(() => {
-        const localReviews = reviews.filter((currentReview) => currentReview.item === id)
-        if(localReviews.length > 0){
-            setRating(Math.round(localReviews.reduce((acc,current) => acc + current.rating, 0)/localReviews.length))
-        } else {
-            setRating(0)
-        }
-    }, [reviews])
     
     return(
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] grid-rows-[repeat(auto-fit,minmax(0px,max-content))] 

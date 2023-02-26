@@ -11,27 +11,28 @@ const ReviewForm = () => {
     const [item, setItem] = useState(null);
     const [comment, setComment] = useState(null);
     const [rating, setRating] = useState(0);
+    const [localReviews, setLocalReviews] = useState([])
     const [alreadyReviewed, setAlreadyReviewed] = useState(false)
 
     const {id} = useParams()
     const API = useContext(CartContext).API;
     const user = useContext(CartContext).user;
+    const reviews = useContext(CartContext).globalReviews;
+    /*Permite llamar a la base de datos para actualizar reviews después de publicar una. */
+    const setUpdateReviews = useContext(CartContext).setUpdateReviews;
 
     useEffect(() => {
         setItem(productsData.filter(product => product.id === parseInt(id))[0])
+        setLocalReviews(reviews.filter(review => review.item === parseInt(id)))
     }, [])
 
     useEffect(() => {
-        fetch(`http://localhost:5000/api/${id}/get_reviews`)
-        .then(data => data.json())
-        .then(data => {
-            data.forEach((review) => {
-                if(review.author._id === user.id){
-                    setAlreadyReviewed(true)
-                }
-            })
+        localReviews.forEach((review) => {
+            if(review.author._id === user.id){
+                setAlreadyReviewed(true)
+            }
         })
-    }, [])  
+    }, [localReviews])  
 
     const createReview = (e) => {
         e.preventDefault()
@@ -44,6 +45,7 @@ const ReviewForm = () => {
         })
         .then(response => response.json())
         .then(data => {
+            setUpdateReviews(prev => !prev)
             if(data){
                 navigate('/')
             }

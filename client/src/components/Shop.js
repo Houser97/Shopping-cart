@@ -17,14 +17,25 @@ const Shop = () => {
     const API = useContext(CartContext).API;
 
     const getAverageRating = (reviews, products) => {
-        products.forEach((productObject) => {
-            let productReviews = reviews.filter((reviewObject) => reviewObject.item === productObject.id)
-            if(productReviews.length > 0){
-                const averageRating = Math.round(productReviews.reduce((acc, current) => acc + current.rating, 0)/productReviews.length)
-                productObject.rating = averageRating
+        const reviewsById = reviews.reduce((acc, current) => {
+            if(!acc[current.item]){
+                acc[current.item] = {count: 0, sum: 0}
             }
+
+            acc[current.item].count += 1
+            acc[current.item].sum += current.rating
+
+            return acc;
+        }, {})
+
+        const updatedProducts = products.map((productObject) => {
+            const { count, sum } = reviewsById[productObject.id] || {}
+            if(count){
+                productObject.rating = Math.round(sum/count)
+            }
+            return productObject
         })
-        return products
+        return updatedProducts
     }
 
 /*Obtener todas las reviews y calcular rating promedio para cada producto. */
@@ -33,7 +44,7 @@ const Shop = () => {
         .then(data => data.json())
         .then(reviews => {
             setReviews(reviews)
-            setUpdatedProducts(getAverageRating(reviews, structuredClone(updatedProducts)))
+            setUpdatedProducts(getAverageRating(reviews, updatedProducts))
         })
     }, []) 
 

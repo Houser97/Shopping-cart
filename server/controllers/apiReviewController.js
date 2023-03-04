@@ -2,7 +2,7 @@ const Review = require('../models/review')
 const {body, validationResult} = require('express-validator');
 
 exports.get_reviews = (req, res, next) => {
-    Review.find({item: {$eq: req.params.itemId}})
+    Review.find({})
     .sort({date: -1})
     .populate('author', 'username')
     .exec((err, reviews) => {

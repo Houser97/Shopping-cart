@@ -14,16 +14,8 @@ const ProductData = () => {
     const updatedProducts = useContext(CartContext).globalUpdatedProducts;
 
     useEffect(() => {
-      const handleProduct = (product) => {
-        setProduct(product)
-      }  
-
-      const handleReviews = (reviewProduct) => {
-        setLocalReviews(reviewProduct)
-      }
-
-      handleProduct(updatedProducts.filter(product => product.id === parseInt(id))[0])  
-      handleReviews(reviews.filter((review) => review.item === parseInt(id)))    
+      setProduct(updatedProducts.filter(product => product.id === parseInt(id))[0])  
+      setLocalReviews(reviews.filter((review) => review.item === parseInt(id)))    
     }, [])
 
   return (

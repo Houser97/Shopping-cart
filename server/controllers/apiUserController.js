@@ -70,21 +70,21 @@ exports.login = [
     .escape()
     .normalizeEmail(),
     passport.authenticate('local', {
-        successRedirect: '/api/check_user_status',
+        keepSessionInfo: true,
+        successReturnToOrRedirect: '/api/check_user_status',
         failureRedirect: '/api/login_failure'
     })
 ]
 
-exports.check_user_status = (req, res) => {
-    if(req.isAuthenticated()){
+exports.check_user_status = (req, res, next) => {
+    if(req.user){
         return res.json({
             username: req.user.username,
             id: req.user._id,
             cart: req.user.cart
         })
-    } else {
-        return res.json(null)
     }
+    return res.json(null)
 }
 
 exports.login_failure = (req, res) => {
@@ -96,4 +96,22 @@ exports.logout = (req, res) => {
         if(err) return res.json(err);
         return res.json(true);
     })
+}
+
+exports.update_user_cart = (req, res) => {
+    if(req.user){
+        const user = new User({
+            email: req.user.email,
+            password: req.user.password,
+            username: req.user.username,
+            cart: req.body.cartUser,
+            _id: req.user._id
+        })
+        User.findByIdAndUpdate(req.user._id, user, {new: true}, (err, newUser) => {
+            if(err) return res.json(err)
+            return res.json(newUser)
+        } )
+    } else {
+        console.log('not logged')
+    }
 }

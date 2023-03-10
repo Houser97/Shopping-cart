@@ -5,10 +5,10 @@ import CartCard from './CartCard';
 import LogoutBtn from './LogoutBtn';
 
 const Cart = ({toggleCart}) => {
-    const productsInCar = useContext(CartContext).productsInCar;
+    const productsInCart = useContext(CartContext).productsInCart;
     const totalPrice = useContext(CartContext).totalPrice;
     const user = useContext(CartContext).user;
-    const isEmpty = productsInCar.length === 0;
+    const isEmpty = productsInCart.length === 0;
 
     return(
         <div className={`cart-container ${toggleCart ? 'show-cart-container' : ''}`}>
@@ -27,7 +27,7 @@ const Cart = ({toggleCart}) => {
                     !isEmpty ? (
                         <div className='cart-content-submission'>
                             <div className='products-section-cart'>
-                                <CartCard submission={productsInCar} />
+                                <CartCard submission={productsInCart} />
                             </div>
                             <div className='DIV-total-price'>
                                 <div className='total-price'>Total price:</div>

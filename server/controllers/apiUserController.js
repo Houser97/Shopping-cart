@@ -104,7 +104,7 @@ exports.update_user_cart = (req, res) => {
             email: req.user.email,
             password: req.user.password,
             username: req.user.username,
-            cart: req.body.cartUser,
+            cart: req.body.productsInCart,
             _id: req.user._id
         })
         User.findByIdAndUpdate(req.user._id, user, {new: true}, (err, newUser) => {

@@ -4,7 +4,7 @@ import Home from './components/Home';
 import Shop from './components/Shop';
 import {useState, createContext, useEffect} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import { productsData } from './assets/constants';
+import { productsData, productsDataObject } from './assets/constants';
 import ProductData from './components/ProductData';
 import ReviewForm from './components/ReviewForm';
 import SignUpForm from './components/SignUpForm';
@@ -16,7 +16,7 @@ const API = 'http://localhost:5000/api';
 function App() {
 
   const [totalProducts, setTotalProducts] = useState(0);
-  const [productsInCar, setProductsInCar] = useState([]);
+  const [productsInCart, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [user, setUser] = useState(null);
   /*Estado con estructura general de productos con rating actualizado. */
@@ -26,22 +26,22 @@ function App() {
   const [updateReviews, setUpdateReviews] = useState(false)
 
   const checkIfProductAlreadyInCar = (productId) => {
-    return productsInCar.some(product => product.id === productId);
+    return productsInCart.some(product => product.id === productId);
   }
 
   const addCurrentProductQuantity = (newQuantity, productId) => {
-    const productsHelper = structuredClone(productsInCar)
+    const productsHelper = structuredClone(productsInCart)
     const productIndex = productsHelper.findIndex(product => product.id === productId)
     productsHelper[productIndex].quantity += newQuantity
     setProductsInCar([...productsHelper]);
   }
 
   const changeTotalPrice = () => {
-    setTotalPrice(productsInCar.reduce((acc, current) => acc + current.quantity*current.price, 0));
+    setTotalPrice(productsInCart.reduce((acc, current) => acc + current.quantity*current.price, 0));
   }
 
   const updateTotalProductInCard = () => {
-    setTotalProducts(productsInCar.reduce((acc, current) => acc + current.quantity, 0))
+    setTotalProducts(productsInCart.reduce((acc, current) => acc + current.quantity, 0))
   }
 
   const addProduct = (numberOfProducts, id) => {
@@ -53,7 +53,7 @@ function App() {
       let helper = structuredClone(productsData)
       const product = helper.filter(product => product.id === id)[0];
       product.quantity = numberOfProducts;
-      setProductsInCar([...productsInCar, product])
+      setProductsInCar([...productsInCart, product])
     }
   }
 
@@ -65,7 +65,7 @@ function App() {
     changeTotalPrice();
     updateTotalProductInCard();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changeTotalPrice, productsInCar])
+  }, [changeTotalPrice, productsInCart])
 
   const getAverageRating = (reviews, products) => {
     const reviewsById = reviews.reduce((acc, current) => {
@@ -99,8 +99,24 @@ function App() {
     })
   }, [updateReviews]) 
 
-  const cartContextValue = {productsInCar, totalPrice, totalProducts,
-    addProduct, removeProduct, user, setUser, API, 
+  useEffect(() => {
+    if(!user) return undefined
+    fetch(`${API}/update_user_cart`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({productsInCart})
+    }).then(data=> data.json()).then(data => {
+      const userCopy = structuredClone(user)
+      userCopy.cart = productsInCart
+      setUser(userCopy)
+    })
+  }, [productsInCart])
+
+  const cartContextValue = {productsInCart, totalPrice, totalProducts,
+    addProduct, removeProduct, user, setUser, API, setProductsInCar, 
     setGlobalReviews, globalReviews ,setGlobalUpdatedProducts, 
     globalUpdatedProducts, setUpdateReviews}
 

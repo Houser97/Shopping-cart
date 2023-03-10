@@ -35,6 +35,17 @@ export const productsData = [
     {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes'], rating: 0}
 ]
 
+export const productsDataObject = productsData.reduce((acc,product) => {
+    acc[product.id] = {
+        image:product.image,   
+        name: product.name,   
+        price: product.price,
+        quantity: 0,
+        id: product.id
+    }
+    return acc
+}, {});
+
 export const itemsPromotion = [
     {
         image: Controller,

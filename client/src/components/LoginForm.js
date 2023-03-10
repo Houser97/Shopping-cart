@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../App';
+import { productsDataObject } from '../assets/constants';
 import LoginMessage from './LoginMessage';
 
 const LoginForm = () => {
@@ -12,6 +13,7 @@ const LoginForm = () => {
   const user = useContext(CartContext).user;
   const setUser = useContext(CartContext).setUser;
   const API = useContext(CartContext).API;
+  const setProductsInCar = useContext(CartContext).setProductsInCar;
 
   const navigate = useNavigate();
 
@@ -26,11 +28,19 @@ const LoginForm = () => {
           body: JSON.stringify({email, password})
       })
       .then(data => data.json())
-      .then(data => {
-          if(Array.isArray(data)){
-            setValidationErrors(data)
+      .then(user => {
+          if(Array.isArray(user)){
+            setValidationErrors(user)
           } else {
-            setUser(data);
+            setUser(user);
+            /*Actualiza ProductsInCar cuando usuario inicie sesión */
+            const products = user.cart.reduce((acc, product) => {
+                const currentProduct = productsDataObject[product.id]
+                currentProduct.quantity = product.quantity
+                acc.push(currentProduct)
+                return acc
+            }, [])
+            setProductsInCar(products)
             navigate('/')
           }
       }) 

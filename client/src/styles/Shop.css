@@ -44,7 +44,7 @@
     de la tarjeta*/
     .shop-cards {
         grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
-        grid-template-rows: repeat(auto-fit, minmax(0px, 1fr));
+        grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
         padding: 50px 20px;
     }
 }

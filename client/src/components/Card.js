@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import StarRate from './StarRate';
 import ProductBtns from './ProductBtns';
 import IncDecProduct from './IncDecProduct';
+import useTotalReviewMessage from '../hooks/useTotalReviewMessage';
 
 const initialState = {numberOfProducts: 1}
 
@@ -20,9 +21,11 @@ function reducer(state, action){
     }
 }
 
-const Card = ({image, name, price, id, isLazy, rating}) => {
+const Card = ({image, name, price, id, isLazy, rating, reviewsCount}) => {
 
     const [state, dispatch] = useReducer(reducer, initialState)
+    const totalReviewsMessage = useTotalReviewMessage(reviewsCount);
+
     
     return(
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] grid-rows-[repeat(auto-fit,minmax(0px,max-content))] 
@@ -35,6 +38,7 @@ const Card = ({image, name, price, id, isLazy, rating}) => {
             <div className='flex flex-col justify-evenly items-center w-full'>
                 <div className='text-xl text-center font-bold 2sm:text-2xl'>{name}</div>
                 <StarRate product={id} rating = {rating} isCustomizable={false} />
+                <Link to={`/product/${id}`} className='font-bold text-center text-blue-800 text-lg'>{totalReviewsMessage}</Link>
                 <IncDecProduct dispatch={dispatch} state={state} />
                 <ProductBtns productId = {id} reduceState = {state} />
             </div>

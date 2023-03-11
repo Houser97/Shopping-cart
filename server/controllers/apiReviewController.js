@@ -7,7 +7,8 @@ exports.get_reviews = (req, res, next) => {
     .populate('author', 'username')
     .exec((err, reviews) => {
         if(err) return res.json(err);
-        return res.json(reviews)
+        const reviewsWithFormattedDate = reviews.map((review) => review.toJSON({virtuals: true}))
+        return res.json(reviewsWithFormattedDate)
     })
 }
 

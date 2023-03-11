@@ -14,7 +14,6 @@ const Shop = () => {
     const [itemsToShow, setItemsToShow] = useState(structuredClone(updatedProducts))
 
     useEffect(() => {
-        console.log(updatedProducts)
         const productsDataCopy = structuredClone(updatedProducts)
         if(filter.category !== 'all'){
             setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filter.category) && product.price <= filter.price))
@@ -36,7 +35,7 @@ const Shop = () => {
                         itemsToShow.map(
                             (product, iterator) => {
                                 return(
-                                    <Card key = {`card-iterator-${iterator}`} 
+                                    <Card key = {`card-iterator-${product.id}`} 
                                     {...product} 
                                     isLazy={iterator > 1} />
                                 )

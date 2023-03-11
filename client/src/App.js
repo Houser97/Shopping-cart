@@ -83,6 +83,7 @@ function App() {
         const { count, sum } = reviewsById[productObject.id] || {}
         if(count){
             productObject.rating = Math.round(sum/count)
+            productObject.reviewsCount = count
         }
         return productObject
     })

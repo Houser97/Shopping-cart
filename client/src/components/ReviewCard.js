@@ -2,10 +2,12 @@ import React, { useContext, useState } from 'react'
 import { CartContext } from '../App'
 import StarRate from './StarRate'
 
-const ReviewCard = ({likes, dislikes, comment, author, rating, date, _id, productId, setReviews}) => {
+const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_date, _id, productId}) => {
 
     const API = useContext(CartContext).API
     const user = useContext(CartContext).user
+    const setReviews = useContext(CartContext).setGlobalReviews
+    /*Estados LOCAL ayudan a actualizar interfaz sin tener que refrescar página para recuperar REVIEWS de DB. */
     const [localLikes, setLocalLikes] = useState(new Set(likes))
     const [localDislikes, setLocalDislikes] = useState(new Set(dislikes));
 
@@ -81,7 +83,7 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date, _id, produc
                 <div className='text-lg'>{localDislikes.size}</div>
             </div>
         </div>
-        <div className='w-full text-end text-xl font-bold'>{date}</div>
+        <div className='w-full text-end text-xl font-bold'>{formatted_date}</div>
     </div>
   )
 }

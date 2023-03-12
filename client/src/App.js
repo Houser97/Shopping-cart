@@ -130,7 +130,7 @@ function App() {
             <Route path="/" element = {<Home />} />
             <Route path="/shop" element = {<Shop />} />
             <Route path="/product/:id" element = {<ProductData />} />
-            <Route path="/:id/review" element = {<ReviewForm />} />
+            <Route path="/:id/:edit/review" element = {<ReviewForm />} />
             <Route path="/sign-up" element = {<SignUpForm />} />
             <Route path="/login" element = {<LoginForm />} />
           </Routes>

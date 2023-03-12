@@ -30,6 +30,7 @@ const ReviewForm = () => {
 
     /*useEffect que asigna si ya se hizo review o recupera datos de review para poder hacer edit */
     useEffect(() => {
+        if(!user) return undefined
         const review = localReviews.filter((review) => review.author._id === user.id)
         if(review.length && parseInt(edit)){
             setUserReview(review[0])
@@ -96,21 +97,25 @@ const ReviewForm = () => {
         <div className='grid grid-rows-[min-content,minmax(0,1fr)] grid-cols-1 justify-center 
         items-center gap-5 p-5 px-6 w-full bg-white rounded-2xl md:grid-cols-[minmax(0,350px),minmax(350px,1fr)] md:pl-20 md:p-10'>
             <img className='w-full max-w-[350px] justify-self-center h-auto md:mr-10' src={item ? item.image : ''} alt='product'></img>
-            { !alreadyReviewed ?
-            <form className='flex flex-col w-full h-full text-3xl justify-around' onSubmit={(e) => handleReviewSubmit(e)}>
-                <h1 className='w-full text-center md:text-5xl'>{item ? item.name : ''}</h1>
-                <div className='flex w-full px-10 justify-center text-3xl my-5 md:text-4xl'>
-                    <StarRate key={`update-Review-${userReview ? userReview._id : id}`} product={item ? item.name : ''} isCustomizable={true} setRating={setRating} rating = {userReview ? userReview.rating:0} />
-                </div>
-                <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 
-                outline-none rounded-md' minLength='4' required onChange={(e) => setComment(e.target.value)}
-                defaultValue = {userReview ? userReview.comment:''}></textarea>
-                <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
-                px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
-            </form>
-            :
-            <div className='flex flex-row w-full h-full text-3xl text-center font-bold items-center justify-center my-10 2sm:text-5xl'>You have already reviewed this article</div>
-            }
+            {user ? 
+                ( !alreadyReviewed ?
+                <form className='flex flex-col w-full h-full text-3xl justify-around' onSubmit={(e) => handleReviewSubmit(e)}>
+                    <h1 className='w-full text-center md:text-5xl'>{item ? item.name : ''}</h1>
+                    <div className='flex w-full px-10 justify-center text-3xl my-5 md:text-4xl'>
+                        <StarRate key={`update-Review-${userReview ? userReview._id : id}`} product={item ? item.name : ''} isCustomizable={true} setRating={setRating} rating = {userReview ? userReview.rating:0} />
+                    </div>
+                    <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 
+                    outline-none rounded-md' minLength='4' required onChange={(e) => setComment(e.target.value)}
+                    defaultValue = {userReview ? userReview.comment:''}></textarea>
+                    <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
+                    px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
+                </form>
+                :
+                <div className='flex flex-row w-full h-full text-3xl text-center font-bold items-center justify-center my-10 2sm:text-5xl'>You have already reviewed this article</div>
+                )
+                :
+                <div className='flex flex-row w-full h-full text-3xl text-center font-bold items-center justify-center my-10 2sm:text-5xl'>You must log in to review products</div>
+            }    
         </div>
     </div>
   )

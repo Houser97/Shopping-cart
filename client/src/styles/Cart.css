@@ -91,3 +91,16 @@
     color: rgb(98, 96, 96);
 }
 
+.products-section-cart::-webkit-scrollbar {
+    width: 4px;          
+}
+  
+.products-section-cart::-webkit-scrollbar-track {
+    background: #929497;     
+}
+  
+.products-section-cart::-webkit-scrollbar-thumb {
+    background-color: var(--blue-color);   
+    border-radius: 20px;    
+}
+

@@ -63,3 +63,16 @@ h1 {
 h2{
   font-size: 34px;
 }
+
+body::-webkit-scrollbar {
+  width: 8px;          
+}
+
+body::-webkit-scrollbar-track {
+  background: #929497;     
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: black;   
+  border-radius: 20px;    
+}

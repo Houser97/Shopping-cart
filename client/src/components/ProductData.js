@@ -47,7 +47,7 @@ const ProductData = () => {
             )
           })
           :
-          <div className='text-4xl text-black w-full text-center font-bold py-12'>This product has no reviews.</div>
+          <div className='text-2xl text-black w-full text-center font-bold py-12 2sm:text-4xl'>This product has no reviews.</div>
         }
         </div>
       </div>

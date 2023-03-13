@@ -11,9 +11,9 @@ const Cart = ({toggleCart}) => {
     const isEmpty = productsInCart.length === 0;
 
     return(
-        <div className={`cart-container ${toggleCart ? 'show-cart-container' : ''}`}>
-            <div className={`cart ${toggleCart ? 'show-cart':''}`}>
-                <div className='cart-content'>
+        <div className={`cart-container absolute opacity-0 top-0 left-0 h-screen w-full z-0 bg-black/80 ${toggleCart ? 'show-cart-container' : ''}`}>
+            <div className={`cart flex flex-col items-center justify-center absolute top-0 right-0 w-[320px] h-screen z-0 bg-white py-8 px-3 pt-20 overflow-y-auto overflow-x-hidden ${toggleCart ? 'show-cart':''}`}>
+                <div className='flex flex-col items-center justify-center w-full h-full gap-5'>
                 <div className='absolute text-black top-3 left-2 text-xl'>
                     {
                         user ? (
@@ -25,21 +25,19 @@ const Cart = ({toggleCart}) => {
                 </div>
                 {
                     !isEmpty ? (
-                        <div className='cart-content-submission'>
-                            <div className='products-section-cart'>
+                        <div className='flex flex-col h-full w-full gap-5'>
+                            <div className='flex flex-col flex-1 w-full p-3 overflow-y-auto overflow-x-hidden gap-5 bg-white cart-scrollbar'>
                                 <CartCard submission={productsInCart} />
                             </div>
-                            <div className='DIV-total-price'>
-                                <div className='total-price'>Total price:</div>
-                                <div data-testid="total-price-id" className='total-price-number'>${totalPrice}</div>
+                            <div className='flex flex-row text-black text-xl justify-evenly'>
+                                <div>Total price:</div>
+                                <div>${totalPrice}</div>
                             </div>
-                            <div className='pay'>
-                                <button className='pay-button'>Pay</button>
-                            </div>
+                            <button className='bg-gray-600 text-white text-3xl px-3 py-2 rounded-lg hover:bg-gray-500'>Pay</button>
                         </div>
                     ) 
                     : (
-                        <h2 className='no-submission'> Cart empty</h2>
+                        <h2 className='flex self-center justify-self-center text-gray-600'> Cart empty</h2>
                     )
                 }
                 </div>

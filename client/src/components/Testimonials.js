@@ -12,14 +12,7 @@ const Testimonials = () => {
         <HomeLottie />
         <div className='self-center h-full row-start-1 lg:row-auto'>
             <h2 className='mb-7 text-center'>Testimonials</h2>
-            <div className='grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]
-            grid-rows-[repeat(auto-fit,minmax(150px,200px))] auto-rows-[minmax(150px,200px)] w-full
-            gap-7 '>
-              <TestimonialCard />
-              <TestimonialCard />
-              <TestimonialCard />
-              <TestimonialCard />
-              <TestimonialCard />
+            <div className='flex flex-row justify-center items-center w-full py-12 px-5'>
               <TestimonialCard />
             </div>
         </div>

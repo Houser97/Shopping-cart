@@ -18,6 +18,10 @@ import Cell from './Home/cell.png';
 import Headphones from './Home/Headphones.png';
 import LaptopPromotion from './Home/laptop.png'
 
+import testimonial1 from './images/Testimonials/testimonial1.jpg'
+import testimonial2 from './images/Testimonials/testimonial2.jpg'
+import testimonial3 from './images/Testimonials/testimonial3.jpg'
+
 export const productsData = [
     {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames'], rating: 0},
     {image:Laptop,  name: "HP Victus Gaming 2022",  price: 600, id: 1, categories:['Electronics'], rating: 0},
@@ -101,4 +105,28 @@ export const svgIncentives = [
         text1: '100% secure purchases',
         text2: 'Earn points with your purchases'
     }
+]
+
+export const TestimonialData = [
+    {
+        country: 'United States',
+        username: 'Lee Smith',
+        mainSentence: 'Praesent sed est sed sapien aliquet venenatis. Maecenas eget vestibulum ante, eget rhoncus purus. Nam vitae eros eros. Ut finibus faucibus nibh a mattis. Donec euismod finibus nibh id pulvinar',
+        testimonial: 'Nullam elit turpis, interdum eu metus ac, fermentum interdum erat. Integer id urna sit amet nunc tincidunt lacinia. Aliquam erat volutpat.',
+        userPicture: testimonial1
+    },
+    {
+        country: 'Mexico',
+        username: 'César Martínez',
+        mainSentence: 'Phasellus sit amet vestibulum diam, tempor tristique velit. Nunc suscipit, est sit amet vehicula molestie, ipsum dui ornare neque, eu malesuada felis purus quis purus',
+        testimonial: 'Maecenas bibendum arcu elit, rutrum eleifend lectus consectetur et. Pellentesque imperdiet, magna in luctus facilisis, enim enim tempus augue, a ultrices massa augue in velit.',
+        userPicture: testimonial2
+    },
+    {
+        country: 'France',
+        username: 'Denise Bernard',
+        mainSentence: 'Morbi malesuada, ante eget semper lacinia, velit lectus euismod ex, in semper sem nunc a lectus',
+        testimonial: 'Aliquam erat volutpat. Phasellus sit amet vestibulum diam, tempor tristique velit. Nunc suscipit, est sit amet vehicula molestie, ipsum dui ornare neque, eu malesuada felis purus quis purus.',
+        userPicture: testimonial3
+    },
 ]

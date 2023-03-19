@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TestimonialData } from '../assets/constants'
 import HomeLottie from './HomeLottie'
 import TestimonialCard from './TestimonialCard'
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false)
 
   const handlePrevClick = () => {
     setCurrentIndex((prevIndex) => {
@@ -19,6 +20,21 @@ const Testimonials = () => {
       return prevIndex + 1;
     });
   };
+
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if(!isHovering) {
+        handleNextClick()
+      }
+    }, 3000)
+  
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [isHovering])
+  
+
   return (
     <section className='grid grid-cols-[minmax(100px,1fr)] 
     grid-rows-[minmax(0px,1fr)_minmax(200px,400px)] gap-3 py-7 px-2
@@ -28,7 +44,9 @@ const Testimonials = () => {
         <HomeLottie />
         <div className='self-center h-full row-start-1 lg:row-auto overflow-y-visible'>
             <h2 className='mb-7 text-center'>Testimonials</h2>
-            <div className='flex flex-row justify-start items-center pl-0 py-16 overflow-x-hidden overflow-y-visible sm:pl-16'>
+            <div className='flex flex-row justify-start items-center pl-0 py-16 overflow-x-hidden overflow-y-visible sm:pl-16'
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}>
               <div className='flex flex-row justify-start items-center transition-transform duration-300 ease-in-out transform w-full gap-32'
                 style={{ transform: `translateX(calc(-${currentIndex * 100 }% - ${currentIndex*128}px))` }}>
                 {

@@ -1,0 +1,98 @@
+.icon-loading{
+    fill: transparent;
+    stroke-width: 1;
+    stroke: var(--blue-color);
+}
+
+.cart-loading path{
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+}
+
+.cart-loading.cart-svg path{
+    animation: animate-cart 2500ms linear forwards;
+}
+
+.basket-loading path{
+    stroke-dasharray: 80;
+    stroke-dashoffset: 80;
+}
+
+.basket-animation path{
+    animation: animate-basket 2500ms linear forwards;
+}
+
+.bear-loading path {
+    stroke-dasharray: 90;
+    stroke-dashoffset: 90;
+}
+
+.bear-animation path{
+    animation: animate-bear 2500ms linear forwards;
+}
+
+.controller-loading path {
+    stroke-dasharray: 90;
+    stroke-dashoffset: 90;
+}
+
+.controller-animation path{
+    animation: animate-controller 2500ms linear forwards;
+}
+
+@keyframes animate {
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes animate-cart {
+    0%{
+        stroke-dashoffset: 100;
+    }
+    50%{
+        stroke-dashoffset: 0;
+    }
+    100%{
+        stroke-dashoffset: 100;
+    }
+}
+
+@keyframes animate-basket {
+    0%{
+        stroke-dashoffset: 80;
+    }
+    50%{
+        stroke-dashoffset: 0;
+    }
+    100%{
+        stroke-dashoffset: 80;
+    }
+}
+
+@keyframes animate-bear {
+    0%{
+        stroke-dashoffset: 90;
+    }
+    50%{
+        stroke-dashoffset: 0;
+    }
+    100%{
+        stroke-dashoffset: 90;
+    }
+}
+
+@keyframes animate-controller {
+    0%{
+        stroke-dashoffset: 90;
+    }
+    50%{
+        stroke-dashoffset: 0;
+    }
+    100%{
+        stroke-dashoffset: 90;
+    }
+}

@@ -21,6 +21,10 @@ const Testimonials = () => {
     });
   };
 
+  const handleCustomPosition = (position) => {
+    setCurrentIndex(position)
+  }
+
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -47,7 +51,7 @@ const Testimonials = () => {
             <div className='flex flex-row justify-start items-center pl-0 py-2 overflow-x-hidden overflow-y-visible sm:pl-16 h-full w-full sm:py-16'
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}>
-              <div className='flex flex-row justify-start items-center transition-transform duration-300 ease-in-out transform w-full gap-32'
+              <div className='flex flex-row justify-start items-center transition-transform duration-300 ease-in-out transform w-full gap-32 mb-10 sm:mb-0'
                 style={{ transform: `translateX(calc(-${currentIndex * 100 }% - ${currentIndex*128}px))` }}>
                 {
                   TestimonialData.map((testimonial, index) => (
@@ -60,7 +64,7 @@ const Testimonials = () => {
                 }
               </div>
             </div>
-            <div className='flex flex-row w-full justify-center absolute bottom-0'>
+            <div className='flex flex-row w-full justify-start absolute bottom-0 sm:justify-center'>
               <button className='mx-2 focus:outline-none self-center' onClick={handlePrevClick} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
                   <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                     <path
@@ -81,6 +85,22 @@ const Testimonials = () => {
                     />
                   </svg>
                 </button>
+              </div>
+              <div className='flex flex-row absolute bottom-0 right-0 sm:bottom-5 sm:right-20'>
+                {
+                  TestimonialData.map(({id},index) => {
+                    return(
+                      <div 
+                        key={`Caroussel-indicator-${id}`} 
+                        className={`flex w-[10px] h-[10px] rounded-full mr-4 bg-white cursor-pointer ${index === currentIndex ? 'opacity-100':'opacity-20'}`}
+                        onClick = {() => handleCustomPosition(index)}
+                        onMouseEnter={() => setIsHovering(true)} 
+                        onMouseLeave={() => setIsHovering(false)}
+                        >
+                      </div>
+                    )
+                  })
+                }
               </div>
         </div>
     </section>

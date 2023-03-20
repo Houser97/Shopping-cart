@@ -21,7 +21,6 @@ function App() {
   const [user, setUser] = useState(null);
   /*Estado con estructura general de productos con rating actualizado. */
   const [globalUpdatedProducts, setGlobalUpdatedProducts] = useState(structuredClone(productsData))
-  const [globalReviews, setGlobalReviews] = useState([]) 
   /*Sirve para actualizar reviews apenas se haga un post */
   const [updateReviews, setUpdateReviews] = useState(false)
 
@@ -97,7 +96,6 @@ function App() {
     fetch(`${API}/get_reviews`)
     .then(data => data.json())
     .then(reviews => {
-        setGlobalReviews(reviews)
         setGlobalUpdatedProducts(getAverageRating(reviews, globalUpdatedProducts))
     })
   }, [updateReviews]) 
@@ -120,8 +118,7 @@ function App() {
 
   const cartContextValue = {productsInCart, totalPrice, totalProducts,
     addProduct, removeProduct, user, setUser, API, setProductsInCar, 
-    setGlobalReviews, globalReviews ,setGlobalUpdatedProducts, 
-    globalUpdatedProducts, setUpdateReviews}
+    setGlobalUpdatedProducts, globalUpdatedProducts, setUpdateReviews}
 
   return (
     <BrowserRouter basename='Shopping-cart/'>

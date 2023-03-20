@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { productsData } from '../assets/constants'
 import { CartContext } from '../App';
 import StarRate from './StarRate'
 
@@ -17,16 +16,17 @@ const ReviewForm = () => {
     const {id, edit} = useParams()
     const API = useContext(CartContext).API;
     const user = useContext(CartContext).user;
-    const reviews = useContext(CartContext).globalReviews;
+    const updatedProducts = useContext(CartContext).globalUpdatedProducts;
     /*Permite llamar a la base de datos para actualizar reviews después de publicar una. */
     const setUpdateReviews = useContext(CartContext).setUpdateReviews;
     /*Estado que guardará los datos de la review del usuario para poder hacer edit*/
     const [userReview, setUserReview] = useState(null)
 
     useEffect(() => {
-        setItem(productsData.filter(product => product.id === parseInt(id))[0])
-        setLocalReviews(reviews.filter(review => review.item === parseInt(id)))
-    }, [])
+        const currentProduct = updatedProducts.filter(product => product.id === parseInt(id))[0]
+        setItem(currentProduct)
+        setLocalReviews(currentProduct.reviews)
+    }, [updatedProducts])
 
     /*useEffect que asigna si ya se hizo review o recupera datos de review para poder hacer edit */
     useEffect(() => {

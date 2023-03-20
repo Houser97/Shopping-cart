@@ -11,14 +11,14 @@ const ProductData = () => {
     const [product, setProduct] = useState(null);
     const [localReviews, setLocalReviews] = useState([])
     const {id} = useParams();
-    const reviews = useContext(CartContext).globalReviews;
     const updatedProducts = useContext(CartContext).globalUpdatedProducts;
     const totalReviewsMessage = useTotalReviewMessage(product ? product.reviewsCount : undefined)
 
     useEffect(() => {
-      setProduct(updatedProducts.filter(product => product.id === parseInt(id))[0])  
-      setLocalReviews(reviews.filter((review) => review.item === parseInt(id)))    
-    }, [])
+      const currentProduct = updatedProducts.filter(product => product.id === parseInt(id))[0]
+      setProduct(currentProduct)  
+      setLocalReviews(currentProduct.reviews)  
+    }, [updatedProducts])
 
   return (
     <div className='flex justify-center items-center bg-[var(--blue-color)] w-full py-28 px-2 sm:px-8 md:px-14'>

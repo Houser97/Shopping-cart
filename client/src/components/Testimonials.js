@@ -42,9 +42,9 @@ const Testimonials = () => {
     lg:grid-cols-[minmax(200px,400px)_minmax(200px,1200px)]
     lg:grid-rows-1 justify-center'>
         <HomeLottie />
-        <div className='self-center h-full row-start-1 lg:row-auto overflow-y-visible'>
-            <h2 className='mb-7 text-center'>Testimonials</h2>
-            <div className='flex flex-row justify-start items-center pl-0 py-16 overflow-x-hidden overflow-y-visible sm:pl-16'
+        <div className='flex flex-col self-center items-center justify-center h-full row-start-1 lg:row-auto overflow-y-visible relative'>
+            <h2 className='text-center'>Testimonials</h2>
+            <div className='flex flex-row justify-start items-center pl-0 py-2 overflow-x-hidden overflow-y-visible sm:pl-16 h-full w-full sm:py-16'
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}>
               <div className='flex flex-row justify-start items-center transition-transform duration-300 ease-in-out transform w-full gap-32'
@@ -60,48 +60,28 @@ const Testimonials = () => {
                 }
               </div>
             </div>
-            <button
-                className='mx-2 focus:outline-none'
-                onClick={handlePrevClick}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='h-6 w-6'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M15 19l-7-7 7-7'
-                  />
-                </svg>
-              </button>
-              <button
-                className='mx-2 focus:outline-none'
-                onClick={handleNextClick}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='h-6 w-6'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M9 5l7 7-7 7'
-                  />
-                </svg>
-              </button>
+            <div className='flex flex-row w-full justify-center absolute bottom-0'>
+              <button className='mx-2 focus:outline-none self-center' onClick={handlePrevClick} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                  <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M15 19l-7-7 7-7'
+                    />
+                  </svg>
+                </button>
+                <button className='mx-2 focus:outline-none' onClick={handleNextClick} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                  <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                </button>
+              </div>
         </div>
     </section>
   )

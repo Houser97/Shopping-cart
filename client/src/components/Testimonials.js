@@ -88,10 +88,10 @@ const Testimonials = () => {
               </div>
               <div className='flex flex-row absolute bottom-0 right-0 sm:bottom-5 sm:right-20'>
                 {
-                  TestimonialData.map(({id},index) => {
+                  TestimonialData.map((c,index) => {
                     return(
                       <div 
-                        key={`Caroussel-indicator-${id}`} 
+                        key={`Caroussel-indicator-${index}`} 
                         className={`flex w-[10px] h-[10px] rounded-full mr-4 bg-white cursor-pointer ${index === currentIndex ? 'opacity-100':'opacity-20'}`}
                         onClick = {() => handleCustomPosition(index)}
                         onMouseEnter={() => setIsHovering(true)} 

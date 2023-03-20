@@ -1,7 +1,7 @@
 import React from 'react'
 import '../styles/TestimonialCard.css'
 
-const TestimonialCard = ({userPicture, country, username, mainSentence, testimonial}) => {
+const TestimonialCard = ({userPicture, username, mainSentence, testimonial}) => {
   return (
     <div className='flex flex-col items-start justify-between relative px-6 pb-5 bg-white text-black rounded-xl w-full shrink-0'>
       <svg className='testimonial-quote rotate-180 top-2 right-0 sm:top-10 sm:right-10' viewBox="0 0 24 24">
@@ -10,7 +10,6 @@ const TestimonialCard = ({userPicture, country, username, mainSentence, testimon
       <div className='hidden flex-row justify-between relative -left-16 -top-10 text-lg font-bold py-2 px-12 w-80 bg-blue-600 rounded-tr-[50px] sm:flex'>
         <img src={userPicture} className='flex text-center items-center justify-center rounded-full w-24 h-24 border-[var(--yellow-color)] border-solid border-4 bg-white mr-6'></img>
         <div className='flex flex-col items-start justify-center'>
-          <div>{country}</div>
           <div>{username}</div>
         </div>
         <div className='absolute w-10 h-40 top-full left-0  overflow-hidden'>
@@ -20,7 +19,6 @@ const TestimonialCard = ({userPicture, country, username, mainSentence, testimon
       <div className='flex flex-row text-lg font-bold w-full justify-center sm:hidden py-10'>
           <img src = {userPicture} className='flex text-center items-center justify-center rounded-full w-24 h-24 border-[var(--yellow-color)] border-solid border-4 bg-white mr-6'></img>
           <div className='flex flex-col items-start justify-center'>
-            <div>{country}</div>
             <div>{username}</div>
           </div>
       </div>

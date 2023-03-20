@@ -70,20 +70,22 @@ function App() {
   const getAverageRating = (reviews, products) => {
     const reviewsById = reviews.reduce((acc, current) => {
         if(!acc[current.item]){
-            acc[current.item] = {count: 0, sum: 0}
+            acc[current.item] = {count: 0, sum: 0, reviews: []}
         }
 
         acc[current.item].count += 1
         acc[current.item].sum += current.rating
+        acc[current.item].reviews.push(current)
 
         return acc;
     }, {})
 
     const updatedProducts = products.map((productObject) => {
-        const { count, sum } = reviewsById[productObject.id] || {}
+        const { count, sum, reviews } = reviewsById[productObject.id] || {}
         if(count){
             productObject.rating = Math.round(sum/count)
             productObject.reviewsCount = count
+            productObject.reviews = reviews
         }
         return productObject
     })

@@ -24,20 +24,20 @@ import testimonial3 from './images/Testimonials/testimonial3.jpg'
 import testimonial4 from './images/Testimonials/testimonial4.jpg'
 
 export const productsData = [
-    {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames'], rating: 0},
-    {image:Laptop,  name: "HP Victus Gaming 2022",  price: 600, id: 1, categories:['Electronics'], rating: 0},
-    {image:iPad,    name: "iPad",    price: 529, id: 2, categories:['Electronics'], rating: 0},
-    {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames'], rating: 0},
-    {image:xbox,   name: "Xbox Series X",   price: 499, id: 4, categories:['Electronics', 'Videogames'], rating: 0},
-    {image:tShirt,   name: "5 t-shirts",    price: 50, id: 5, categories:['Clothes'], rating: 0},
-    {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames'], rating: 0},
-    {image:Shoes,  name: "Shoes",  price: 70, id: 7, categories:['Clothes'], rating: 0},
-    {image:PS5,   name: "PS5 Console",   price: 499,   id: 8, categories:['Electronics', 'Videogames'], rating: 0},
-    {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames'], rating: 0},
-    {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics'], rating: 0},
-    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics'], rating: 0},
-    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:12, categories:['Clothes'], rating: 0},
-    {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes'], rating: 0}
+    {image:GodOfWar,   name: "God of War Ragnarok",   price: 69,  id: 0, categories:['Videogames'], rating: 0, reviews: []},
+    {image:Laptop,  name: "HP Victus Gaming 2022",  price: 600, id: 1, categories:['Electronics'], rating: 0, reviews: []},
+    {image:iPad,    name: "iPad",    price: 529, id: 2, categories:['Electronics'], rating: 0, reviews: []},
+    {image:Gears, name: "Gears of War - Ultimate Edition", price: 35, id: 3, categories:['Videogames'], rating: 0, reviews: []},
+    {image:xbox,   name: "Xbox Series X",   price: 499, id: 4, categories:['Electronics', 'Videogames'], rating: 0, reviews: []},
+    {image:tShirt,   name: "5 t-shirts",    price: 50, id: 5, categories:['Clothes'], rating: 0, reviews: []},
+    {image:Spiderman,   name: "Spiderman",   price: 40,   id: 6, categories:['Videogames'], rating: 0, reviews: []},
+    {image:Shoes,  name: "Shoes",  price: 70, id: 7, categories:['Clothes'], rating: 0, reviews: []},
+    {image:PS5,   name: "PS5 Console",   price: 499,   id: 8, categories:['Electronics', 'Videogames'], rating: 0, reviews: []},
+    {image:RedDead,   name: "Red Dead Redemption 2",    price: 40, id: 9, categories:['Videogames'], rating: 0, reviews: []},
+    {image:samPhone,    name: "SAMSUNG Galaxy-Z",    price: 1000,  id:10, categories:['Electronics'], rating: 0, reviews: []},
+    {image:iPhone,    name: "Apple iPhone 13",    price: 1000,  id:11, categories:['Electronics'], rating: 0, reviews: []},
+    {image:Blouse,    name: "Elegant Blouse",    price: 40,  id:12, categories:['Clothes'], rating: 0, reviews: []},
+    {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes'], rating: 0, reviews: []}
 ]
 
 export const productsDataObject = productsData.reduce((acc,product) => {

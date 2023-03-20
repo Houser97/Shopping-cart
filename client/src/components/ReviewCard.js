@@ -7,7 +7,6 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
 
     const API = useContext(CartContext).API
     const user = useContext(CartContext).user
-    const setReviews = useContext(CartContext).setGlobalReviews
     /*Estados LOCAL ayudan a actualizar interfaz sin tener que refrescar página para recuperar REVIEWS de DB. */
     const [localLikes, setLocalLikes] = useState(new Set(likes))
     const [localDislikes, setLocalDislikes] = useState(new Set(dislikes));
@@ -53,12 +52,6 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
         })
         .then(response => response.json())
         .then(data => {
-            setReviews(oldArray => {
-                const index = oldArray.findIndex(review => review._id === _id)
-                oldArray[index] = data
-                return oldArray
-            })
-
             setLocalLikes(likesSet);
             setLocalDislikes(dislikesSet);
         })

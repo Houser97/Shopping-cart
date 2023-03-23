@@ -99,7 +99,7 @@ function App() {
     fetch(`${API}/get_reviews`)
     .then(data => data.json())
     .then(reviews => {
-        setGlobalUpdatedProducts(getAverageRating(reviews, globalUpdatedProducts));
+        setGlobalUpdatedProducts(getAverageRating(reviews, structuredClone(productsData)));
     })
   }, [updateReviews]) 
 

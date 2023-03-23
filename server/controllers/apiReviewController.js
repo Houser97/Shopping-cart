@@ -54,3 +54,12 @@ exports.update_review = [
         })
     }
 ]
+
+exports.delete_review = (req, res) => {
+    if(req.user){
+        Review.findByIdAndDelete(req.body.id, (err) => {
+            if(err) return res.json(false)
+            return res.json(true)
+        })
+    }
+}

@@ -9,6 +9,8 @@ router.post('/create_review', apiReviewController.create_review);
 
 router.post('/update_review', apiReviewController.update_review);
 
+router.post('/delete_review', apiReviewController.delete_review)
+
 router.post('/create_user', apiUserController.check_email, apiUserController.create_user);
 
 router.post('/login', apiUserController.login);

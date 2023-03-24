@@ -51,7 +51,7 @@ const ReviewForm = () => {
         .then(data => {
             if(data){
                 setUpdateReviews(prev => !prev)
-                navigate('/Shop')
+                navigate(-1)
             }
         })
     }
@@ -78,7 +78,7 @@ const ReviewForm = () => {
         .then(data => {
             if(data){
                 setUpdateReviews(prev => !prev)
-                navigate('/Shop')
+                navigate(-1)
             }
         })
     }

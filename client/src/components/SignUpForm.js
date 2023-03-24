@@ -35,7 +35,7 @@ const SignUpForm = () => {
                 }
                 else {
                     setUser(data);
-                    navigate('/');
+                    navigate(-1);
                 }
             })
         } else {

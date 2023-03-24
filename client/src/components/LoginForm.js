@@ -41,7 +41,7 @@ const LoginForm = () => {
                 return acc
             }, [])
             setProductsInCar(products)
-            navigate('/')
+            navigate(-1)
           }
       }) 
   }

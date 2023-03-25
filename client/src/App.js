@@ -9,6 +9,7 @@ import ProductData from './components/ProductData';
 import ReviewForm from './components/ReviewForm';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
+import BuyAnimation from './components/BuyAnimation';
 
 export const CartContext = createContext();
 const API = 'http://localhost:5000/api';
@@ -19,6 +20,9 @@ function App() {
   const [productsInCart, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [user, setUser] = useState(null);
+  /*Estado para mostrar animación de botón BUY */
+  const [showAnimation, setShowAnimation] = useState(false)
+  
   const [isLoading, setIsLoading] = useState(true)
   /*Estado con estructura general de productos con rating actualizado. */
   const [globalUpdatedProducts, setGlobalUpdatedProducts] = useState(structuredClone(productsData))
@@ -122,13 +126,14 @@ function App() {
   const cartContextValue = {productsInCart, totalPrice, totalProducts,
     addProduct, removeProduct, user, setUser, API, setProductsInCar, 
     setGlobalUpdatedProducts, globalUpdatedProducts, setUpdateReviews,
-    isLoading, setIsLoading
+    isLoading, setIsLoading, showAnimation, setShowAnimation
   }
 
   return (
     <BrowserRouter basename='Shopping-cart/'>
       <CartContext.Provider value = {cartContextValue}>
         <div className="App">
+          <BuyAnimation />
           <Header />
           <Routes>
             <Route path="/" element = {<Home />} />

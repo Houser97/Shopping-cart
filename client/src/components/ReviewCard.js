@@ -7,6 +7,7 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
 
     const API = useContext(CartContext).API
     const user = useContext(CartContext).user
+    const setUser = useContext(CartContext).setUser;
     const setUpdateReviews = useContext(CartContext).setUpdateReviews
     /*Estados LOCAL ayudan a actualizar interfaz sin tener que refrescar página para recuperar REVIEWS de DB. */
     const [localLikes, setLocalLikes] = useState(new Set(likes))
@@ -71,6 +72,11 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
         .then(data => {
             if(data){
                 setUpdateReviews(prev => !prev)
+                /*Se actualiza el arreglo reviews en user para evitar hacer fetch */
+                const updatedUser = structuredClone(user);
+                const reviewIndex = updatedUser.reviews.indexOf(parseInt(productId))
+                updatedUser.reviews.splice(reviewIndex,1)
+                setUser(updatedUser)
             }
         })
     }

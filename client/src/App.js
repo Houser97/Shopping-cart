@@ -107,6 +107,26 @@ function App() {
     })
   }, [updateReviews]) 
 
+  /*Obtener sesión del usuario si es que se refresca aplicación. */
+  useEffect(() => {
+    fetch(`${API}/check_user_status`, {
+      credentials: 'include'
+    })
+    .then(data => data.json())
+    .then(user => {
+      if(!user) return undefined;
+      /*Se deben servir los productos del usuario al carrito */
+        const userCart = user.cart.reduce((acc, product) => {
+          const currentProduct = productsDataObject[product.id]
+          currentProduct.quantity = product.quantity
+          acc.push(currentProduct)
+          return acc
+        }, [])
+        setProductsInCar(userCart)
+        setUser(user);
+    })
+  }, []) 
+
   useEffect(() => {
     if(!user) return undefined
     fetch(`${API}/update_user_cart`, {

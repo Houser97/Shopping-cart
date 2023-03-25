@@ -78,7 +78,7 @@ exports.login = [
 ]
 
 exports.check_user_status = (req, res, next) => {
-    if(req.user){
+    if(req.isAuthenticated()){
         Review.find({author: req.user._id}, 'item').exec((err, reviews) => {
             if(err) return res.json(err)
             return res.json({
@@ -108,7 +108,7 @@ exports.logout = (req, res) => {
 }
 
 exports.update_user_cart = (req, res) => {
-    if(req.user){
+    if(req.isAuthenticated()){
         const user = new User({
             email: req.user.email,
             password: req.user.password,

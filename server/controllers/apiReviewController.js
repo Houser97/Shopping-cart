@@ -16,6 +16,7 @@ exports.create_review = [
     body('comment', 'Comment must no be empty').trim().escape(),
 
     (req, res, next) => {
+        if(!req.isAuthenticated()) return res.json(false)
         const errors = validationResult(req);
         if(!errors.isEmpty()) return res.json(errors.array());
         const review = new Review({
@@ -36,6 +37,7 @@ exports.update_review = [
     body('userId', 'You must be logged in to like reviews'),
 
     (req, res) => {
+        if(!req.isAuthenticated()) return res.json(false)
         const errors = validationResult(req);
         if(!errors.isEmpty()) return res.json(errors.array())
         const review = new Review({
@@ -56,7 +58,7 @@ exports.update_review = [
 ]
 
 exports.delete_review = (req, res) => {
-    if(req.user){
+    if(req.isAuthenticated()){
         Review.findByIdAndDelete(req.body.id, (err) => {
             if(err) return res.json(false)
             return res.json(true)

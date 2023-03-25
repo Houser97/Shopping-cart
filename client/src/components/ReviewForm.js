@@ -7,8 +7,10 @@ const ReviewForm = () => {
 
     const navigate = useNavigate();
 
+    const [userReview, setUserReview] = useState(null)
+
     const [item, setItem] = useState(null);
-    const [comment, setComment] = useState(null);
+    const [comment, setComment] = useState('');
     const [rating, setRating] = useState(0);
     const [localReviews, setLocalReviews] = useState([])
     const [alreadyReviewed, setAlreadyReviewed] = useState(false)
@@ -21,7 +23,6 @@ const ReviewForm = () => {
     /*Permite llamar a la base de datos para actualizar reviews después de publicar una. */
     const setUpdateReviews = useContext(CartContext).setUpdateReviews;
     /*Estado que guardará los datos de la review del usuario para poder hacer edit*/
-    const [userReview, setUserReview] = useState(null)
 
     useEffect(() => {
         const currentProduct = updatedProducts.filter(product => product.id === parseInt(id))[0]
@@ -40,9 +41,19 @@ const ReviewForm = () => {
         }
     }, [localReviews])  
 
+    /*Modificar comment y rating en caso de que sea Update. Esto se hace para evitar
+    perder datos si el usuario no modifica algún campo en el update. */
+    useEffect(() => {
+        if(parseInt(edit) && userReview){
+            setComment(userReview.comment)
+            setRating(userReview.rating)
+        }
+    }, [userReview])
+
     const createReview = () => {
         fetch(`${API}/create_review`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -65,6 +76,7 @@ const ReviewForm = () => {
         const {date, dislikes, item, _id, likes} = userReview
         fetch(`${API}/update_review`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -111,7 +123,7 @@ const ReviewForm = () => {
                     </div>
                     <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 
                     outline-none rounded-md' minLength='4' required onChange={(e) => setComment(e.target.value)}
-                    defaultValue = {userReview ? userReview.comment:''}></textarea>
+                    defaultValue = {comment}></textarea>
                     <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
                     px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
                 </form>

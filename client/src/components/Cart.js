@@ -9,10 +9,12 @@ const Cart = ({toggleCart}) => {
     const totalPrice = useContext(CartContext).totalPrice;
     const user = useContext(CartContext).user;
     const setProductsInCar = useContext(CartContext).setProductsInCar;
+    const setShowAnimation = useContext(CartContext).setShowAnimation;
     const isEmpty = productsInCart.length === 0;
 
-    const cleanProductsInCart = () => {
+    const handlePayment = () => {
         setProductsInCar([])
+        setShowAnimation(true)
     }
 
     return(
@@ -39,7 +41,7 @@ const Cart = ({toggleCart}) => {
                                 <div>${totalPrice}</div>
                             </div>
                             <button className='bg-gray-600 text-white text-3xl px-3 py-2 rounded-lg hover:bg-gray-500'
-                            onClick={() => cleanProductsInCart()}>Pay</button>
+                            onClick={() => handlePayment()}>Pay</button>
                         </div>
                     ) 
                     : (

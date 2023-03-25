@@ -16,6 +16,7 @@ const ReviewForm = () => {
     const {id, edit} = useParams()
     const API = useContext(CartContext).API;
     const user = useContext(CartContext).user;
+    const setUser = useContext(CartContext).setUser;
     const updatedProducts = useContext(CartContext).globalUpdatedProducts;
     /*Permite llamar a la base de datos para actualizar reviews después de publicar una. */
     const setUpdateReviews = useContext(CartContext).setUpdateReviews;
@@ -51,6 +52,10 @@ const ReviewForm = () => {
         .then(data => {
             if(data){
                 setUpdateReviews(prev => !prev)
+                /*Se modifica user localmente para no tener que hacer fetch nuevamente.*/
+                const updatedUser = structuredClone(user)
+                updatedUser.reviews.push(parseInt(id))
+                setUser(updatedUser)
                 navigate(-1)
             }
         })

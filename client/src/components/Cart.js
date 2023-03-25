@@ -8,7 +8,12 @@ const Cart = ({toggleCart}) => {
     const productsInCart = useContext(CartContext).productsInCart;
     const totalPrice = useContext(CartContext).totalPrice;
     const user = useContext(CartContext).user;
+    const setProductsInCar = useContext(CartContext).setProductsInCar;
     const isEmpty = productsInCart.length === 0;
+
+    const cleanProductsInCart = () => {
+        setProductsInCar([])
+    }
 
     return(
         <div className={`cart-container absolute opacity-0 top-0 left-0 h-screen w-full z-0 bg-black/80 ${toggleCart ? 'show-cart-container' : ''}`}>
@@ -33,7 +38,8 @@ const Cart = ({toggleCart}) => {
                                 <div>Total price:</div>
                                 <div>${totalPrice}</div>
                             </div>
-                            <button className='bg-gray-600 text-white text-3xl px-3 py-2 rounded-lg hover:bg-gray-500'>Pay</button>
+                            <button className='bg-gray-600 text-white text-3xl px-3 py-2 rounded-lg hover:bg-gray-500'
+                            onClick={() => cleanProductsInCart()}>Pay</button>
                         </div>
                     ) 
                     : (

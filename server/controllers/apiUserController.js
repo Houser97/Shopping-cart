@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Review = require('../models/review');
 const {body, validationResult} = require('express-validator');
 const bcryptjs = require('bcryptjs');
 const passport = require('passport')
@@ -78,13 +79,21 @@ exports.login = [
 
 exports.check_user_status = (req, res, next) => {
     if(req.user){
-        return res.json({
-            username: req.user.username,
-            id: req.user._id,
-            cart: req.user.cart
+        Review.find({author: req.user._id}, 'item').exec((err, reviews) => {
+            if(err) return res.json(err)
+            return res.json({
+                username: req.user.username,
+                id: req.user._id,
+                cart: req.user.cart,
+                reviews: reviews.reduce((acc, current) => {
+                    acc.push(current.item)
+                    return acc;
+                }, [])
+            })
         })
+    } else {
+        return res.json(null)
     }
-    return res.json(null)
 }
 
 exports.login_failure = (req, res) => {

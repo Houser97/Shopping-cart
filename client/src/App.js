@@ -13,7 +13,8 @@ import BuyAnimation from './components/BuyAnimation';
 import ScrollToTop from './components/ScrollToTop';
 
 export const CartContext = createContext();
-const API = 'http://localhost:5000/api';
+//const API = 'http://localhost:5000/api';
+const API = 'https://shopping-cart-a2.onrender.com/api'
 
 function App() {
 

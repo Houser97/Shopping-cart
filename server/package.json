@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www"
+    "devstart": "nodemon ./bin/www",
+    "deployment": "cd .. && cd client && npm run build && cd .. && cd server && cp -a ../client/build/. ./public"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

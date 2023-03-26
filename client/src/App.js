@@ -10,6 +10,7 @@ import ReviewForm from './components/ReviewForm';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import BuyAnimation from './components/BuyAnimation';
+import ScrollToTop from './components/ScrollToTop';
 
 export const CartContext = createContext();
 const API = 'http://localhost:5000/api';
@@ -155,14 +156,16 @@ function App() {
         <div className="App">
           <BuyAnimation />
           <Header />
-          <Routes>
-            <Route path="/" element = {<Home />} />
-            <Route path="/shop" element = {<Shop />} />
-            <Route path="/product/:id" element = {<ProductData />} />
-            <Route path="/:id/:edit/review" element = {<ReviewForm />} />
-            <Route path="/sign-up" element = {<SignUpForm />} />
-            <Route path="/login" element = {<LoginForm />} />
-          </Routes>
+          <ScrollToTop>
+            <Routes>
+                <Route path="/" element = {<Home />} />
+                <Route path="/shop" element = {<Shop />} />
+                <Route path="/product/:id" element = {<ProductData />} />
+                <Route path="/:id/:edit/review" element = {<ReviewForm />} />
+                <Route path="/sign-up" element = {<SignUpForm />} />
+                <Route path="/login" element = {<LoginForm />} />
+            </Routes>
+          </ScrollToTop>
         </div>
       </CartContext.Provider>
     </BrowserRouter>

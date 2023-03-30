@@ -11,12 +11,24 @@ const SignUpForm = () => {
     const [pwdMatch, setPwdMatch] = useState(true);
     const [username, setUsername] = useState(null);
     const [validationErrors, setValidationErrors] = useState([]);
+    //Estados para indicar que mayús está activa
+    const [isMayusActive, setIsMayusActive] = useState(false)
+    const [selectedPwdInput, setSelectedPwdInput] = useState(null)
 
     const user = useContext(CartContext).user;
     const setUser = useContext(CartContext).setUser;
     const API = useContext(CartContext).API;
 
     const navigate = useNavigate();
+
+    const handlePasswordInputCaps = (e) => {
+        setIsMayusActive(e.getModifierState('CapsLock'))
+        setSelectedPwdInput(e.target.name)
+    }
+
+    const handleBlur = () => {
+        setIsMayusActive(false)
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -47,6 +59,8 @@ const SignUpForm = () => {
         setPwdMatch(repeatPwd === pwd)
     }, [repeatPwd])
 
+
+    //Si el usuario ya inicio sesión, no tiene acceso al formulario.
     if(user){
         return(
             <LoginMessage />
@@ -64,17 +78,29 @@ const SignUpForm = () => {
                 className='border-slate-500 border-2 rounded-md p-1 px-3 
                 outline-[var(--blue-color)]' onChange={(e) => setEmail(e.target.value)} required></input>
             </div>
-            <div className='flex flex-col mt-4 w-full'>
+            <div className='flex flex-col mt-4 w-full relative'>
                 <label htmlFor='password' className='font-bold'>Password</label>
                 <input type='password' id='password' name='pwd'
                 className='border-slate-500 border-2 rounded-md p-1 px-3 
-                outline-[var(--blue-color)]' onChange={(e) => setPwd(e.target.value)} required></input>
+                outline-[var(--blue-color)]' 
+                onChange={(e) => setPwd(e.target.value)} 
+                onKeyDown={handlePasswordInputCaps}
+                onClick={handlePasswordInputCaps}
+                onBlur={handleBlur}
+                required></input>
+                <div className={`absolute -bottom-8 right-0 text-base font-extrabold text-blue-700 ${isMayusActive && selectedPwdInput === 'pwd' ? 'flex':'hidden'}`}>Caps Lock is on</div>
             </div>
-            <div className='flex flex-col my-4 w-full'>
+            <div className='flex flex-col my-4 w-full relative'>
                 <label htmlFor='repeatPassword' className='font-bold'>Repeat password</label>
                 <input type='password' id='repeatPassword' name='repeatPwd'
                 className={`border-2 rounded-md p-1 px-3 
-                ${pwdMatch ? 'border-slate-500 outline-[var(--blue-color)]':'border-red-400 outline-red-400'}`} onChange={(e) => setRepeatPwd(e.target.value)} required></input>
+                ${pwdMatch ? 'border-slate-500 outline-[var(--blue-color)]':'border-red-400 outline-red-400'}`} 
+                onChange={(e) => setRepeatPwd(e.target.value)} 
+                onKeyDown={handlePasswordInputCaps}
+                onClick={handlePasswordInputCaps}
+                onBlur={handleBlur}
+                required></input>
+                <div className={`absolute -bottom-8 right-0 text-base font-extrabold text-blue-700 ${isMayusActive && selectedPwdInput === 'repeatPwd' ? 'flex':'hidden'}`}>Caps Lock is on</div>
             </div>
             <div className='flex flex-col w-full'>
                 <label htmlFor='username' className='font-bold'>Username</label>

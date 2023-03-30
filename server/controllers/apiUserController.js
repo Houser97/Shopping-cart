@@ -53,10 +53,10 @@ exports.create_user = [
                 req.login(user, (err) => {
                     if(err) return res.json(err);
                     return res.json({
-                        email: user.email,
                         cart: user.cart,
                         username: user.username,
-                        id: user._id
+                        id: user._id,
+                        reviews: []
                     })
                 })
             })

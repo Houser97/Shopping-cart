@@ -15,7 +15,7 @@ const ReviewForm = () => {
     const [rating, setRating] = useState(0);
     const [localReviews, setLocalReviews] = useState([])
     const [alreadyReviewed, setAlreadyReviewed] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     const {id, edit} = useParams()
     const API = useContext(CartContext).API;

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CartContext } from '../App';
+import LoadingV2 from './LoadingV2';
 import StarRate from './StarRate'
 
 const ReviewForm = () => {
@@ -14,6 +15,7 @@ const ReviewForm = () => {
     const [rating, setRating] = useState(0);
     const [localReviews, setLocalReviews] = useState([])
     const [alreadyReviewed, setAlreadyReviewed] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     const {id, edit} = useParams()
     const API = useContext(CartContext).API;
@@ -61,6 +63,7 @@ const ReviewForm = () => {
         })
         .then(response => response.json())
         .then(data => {
+            setIsLoading(false)
             if(data){
                 setUpdateReviews(prev => !prev)
                 /*Se modifica user localmente para no tener que hacer fetch nuevamente.*/
@@ -93,6 +96,7 @@ const ReviewForm = () => {
         })
         .then(response => response.json())
         .then(data => {
+            setIsLoading(false)
             if(data){
                 setUpdateReviews(prev => !prev)
                 navigate(-1)
@@ -101,6 +105,7 @@ const ReviewForm = () => {
     }
 
     const handleReviewSubmit = (e) => {
+        setIsLoading(true)
         e.preventDefault()
         if(userReview && parseInt(edit)){
             updateReview()
@@ -124,8 +129,13 @@ const ReviewForm = () => {
                     <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 
                     outline-none rounded-md' minLength='4' required onChange={(e) => setComment(e.target.value)}
                     defaultValue = {comment}></textarea>
-                    <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
-                    px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
+                    {
+                        isLoading ? 
+                        <LoadingV2 /> 
+                        :
+                        <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
+                        px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
+                    }
                 </form>
                 :
                 <div className='flex flex-row w-full h-full text-3xl text-center font-bold items-center justify-center my-10 2sm:text-5xl'>You have already reviewed this article</div>

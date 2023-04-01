@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../App';
 import { productsDataObject } from '../assets/constants';
+import LoadingV2 from './LoadingV2';
 import LoginMessage from './LoginMessage';
 
 const LoginForm = () => {
@@ -9,6 +10,8 @@ const LoginForm = () => {
   const [email, setEmail] = useState(null);
   const [password, setPwd] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const user = useContext(CartContext).user;
   const setUser = useContext(CartContext).setUser;
@@ -18,6 +21,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
+      setIsLoading(true)
       e.preventDefault();
       fetch(`${API}/login`, {
           method: 'POST',
@@ -29,6 +33,7 @@ const LoginForm = () => {
       })
       .then(data => data.json())
       .then(user => {
+          setIsLoading(false)
           if(Array.isArray(user)){
             setValidationErrors(user)
           } else {
@@ -67,7 +72,9 @@ const LoginForm = () => {
                 className='border-slate-500 border-2 rounded-md p-1 px-3 
                 outline-[var(--blue-color)]' onChange={(e) => setPwd(e.target.value)} required></input>
             </div>
-            <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-bold'>Sign in</button>
+            {
+                isLoading ? <LoadingV2 /> : <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-bold'>Sign in</button>
+            }
             {validationErrors.length > 0 ? 
                 <ul className='list-disc list-inside text-base text-justify sm:text-xl'>
                     {

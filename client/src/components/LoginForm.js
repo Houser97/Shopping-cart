@@ -4,14 +4,16 @@ import { CartContext } from '../App';
 import { productsDataObject } from '../assets/constants';
 import LoadingV2 from './LoadingV2';
 import LoginMessage from './LoginMessage';
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchUser, userSelector } from '../slices/user';
 
 const LoginForm = () => {
-
   const [email, setEmail] = useState(null);
   const [password, setPwd] = useState(null);
-  const [validationErrors, setValidationErrors] = useState([]);
 
-  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch();
+  const { isLoading, validationErrors } = useSelector(userSelector)
+
 
   const user = useContext(CartContext).user;
   const setUser = useContext(CartContext).setUser;
@@ -21,35 +23,10 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-      setIsLoading(true)
-      e.preventDefault();
-      fetch(`${API}/login`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({email, password})
-      })
-      .then(data => data.json())
-      .then(user => {
-          setIsLoading(false)
-          if(Array.isArray(user)){
-            setValidationErrors(user)
-          } else {
-            setUser(user);
-            /*Actualiza ProductsInCar cuando usuario inicie sesión */
-            const products = user.cart.reduce((acc, product) => {
-                const currentProduct = productsDataObject[product.id]
-                currentProduct.quantity = product.quantity
-                acc.push(currentProduct)
-                return acc
-            }, [])
-            setProductsInCar(products)
-            navigate(-1)
-          }
-      }) 
+    e.preventDefault()
+    dispatch(fetchUser(email, password));    
   }
+
   if(user){
     return(
         <LoginMessage />

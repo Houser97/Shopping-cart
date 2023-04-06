@@ -1,59 +1,84 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { productsDataObject } from "../assets/constants";
 
 const API = 'http://localhost:5000/api';
 
-export const loginUser = createAsyncThunk(
-  "user/login",
-  async ({ email, password }, thunkAPI) => {
-
-    const response = await fetch(`${API}/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const user = await response.json();
-
-    if (Array.isArray(user)) {
-      return thunkAPI.rejectWithValue(user);
-    }
-
-    return user;
-  }
-);
-
-const userSlice = createSlice({
-  name: "user",
-  initialState: {
+export const initialState = {
     isLoading: false,
     user: null,
     validationErrors: [],
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.isLoading = true;
-        console.log('is loading')
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload;
-        state.validationErrors = [];
-        console.log(state.user)
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.validationErrors = action.payload;
-        console.log('rejected')
-      });
-  },
-});
+    hasErrors: false
+}
 
-export const selectUser = (state) => state.user;
-export const selectUserLoading = (state) => state.isLoading;
-export const selectUserValidationErrors = (state) => state.validationErrors;
+export const userSlice = createSlice({
+    name: 'user',
+    initialState,
+    reducers: {
+        getUser: (state) => {
+            state.isLoading = true
+        },
+        getUserSuccess: (state, {payload}) => {
+            state.user = payload
+            state.isLoading = false
+            state.hasErrors = false
+        },
+        getUserFailure: (state) => {
+            state.isLoading = false
+            state.hasErrors = true
+        },
+        getUserStatus: (state) => {
+            state.isLoading = true
+        },
+        getUserStatusSuccess: (state, {payload}) => {
+            state.isLoading = false
+            state.hasErrors = false
+            state.user = payload
+        },
+        getUserStatusFailure: (state) => {
+            state.hasErrors = true
+        }
+    }
+})
 
-export default userSlice.reducer;
+export const {
+    getUser, 
+    getUserFailure, 
+    getUserSuccess, 
+    getUserStatus, 
+    getUserStatusSuccess, 
+    getUserStatusFailure
+} = userSlice.actions
+
+export const userSelector = (state) => state.user
+//Se debe colocar .user. Se debe quitar en caso de que el rootReducer sea exactamente ese slice.
+//.user corresponde al nombre dado a este reducer en combineReducers en store.js
+
+export default userSlice.reducer
+
+export function fetchUser(email, password) {
+    return async (dispatch) => {
+        dispatch(getUser())
+
+        try{
+            const response = await fetch(`${API}/login`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email, password})
+              })
+            const user = await response.json()
+            console.log(user)
+            const userCart = user.cart.reduce((acc, product) => {
+                const currentProduct = productsDataObject[product.id]
+                currentProduct.quantity = product.quantity
+                acc.push(currentProduct)
+                return acc
+              }, [])
+            dispatch(getUserSuccess(user))
+        } catch (error) {
+            dispatch(getUserFailure())
+        }
+    }
+}

@@ -7,7 +7,8 @@ export const initialState = {
     isLoading: false,
     user: null,
     validationErrors: [],
-    hasErrors: false
+    hasErrors: false,
+    productsInCart: []
 }
 
 export const userSlice = createSlice({
@@ -18,10 +19,20 @@ export const userSlice = createSlice({
             state.isLoading = true
         },
         getUserSuccess: (state, {payload}) => {
-            state.user = payload
+            state.user = payload.user
             state.isLoading = false
             state.hasErrors = false
+            state.validationErrors = []
+            state.productsInCart = payload.userCart
         },
+        setValidationErrors: (state, {payload}) => {
+            state.validationErrors = payload
+            state.isLoading = false
+            state.user = null
+            state.productsInCart = []
+            state.hasErrors = false
+        }
+        ,
         getUserFailure: (state) => {
             state.isLoading = false
             state.hasErrors = true
@@ -46,7 +57,8 @@ export const {
     getUserSuccess, 
     getUserStatus, 
     getUserStatusSuccess, 
-    getUserStatusFailure
+    getUserStatusFailure,
+    setValidationErrors
 } = userSlice.actions
 
 export const userSelector = (state) => state.user
@@ -69,16 +81,19 @@ export function fetchUser(email, password) {
                 body: JSON.stringify({email, password})
               })
             const user = await response.json()
-            console.log(user)
-            const userCart = user.cart.reduce((acc, product) => {
-                const currentProduct = productsDataObject[product.id]
-                currentProduct.quantity = product.quantity
-                acc.push(currentProduct)
-                return acc
-              }, [])
-            dispatch(getUserSuccess(user))
+            if(!Array.isArray(user)){
+                const userCart = user.productsInCart.reduce((acc, product) => {
+                    const currentProduct = productsDataObject[product.id]
+                    currentProduct.quantity = product.quantity
+                    acc.push(currentProduct)
+                    return acc
+                  }, [])
+                dispatch(getUserSuccess({user, userCart}))
+            } else {
+                dispatch(setValidationErrors(user))
+            }
         } catch (error) {
-            dispatch(getUserFailure())
+            dispatch(getUserStatusSuccess())
         }
     }
 }

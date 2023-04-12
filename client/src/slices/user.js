@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { productsDataObject } from "../assets/constants";
 
 const API = 'http://localhost:5000/api';
@@ -8,7 +8,7 @@ export const initialState = {
     user: null,
     validationErrors: [],
     hasErrors: false,
-    productsInCart: []
+    productsInCart: [],
 }
 
 export const userSlice = createSlice({
@@ -36,17 +36,6 @@ export const userSlice = createSlice({
         getUserFailure: (state) => {
             state.isLoading = false
             state.hasErrors = true
-        },
-        getUserStatus: (state) => {
-            state.isLoading = true
-        },
-        getUserStatusSuccess: (state, {payload}) => {
-            state.isLoading = false
-            state.hasErrors = false
-            state.user = payload
-        },
-        getUserStatusFailure: (state) => {
-            state.hasErrors = true
         }
     }
 })
@@ -55,9 +44,6 @@ export const {
     getUser, 
     getUserFailure, 
     getUserSuccess, 
-    getUserStatus, 
-    getUserStatusSuccess, 
-    getUserStatusFailure,
     setValidationErrors
 } = userSlice.actions
 
@@ -66,6 +52,18 @@ export const userSelector = (state) => state.user
 //.user corresponde al nombre dado a este reducer en combineReducers en store.js
 
 export default userSlice.reducer
+
+const setCart = (userCart) => {
+    if(!userCart.length) return userCart 
+    return userCart.reduce((acc, product) => {
+        //Se obtiene la información del producto y se actualiza su campo de quantity.
+        //En la base de datos solo se guarda el ID del producto y su cantidad.
+        const currentProduct = productsDataObject[product.id]
+        currentProduct.quantity = product.quantity
+        acc.push(currentProduct)
+        return acc
+    }, [])
+}
 
 export function fetchUser(email, password) {
     return async (dispatch) => {
@@ -82,18 +80,30 @@ export function fetchUser(email, password) {
               })
             const user = await response.json()
             if(!Array.isArray(user)){
-                const userCart = user.productsInCart.reduce((acc, product) => {
-                    const currentProduct = productsDataObject[product.id]
-                    currentProduct.quantity = product.quantity
-                    acc.push(currentProduct)
-                    return acc
-                  }, [])
+                const userCart = setCart(user.cart)
                 dispatch(getUserSuccess({user, userCart}))
             } else {
                 dispatch(setValidationErrors(user))
             }
         } catch (error) {
-            dispatch(getUserStatusSuccess())
+            dispatch(getUserFailure())
         }
+    }
+}
+
+export const getUserStatus = () => {
+    return async (dispatch) => {
+
+        dispatch(getUser())
+
+        const data = await fetch(`${API}/check_user_status`, {
+            credentials: 'include'
+        })
+
+        const user = await data.json()
+
+        const payload = user ? {user, userCart: setCart(user.cart)} : {user, userCart: []}
+        dispatch(getUserSuccess(payload))
+
     }
 }

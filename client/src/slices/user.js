@@ -36,6 +36,10 @@ export const userSlice = createSlice({
         getUserFailure: (state) => {
             state.isLoading = false
             state.hasErrors = true
+        },
+        updateCart: (state, {payload}) => {
+            state.user.cart = payload.userCart
+            state.productsInCart = payload.userCart
         }
     }
 })
@@ -44,7 +48,8 @@ export const {
     getUser, 
     getUserFailure, 
     getUserSuccess, 
-    setValidationErrors
+    setValidationErrors,
+    updateCart
 } = userSlice.actions
 
 export const userSelector = (state) => state.user
@@ -58,8 +63,8 @@ const setCart = (userCart) => {
     return userCart.reduce((acc, product) => {
         //Se obtiene la información del producto y se actualiza su campo de quantity.
         //En la base de datos solo se guarda el ID del producto y su cantidad.
-        const currentProduct = productsDataObject[product.id]
-        currentProduct.quantity = product.quantity
+        const currentProduct = {...productsDataObject[product.id]}
+        currentProduct.quantity += product.quantity
         acc.push(currentProduct)
         return acc
     }, [])
@@ -105,5 +110,24 @@ export const getUserStatus = () => {
         const payload = user ? {user, userCart: setCart(user.cart)} : {user, userCart: []}
         dispatch(getUserSuccess(payload))
 
+    }
+}
+
+export const updateUserCart = (productsInCart, user) => {
+    return async (dispatch) => {
+        const response = await fetch(`${API}/update_user_cart`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({productsInCart})
+        })
+
+        const userUpdated = await response.json()
+
+        if(userUpdated.constructor === Object){
+            dispatch(updateCart({user, userCart:userUpdated.cart}))
+        }
     }
 }

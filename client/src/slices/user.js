@@ -40,6 +40,10 @@ export const userSlice = createSlice({
         updateCart: (state, {payload}) => {
             state.user.cart = payload.userCart
             state.productsInCart = payload.userCart
+        },
+        logout: (state) => {
+            state.user = null
+            state.productsInCart = []
         }
     }
 })
@@ -49,7 +53,8 @@ export const {
     getUserFailure, 
     getUserSuccess, 
     setValidationErrors,
-    updateCart
+    updateCart,
+    logout
 } = userSlice.actions
 
 export const userSelector = (state) => state.user
@@ -129,5 +134,25 @@ export const updateUserCart = (productsInCart, user) => {
         if(userUpdated.constructor === Object){
             dispatch(updateCart({user, userCart:userUpdated.cart}))
         }
+    }
+}
+
+export const logoutUser = () => {
+    return async (dispatch) => {
+        const response = await fetch(`${API}/logout`, {
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        const isLogout = await response.json()
+
+        if(isLogout){
+            dispatch(logout())
+            return true
+        }
+
+        return false
     }
 }

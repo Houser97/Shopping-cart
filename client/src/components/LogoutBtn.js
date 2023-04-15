@@ -1,19 +1,16 @@
-import React, { useContext } from 'react'
-import { CartContext } from '../App'
+import React from 'react'
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../slices/user';
 
 const LogoutBtn = () => {
-    const API = useContext(CartContext).API;
-    const setUser = useContext(CartContext).setUser;
 
-    const logout = () => {
-        fetch(`${API}/logout`)
-        .then(response => response.json())
-        .then(data => {
-            if(data){
-                setUser(null);
-                window.location.reload()
-            }
-        })
+    const dispatch = useDispatch()
+
+    const logout = async () => {
+        const result = await dispatch(logoutUser())
+        if(result) {
+            window.location.reload()
+        }
     }
 
   return (

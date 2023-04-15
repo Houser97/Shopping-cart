@@ -59,12 +59,19 @@ const cartSlice = createSlice({
         state.productsInCart = []
         state.totalPrice = 0
         state.totalProducts = 0
+      },
+      serveUserCart: (state, {payload}) => {
+        const {userCart} = payload
+        console.log(userCart)
+        state.productsInCart = userCart
+        state.totalPrice = changeTotalPrice([...userCart])
+        state.totalProducts = updateTotalProductInCard([...userCart])
       }
     }
 })
 
 export const cartSelector = (state) => state.cart
 
-export const {addProductsToCart, removeProduct, clearCart} = cartSlice.actions;
+export const {addProductsToCart, removeProduct, clearCart, serveUserCart} = cartSlice.actions;
 
 export default cartSlice.reducer

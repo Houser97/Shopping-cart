@@ -11,17 +11,21 @@ import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import BuyAnimation from './components/BuyAnimation';
 import ScrollToTop from './components/ScrollToTop';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserStatus, userSelector, updateUserCart } from './slices/user';
 
 export const CartContext = createContext();
-//const API = 'http://localhost:5000/api';
-const API = 'https://shopping-cart-a2.onrender.com/api'
+const API = 'http://localhost:5000/api';
+//const API = 'https://shopping-cart-a2.onrender.com/api'
 
 function App() {
+
+  const dispatch = useDispatch()
 
   const [totalProducts, setTotalProducts] = useState(0);
   const [productsInCart, setProductsInCar] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [user, setUser] = useState(null);
+  const {user} = useSelector(userSelector)
   /*Estado para mostrar animación de botón BUY */
   const [showAnimation, setShowAnimation] = useState(false)
   
@@ -111,42 +115,16 @@ function App() {
 
   /*Obtener sesión del usuario si es que se refresca aplicación. */
   useEffect(() => {
-    fetch(`${API}/check_user_status`, {
-      credentials: 'include'
-    })
-    .then(data => data.json())
-    .then(user => {
-      if(!user) return undefined;
-      /*Se deben servir los productos del usuario al carrito */
-        const userCart = user.cart.reduce((acc, product) => {
-          const currentProduct = productsDataObject[product.id]
-          currentProduct.quantity = product.quantity
-          acc.push(currentProduct)
-          return acc
-        }, [])
-        setProductsInCar(userCart)
-        setUser(user);
-    })
+    dispatch(getUserStatus())
   }, []) 
 
   useEffect(() => {
     if(!user) return undefined
-    fetch(`${API}/update_user_cart`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({productsInCart})
-    }).then(data=> data.json()).then(data => {
-      const userCopy = structuredClone(user)
-      userCopy.cart = productsInCart
-      setUser(userCopy)
-    })
+    dispatch(updateUserCart(productsInCart, user))
   }, [productsInCart])
 
   const cartContextValue = {productsInCart, totalPrice, totalProducts,
-    addProduct, removeProduct, user, setUser, API, setProductsInCar, 
+    addProduct, removeProduct, user, API, setProductsInCar, 
     setGlobalUpdatedProducts, globalUpdatedProducts, setUpdateReviews,
     isLoading, setIsLoading, showAnimation, setShowAnimation
   }

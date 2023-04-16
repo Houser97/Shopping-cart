@@ -1,16 +1,19 @@
-import React, { useContext } from 'react'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { CartContext } from '../App'
+import { addProductsToCart } from '../slices/cart'
+import { userSelector } from '../slices/user'
 
 const ProductBtns = ({productId, reduceState = {numberOfProducts: 1}}) => {
+  const dispatch = useDispatch()
   /*reduceState se inicializa con 1 para el caso en que se agregue producto
   desde ProductData, en donde no se puede indicar el número de productos a agregar. */
-    const addProduct = useContext(CartContext).addProduct
-    const user = useContext(CartContext).user;
+    const {user} = useSelector(userSelector);
     
     const handleProductAddition = () => {
-      addProduct(reduceState.numberOfProducts, productId);
+      dispatch(addProductsToCart({numberOfProducts: reduceState.numberOfProducts, id: productId}))
     }
+    
   return (
     <div>
       {user ? 

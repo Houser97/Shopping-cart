@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom'
 import { CartContext } from '../App';
+import { updateReviews, userSelector } from '../slices/user';
 import LoadingV2 from './LoadingV2';
 import StarRate from './StarRate'
 
 const ReviewForm = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch()
 
     const [userReview, setUserReview] = useState(null)
 
@@ -19,8 +22,7 @@ const ReviewForm = () => {
 
     const {id, edit} = useParams()
     const API = useContext(CartContext).API;
-    const user = useContext(CartContext).user;
-    const setUser = useContext(CartContext).setUser;
+    const { user } = useSelector(userSelector);
     const updatedProducts = useContext(CartContext).globalUpdatedProducts;
     /*Permite llamar a la base de datos para actualizar reviews después de publicar una. */
     const setUpdateReviews = useContext(CartContext).setUpdateReviews;
@@ -69,7 +71,7 @@ const ReviewForm = () => {
                 /*Se modifica user localmente para no tener que hacer fetch nuevamente.*/
                 const updatedUser = structuredClone(user)
                 updatedUser.reviews.push(parseInt(id))
-                setUser(updatedUser)
+                dispatch(updateReviews({updatedUser}))
                 navigate(-1)
             }
         })

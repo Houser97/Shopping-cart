@@ -1,5 +1,6 @@
-import { useContext, useState } from 'react';
-import { CartContext } from '../App';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { userSelector } from '../slices/user';
 import AuthButtons from './AuthButtons';
 import Cart from './Cart';
 import CartIcon from './CartIcon';
@@ -8,7 +9,7 @@ import ToggleBtn from './ToggleBtn';
 
 const Header = () => {
     
-    const user = useContext(CartContext).user;
+    const { user } = useSelector(userSelector);
 
     const [toggleNavbar, setToggleNavbar] = useState(false);
     const [toggleCart, setToggleCart] = useState(false);

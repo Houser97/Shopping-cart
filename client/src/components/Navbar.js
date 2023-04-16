@@ -1,13 +1,13 @@
 import '../styles/Navbar.css';
 import {Link} from 'react-router-dom';
 import AuthButtons from './AuthButtons';
-import { useContext } from 'react';
-import { CartContext } from '../App';
 import LogoutBtn from './LogoutBtn';
+import { useSelector } from 'react-redux';
+import { userSelector } from '../slices/user';
 
 const Navbar = ({toggle, setToggleNavbar}) => {
 
-    const user = useContext(CartContext).user;
+    const { user } = useSelector(userSelector);
 
     return(
         <nav className={`flex flex-col justify-center items-center absolute left-0 top-full bg-[var(--header-color)] 

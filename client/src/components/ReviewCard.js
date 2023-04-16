@@ -1,13 +1,16 @@
 import React, { useContext, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { CartContext } from '../App'
+import { updateReviews, userSelector } from '../slices/user'
 import StarRate from './StarRate'
 
 const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_date, _id, productId}) => {
 
+    const dispatch = useDispatch()
+
     const API = useContext(CartContext).API
-    const user = useContext(CartContext).user
-    const setUser = useContext(CartContext).setUser;
+    const { user } = useSelector(userSelector)
     const setUpdateReviews = useContext(CartContext).setUpdateReviews
     /*Estados LOCAL ayudan a actualizar interfaz sin tener que refrescar página para recuperar REVIEWS de DB. */
     const [localLikes, setLocalLikes] = useState(new Set(likes))
@@ -73,10 +76,11 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
             if(data){
                 setUpdateReviews(prev => !prev)
                 /*Se actualiza el arreglo reviews en user para evitar hacer fetch */
+                /*Se trabaja con la variable de usuario local para no tener que recuperar el usuario del servidor. */
                 const updatedUser = structuredClone(user);
                 const reviewIndex = updatedUser.reviews.indexOf(parseInt(productId))
                 updatedUser.reviews.splice(reviewIndex,1)
-                setUser(updatedUser)
+                dispatch(updateReviews({updatedUser}))
             }
         })
     }

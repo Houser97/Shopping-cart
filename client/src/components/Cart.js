@@ -1,19 +1,22 @@
 import { useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { CartContext } from '../App';
+import { cartSelector, clearCart } from '../slices/cart';
+import { userSelector } from '../slices/user';
 import '../styles/Cart.css'
 import CartCard from './CartCard';
 import LogoutBtn from './LogoutBtn';
 
 const Cart = ({toggleCart}) => {
-    const productsInCart = useContext(CartContext).productsInCart;
-    const totalPrice = useContext(CartContext).totalPrice;
-    const user = useContext(CartContext).user;
-    const setProductsInCar = useContext(CartContext).setProductsInCar;
+    const dispatch = useDispatch()
+    const {productsInCart, totalPrice} = useSelector(cartSelector)
+    const {user} = useSelector(userSelector);
+
     const setShowAnimation = useContext(CartContext).setShowAnimation;
     const isEmpty = productsInCart.length === 0;
 
     const handlePayment = () => {
-        setProductsInCar([])
+        dispatch(clearCart())
         setShowAnimation(true)
     }
 

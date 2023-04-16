@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
-import { CartContext } from '../App'
+import React from 'react'
+import { useSelector } from 'react-redux';
+import { userSelector } from '../slices/user';
 
 const IncDecProduct = ({dispatch, state}) => {
 
-    const user = useContext(CartContext).user;
+    const { user } = useSelector(userSelector);
 
   return (
     <div className={`${user ? 'flex':'hidden'} flex-row justify-evenly my-2 mb-4`}>

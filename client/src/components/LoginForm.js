@@ -1,7 +1,5 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CartContext } from '../App';
-import { productsDataObject } from '../assets/constants';
 import LoadingV2 from './LoadingV2';
 import LoginMessage from './LoginMessage';
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,19 +10,18 @@ const LoginForm = () => {
   const [password, setPwd] = useState(null);
 
   const dispatch = useDispatch();
-  const { isLoading, validationErrors } = useSelector(userSelector)
-
-
-  const user = useContext(CartContext).user;
-  const setUser = useContext(CartContext).setUser;
-  const API = useContext(CartContext).API;
-  const setProductsInCar = useContext(CartContext).setProductsInCar;
+  const { isLoading, validationErrors, user } = useSelector(userSelector)
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    dispatch(fetchUser(email, password));    
+    const isUser = await dispatch(fetchUser(email, password))
+    if(isUser) {
+        setEmail(null)
+        setPwd(null)
+        navigate(-1)
+    }
   }
 
   if(user){

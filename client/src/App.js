@@ -12,19 +12,18 @@ import LoginForm from './components/LoginForm';
 import BuyAnimation from './components/BuyAnimation';
 import ScrollToTop from './components/ScrollToTop';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserStatus, userSelector, updateUserCart } from './slices/user';
+import { getUserStatus, userSelector, updateCart } from './slices/user';
+import { cartSelector } from './slices/cart';
 
 export const CartContext = createContext();
-const API = 'http://localhost:5000/api';
-//const API = 'https://shopping-cart-a2.onrender.com/api'
+//const API = 'http://localhost:5000/api';
+const API = 'https://shopping-cart-a2.onrender.com/api'
 
 function App() {
 
   const dispatch = useDispatch()
 
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [productsInCart, setProductsInCar] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const {productsInCart} = useSelector(cartSelector)
   const {user} = useSelector(userSelector)
   /*Estado para mostrar animación de botón BUY */
   const [showAnimation, setShowAnimation] = useState(false)
@@ -34,48 +33,6 @@ function App() {
   const [globalUpdatedProducts, setGlobalUpdatedProducts] = useState(structuredClone(productsData))
   /*Sirve para actualizar reviews apenas se haga un post */
   const [updateReviews, setUpdateReviews] = useState(false)
-
-  const checkIfProductAlreadyInCar = (productId) => {
-    return productsInCart.some(product => product.id === productId);
-  }
-
-  const addCurrentProductQuantity = (newQuantity, productId) => {
-    const productsHelper = structuredClone(productsInCart)
-    const productIndex = productsHelper.findIndex(product => product.id === productId)
-    productsHelper[productIndex].quantity += newQuantity
-    setProductsInCar([...productsHelper]);
-  }
-
-  const changeTotalPrice = () => {
-    setTotalPrice(productsInCart.reduce((acc, current) => acc + current.quantity*current.price, 0));
-  }
-
-  const updateTotalProductInCard = () => {
-    setTotalProducts(productsInCart.reduce((acc, current) => acc + current.quantity, 0))
-  }
-
-  const addProduct = (numberOfProducts, id) => {
-    if(checkIfProductAlreadyInCar(id)){
-      addCurrentProductQuantity(numberOfProducts, id)
-    } else {
-      /*usar [...] crea SHALLOW COPY del arreglo pero las referencias a los objetos siguen presente. */
-      /*Por esta razón se debe aplicar DEEP COPY */
-      let helper = structuredClone(productsData)
-      const product = helper.filter(product => product.id === id)[0];
-      product.quantity = numberOfProducts;
-      setProductsInCar([...productsInCart, product])
-    }
-  }
-
-  const removeProduct = (id) => {
-    setProductsInCar(oldArray => oldArray.filter(product => product.id !== id))
-  } 
-
-  useEffect(() => {
-    changeTotalPrice();
-    updateTotalProductInCard();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changeTotalPrice, productsInCart])
 
   const getAverageRating = (reviews, products) => {
     const reviewsById = reviews.reduce((acc, current) => {
@@ -120,13 +77,28 @@ function App() {
 
   useEffect(() => {
     if(!user) return undefined
-    dispatch(updateUserCart(productsInCart, user))
+    fetch(`${API}/update_user_cart`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({productsInCart})
+    }).then(() => {
+      dispatch(updateCart({newCart: productsInCart}))
+    })
   }, [productsInCart])
 
-  const cartContextValue = {productsInCart, totalPrice, totalProducts,
-    addProduct, removeProduct, user, API, setProductsInCar, 
-    setGlobalUpdatedProducts, globalUpdatedProducts, setUpdateReviews,
-    isLoading, setIsLoading, showAnimation, setShowAnimation
+  const cartContextValue = {
+    user, 
+    API, 
+    setGlobalUpdatedProducts, 
+    globalUpdatedProducts, 
+    setUpdateReviews,
+    isLoading, 
+    setIsLoading, 
+    showAnimation, 
+    setShowAnimation
   }
 
   return (

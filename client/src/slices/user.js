@@ -1,5 +1,6 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { productsDataObject } from "../assets/constants";
+import { serveUserCart } from "./cart";
 
 const API = 'http://localhost:5000/api';
 
@@ -8,7 +9,6 @@ export const initialState = {
     user: null,
     validationErrors: [],
     hasErrors: false,
-    productsInCart: [],
 }
 
 export const userSlice = createSlice({
@@ -23,13 +23,11 @@ export const userSlice = createSlice({
             state.isLoading = false
             state.hasErrors = false
             state.validationErrors = []
-            state.productsInCart = payload.userCart
         },
         setValidationErrors: (state, {payload}) => {
             state.validationErrors = payload
             state.isLoading = false
             state.user = null
-            state.productsInCart = []
             state.hasErrors = false
         }
         ,
@@ -37,13 +35,14 @@ export const userSlice = createSlice({
             state.isLoading = false
             state.hasErrors = true
         },
-        updateCart: (state, {payload}) => {
-            state.user.cart = payload.userCart
-            state.productsInCart = payload.userCart
+        updateCart: (state,{payload}) => {
+            state.user.cart = payload.newCart
+        },
+        updateReviews: (state, {payload}) => {
+            state.user = payload.updatedUser
         },
         logout: (state) => {
             state.user = null
-            state.productsInCart = []
         }
     }
 })
@@ -54,6 +53,7 @@ export const {
     getUserSuccess, 
     setValidationErrors,
     updateCart,
+    updateReviews,
     logout
 } = userSlice.actions
 
@@ -92,8 +92,11 @@ export function fetchUser(email, password) {
             if(!Array.isArray(user)){
                 const userCart = setCart(user.cart)
                 dispatch(getUserSuccess({user, userCart}))
+                dispatch(serveUserCart({userCart}))
+                return true
             } else {
                 dispatch(setValidationErrors(user))
+                return false
             }
         } catch (error) {
             dispatch(getUserFailure())
@@ -114,26 +117,8 @@ export const getUserStatus = () => {
 
         const payload = user ? {user, userCart: setCart(user.cart)} : {user, userCart: []}
         dispatch(getUserSuccess(payload))
+        dispatch(serveUserCart(payload))
 
-    }
-}
-
-export const updateUserCart = (productsInCart, user) => {
-    return async (dispatch) => {
-        const response = await fetch(`${API}/update_user_cart`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({productsInCart})
-        })
-
-        const userUpdated = await response.json()
-
-        if(userUpdated.constructor === Object){
-            dispatch(updateCart({user, userCart:userUpdated.cart}))
-        }
     }
 }
 

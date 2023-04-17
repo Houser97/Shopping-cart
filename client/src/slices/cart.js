@@ -15,9 +15,7 @@ const addProductQuantity = (state, newQuantity, productId) => {
 
 const changeTotalPrice = (productsInCart) => productsInCart.reduce((acc, current) => acc + current.quantity*current.price, 0);
 
-
 const updateTotalProductInCard = (productsInCart) => productsInCart.reduce((acc, current) => acc + current.quantity, 0)
-
 
 const initialState = {
     productsInCart: [],
@@ -42,7 +40,6 @@ const cartSlice = createSlice({
           let helper = structuredClone(productsData)
           const product = helper.filter(product => product.id === id)[0];
           product.quantity = numberOfProducts;
-          console.log(product.quantity)
           state.productsInCart = [...state.productsInCart, product]
           state.totalPrice = changeTotalPrice([...state.productsInCart])
           state.totalProducts = updateTotalProductInCard([...state.productsInCart])
@@ -62,7 +59,6 @@ const cartSlice = createSlice({
       },
       serveUserCart: (state, {payload}) => {
         const {userCart} = payload
-        console.log(userCart)
         state.productsInCart = userCart
         state.totalPrice = changeTotalPrice([...userCart])
         state.totalProducts = updateTotalProductInCard([...userCart])

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useTotalReviewMessage from '../hooks/useTotalReviewMessage'
@@ -13,11 +13,16 @@ const ProductData = () => {
 
     const { products } = useSelector(productsSelector);
 
+    // Estado que contendrá la data del producto según el id recuperado.
     const [product, setProduct] = useState(null);
+
     const [isLoadingProductData, setIsLoadingProductData] = useState(true);
+    //Estado para guardar las reviews del producto.
     const [localReviews, setLocalReviews] = useState([])
+    //Se recupera el id del item correspondiente.
     const {id} = useParams();
 
+    //Hook creado para manejar plural de palabra Review y mostrar cuantas reviews hay en el componente.
     const totalReviewsMessage = useTotalReviewMessage(product ? product.reviewsCount : undefined)
 
     useEffect(() => {
@@ -28,6 +33,7 @@ const ProductData = () => {
     }, [products])
 
     useEffect(() => {
+      //Se da un tiempo para que la aplicación llene la página con los datos correspondientes.
       if(product){
         setTimeout(() => {
           setIsLoadingProductData(false)

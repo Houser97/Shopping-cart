@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom'
 import { CartContext } from '../App';
+import { productsSelector, updateProducts } from '../slices/products';
 import { updateReviews, userSelector } from '../slices/user';
 import LoadingV2 from './LoadingV2';
 import StarRate from './StarRate'
@@ -9,7 +10,10 @@ import StarRate from './StarRate'
 const ReviewForm = () => {
 
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+
+    const { user } = useSelector(userSelector);
+    const { products } = useSelector(productsSelector)
 
     const [userReview, setUserReview] = useState(null)
 
@@ -22,17 +26,16 @@ const ReviewForm = () => {
 
     const {id, edit} = useParams()
     const API = useContext(CartContext).API;
-    const { user } = useSelector(userSelector);
-    const updatedProducts = useContext(CartContext).globalUpdatedProducts;
+
     /*Permite llamar a la base de datos para actualizar reviews después de publicar una. */
     const setUpdateReviews = useContext(CartContext).setUpdateReviews;
     /*Estado que guardará los datos de la review del usuario para poder hacer edit*/
 
     useEffect(() => {
-        const currentProduct = updatedProducts.filter(product => product.id === parseInt(id))[0]
+        const currentProduct = products.filter(product => product.id === parseInt(id))[0]
         setItem(currentProduct)
         setLocalReviews(currentProduct.reviews)
-    }, [updatedProducts])
+    }, [products])
 
     /*useEffect que asigna si ya se hizo review o recupera datos de review para poder hacer edit */
     useEffect(() => {
@@ -67,7 +70,7 @@ const ReviewForm = () => {
         .then(data => {
             setIsLoading(false)
             if(data){
-                setUpdateReviews(prev => !prev)
+                dispatch(updateProducts())
                 /*Se modifica user localmente para no tener que hacer fetch nuevamente.*/
                 const updatedUser = structuredClone(user)
                 updatedUser.reviews.push(parseInt(id))
@@ -100,7 +103,7 @@ const ReviewForm = () => {
         .then(data => {
             setIsLoading(false)
             if(data){
-                setUpdateReviews(prev => !prev)
+                dispatch(updateProducts())
                 navigate(-1)
             }
         })

@@ -1,28 +1,29 @@
 import Card from './Card';
-import { productsData } from '../assets/constants';
 import ShopFilter from './ShopFilter';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { CartContext } from '../App';
 import Loading from './Loading';
+import { useSelector } from 'react-redux';
+import { productsSelector } from '../slices/products';
 
 export const FilterShopContext = createContext();
 
 const Shop = () => {
 
-    const updatedProducts = useContext(CartContext).globalUpdatedProducts
+    const { products } = useSelector(productsSelector);
     const isLoading = useContext(CartContext).isLoading
 
     const [filter, setFilter] = useState({category: 'all', price: 500});
-    const [itemsToShow, setItemsToShow] = useState(structuredClone(updatedProducts))
+    const [itemsToShow, setItemsToShow] = useState(structuredClone(products))
 
     useEffect(() => {
-        const productsDataCopy = structuredClone(updatedProducts)
+        const productsDataCopy = structuredClone(products)
         if(filter.category !== 'all'){
             setItemsToShow(productsDataCopy.filter(product => product.categories.includes(filter.category) && product.price <= filter.price))
         } else {
             setItemsToShow(productsDataCopy.filter(product => product.price <= filter.price))
         }
-    }, [updatedProducts, filter.price, filter.category])
+    }, [products, filter.price, filter.category])
     
     const contextProvider = {setFilter, filter}
 

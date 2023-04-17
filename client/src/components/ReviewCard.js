@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { CartContext } from '../App'
+import { updateProducts } from '../slices/products'
 import { updateReviews, userSelector } from '../slices/user'
 import StarRate from './StarRate'
 
@@ -24,6 +25,10 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
             secondarySet.delete(user.id)
         }
     }
+
+    useEffect(()=> {
+        console.log(localLikes)
+    },[localLikes])
     
     const updateReviewLikes = (e) => {
         const isLike = e.target.getAttribute('data') === 'like'
@@ -41,6 +46,7 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
         
         fetch(`${API}/update_review`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -55,8 +61,7 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
                 likes: Array.from(likesSet)
             })
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(() => {
             setLocalLikes(likesSet);
             setLocalDislikes(dislikesSet);
         })
@@ -74,7 +79,7 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
         .then(data => data.json())
         .then(data => {
             if(data){
-                setUpdateReviews(prev => !prev)
+                dispatch(updateProducts())
                 /*Se actualiza el arreglo reviews en user para evitar hacer fetch */
                 /*Se trabaja con la variable de usuario local para no tener que recuperar el usuario del servidor. */
                 const updatedUser = structuredClone(user);

@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
-import { CartContext } from '../App'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { cartSelector } from '../slices/cart'
 import '../styles/CartIcon.css'
 
 const CartIcon = ({toggle,setToggleCart}) => {
-  const totalProducts = useContext(CartContext).totalProducts;
+  const {totalProducts} = useSelector(cartSelector)
   return (
     <div className={`cart-icon-header-number ${toggle? 'open':''}`} onClick={() => setToggleCart(prev => !prev)}>
         <div className='number-cart-header'>{totalProducts}</div>

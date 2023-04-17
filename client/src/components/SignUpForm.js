@@ -1,25 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../App';
+import { getUser, getUserSuccess, setValidationErrors, userSelector } from '../slices/user';
 import LoadingV2 from './LoadingV2';
 import LoginMessage from './LoginMessage';
 
 const SignUpForm = () => {
+
+    const dispatch = useDispatch()
 
     const [email, setEmail] = useState(null);
     const [pwd, setPwd] = useState(null);
     const [repeatPwd, setRepeatPwd] = useState(null);
     const [pwdMatch, setPwdMatch] = useState(true);
     const [username, setUsername] = useState(null);
-    const [validationErrors, setValidationErrors] = useState([]);
+
     //Estados para indicar que mayús está activa
     const [isMayusActive, setIsMayusActive] = useState(false)
     const [selectedPwdInput, setSelectedPwdInput] = useState(null)
 
-    const [isLoading, setIsLoading] = useState(false)
-
-    const user = useContext(CartContext).user;
-    const setUser = useContext(CartContext).setUser;
+    const { user, validationErrors, isLoading } = useSelector(userSelector);
     const API = useContext(CartContext).API;
 
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ const SignUpForm = () => {
     }
 
     const handleSubmit = (e) => {
-        setIsLoading(true)    
+        dispatch(getUser())   
         e.preventDefault();
         if(pwdMatch){
             fetch(`${API}/create_user`, {
@@ -46,17 +47,17 @@ const SignUpForm = () => {
             })
             .then(data => data.json())
             .then(data => {
-                setIsLoading(false)
                 if(Array.isArray(data)){
-                    setValidationErrors(data)
+                    dispatch(setValidationErrors(data))
                 }
                 else {
-                    setUser(data);
+                    dispatch(getUserSuccess({user: data}))
                     navigate(-1);
                 }
             })
         } else {
-            setValidationErrors([{msg:'Passwords do not match.'}])
+            const message = [{msg:'Passwords do not match.'}]
+            dispatch(setValidationErrors(message))
         }
     }
 

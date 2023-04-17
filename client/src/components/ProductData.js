@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { CartContext } from '../App'
 import useTotalReviewMessage from '../hooks/useTotalReviewMessage'
+import { productsSelector } from '../slices/products'
 import '../styles/ProductData.css'
 import Loading from './Loading'
 import ProductBtns from './ProductBtns'
@@ -9,18 +10,22 @@ import ReviewCard from './ReviewCard'
 import StarRate from './StarRate'
 
 const ProductData = () => {
+
+    const { products } = useSelector(productsSelector);
+
     const [product, setProduct] = useState(null);
     const [isLoadingProductData, setIsLoadingProductData] = useState(true);
     const [localReviews, setLocalReviews] = useState([])
     const {id} = useParams();
-    const updatedProducts = useContext(CartContext).globalUpdatedProducts;
+
     const totalReviewsMessage = useTotalReviewMessage(product ? product.reviewsCount : undefined)
 
     useEffect(() => {
-      const currentProduct = updatedProducts.filter(product => product.id === parseInt(id))[0]
+      if(!products.length) return undefined
+      const currentProduct = products.filter(product => product.id === parseInt(id))[0]
       setProduct(currentProduct)  
       setLocalReviews(currentProduct.reviews)  
-    }, [updatedProducts])
+    }, [products])
 
     useEffect(() => {
       if(product){

@@ -1,4 +1,4 @@
-# Shopping-Cart App using React, NodeJS, MongoDB, Passport and Tailwind
+# Shopping-Cart App using React, Redux, NodeJS, MongoDB, Passport and Tailwind
 
 <p align="center">
   <img src="assets/HomeLog.PNG">

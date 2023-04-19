@@ -32,6 +32,7 @@ const ReviewForm = () => {
     /*Estado que guardará los datos de la review del usuario para poder hacer edit*/
 
     useEffect(() => {
+        if(!products.length) return undefined
         const currentProduct = products.filter(product => product.id === parseInt(id))[0]
         setItem(currentProduct)
         setLocalReviews(currentProduct.reviews)

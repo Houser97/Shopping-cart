@@ -6,7 +6,7 @@ const StarRate = ({product, isCustomizable, rating, setRating}) => {
     const [localRating, setLocalRating] = useState(rating)
 
     const attributes = {
-      type: isCustomizable ? 'radio':'checkbox',
+      type: 'radio',
       class: isCustomizable ? 'customizable' : '',
       name: isCustomizable ? 'rating' : product,
     }

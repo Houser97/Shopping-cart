@@ -14,6 +14,7 @@ import ScrollToTop from './components/ScrollToTop';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserStatus, userSelector, updateCart } from './slices/user';
 import { cartSelector } from './slices/cart';
+import { productsSelector, setProducts } from './slices/products';
 
 export const CartContext = createContext();
 //const API = 'http://localhost:5000/api';
@@ -23,19 +24,18 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const {productsInCart} = useSelector(cartSelector)
-  const {user} = useSelector(userSelector)
+  const { productsInCart } = useSelector(cartSelector)
+  const { user } = useSelector(userSelector)
+  //Valor Redux que se usa para activar useEffect y recuperar nuevas Reviews.
+  const { updateProducts } = useSelector(productsSelector)
   /*Estado para mostrar animación de botón BUY */
   const [showAnimation, setShowAnimation] = useState(false)
   
   const [isLoading, setIsLoading] = useState(true)
-  /*Estado con estructura general de productos con rating actualizado. */
-  const [globalUpdatedProducts, setGlobalUpdatedProducts] = useState(structuredClone(productsData))
-  /*Sirve para actualizar reviews apenas se haga un post */
-  const [updateReviews, setUpdateReviews] = useState(false)
 
   const getAverageRating = (reviews, products) => {
     const reviewsById = reviews.reduce((acc, current) => {
+      //Se crea objeto con las reviews, en donde la llave es el id del item correspondiente.
         if(!acc[current.item]){
             acc[current.item] = {count: 0, sum: 0, reviews: []}
         }
@@ -58,6 +58,7 @@ function App() {
     })
 
     setIsLoading(false)
+    dispatch(setProducts({updatedProducts}))
     return updatedProducts
   }
 
@@ -66,9 +67,9 @@ function App() {
     fetch(`${API}/get_reviews`)
     .then(data => data.json())
     .then(reviews => {
-        setGlobalUpdatedProducts(getAverageRating(reviews, structuredClone(productsData)));
+        getAverageRating(reviews, structuredClone(productsData));
     })
-  }, [updateReviews]) 
+  }, [updateProducts]) 
 
   /*Obtener sesión del usuario si es que se refresca aplicación. */
   useEffect(() => {
@@ -90,11 +91,7 @@ function App() {
   }, [productsInCart])
 
   const cartContextValue = {
-    user, 
     API, 
-    setGlobalUpdatedProducts, 
-    globalUpdatedProducts, 
-    setUpdateReviews,
     isLoading, 
     setIsLoading, 
     showAnimation, 

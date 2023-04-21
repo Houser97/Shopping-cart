@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { productsDataObject } from "../assets/constants";
+import { API, productsDataObject } from "../assets/constants";
 import { serveUserCart } from "./cart";
-
-const API = 'http://localhost:5000/api';
 
 export const initialState = {
     isLoading: false,

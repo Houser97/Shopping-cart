@@ -4,7 +4,7 @@ import Home from './components/Home';
 import Shop from './components/Shop';
 import {useState, createContext, useEffect} from "react";
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import { productsData, productsDataObject } from './assets/constants';
+import { productsData, API } from './assets/constants';
 import ProductData from './components/ProductData';
 import ReviewForm from './components/ReviewForm';
 import SignUpForm from './components/SignUpForm';
@@ -17,8 +17,6 @@ import { cartSelector } from './slices/cart';
 import { productsSelector, setProducts } from './slices/products';
 
 export const CartContext = createContext();
-//const API = 'http://localhost:5000/api';
-const API = 'https://shopping-cart-a2.onrender.com/api'
 
 function App() {
 

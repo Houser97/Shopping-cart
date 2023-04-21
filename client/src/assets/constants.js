@@ -40,6 +40,8 @@ export const productsData = [
     {image:Hat,    name: "Fisherman Hat",    price: 30,  id:13, categories:['Clothes'], rating: 0, reviews: []}
 ]
 
+export const API = 'https://shopping-cart-a2.onrender.com/api';
+
 export const productsDataObject = productsData.reduce((acc,product) => {
     acc[product.id] = {
         image:product.image,   

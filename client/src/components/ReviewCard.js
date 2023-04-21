@@ -12,7 +12,6 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
 
     const API = useContext(CartContext).API
     const { user } = useSelector(userSelector)
-    const setUpdateReviews = useContext(CartContext).setUpdateReviews
     /*Estados LOCAL ayudan a actualizar interfaz sin tener que refrescar página para recuperar REVIEWS de DB. */
     const [localLikes, setLocalLikes] = useState(new Set(likes))
     const [localDislikes, setLocalDislikes] = useState(new Set(dislikes));
@@ -25,10 +24,6 @@ const ReviewCard = ({likes, dislikes, comment, author, rating, date ,formatted_d
             secondarySet.delete(user.id)
         }
     }
-
-    useEffect(()=> {
-        console.log(localLikes)
-    },[localLikes])
     
     const updateReviewLikes = (e) => {
         const isLike = e.target.getAttribute('data') === 'like'

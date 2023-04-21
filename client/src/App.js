@@ -58,6 +58,7 @@ function App() {
     })
 
     setIsLoading(false)
+    //Se actualiza el objeto de productos que contiene campos de REVIEWS y RATING.
     dispatch(setProducts({updatedProducts}))
     return updatedProducts
   }

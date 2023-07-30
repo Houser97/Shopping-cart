@@ -47,7 +47,7 @@ const ProductData = () => {
         isLoadingProductData ? 
         <Loading /> 
         :
-            <div className='flex justify-center items-center bg-[var(--blue-color)] w-full py-28 px-2 sm:px-8 md:px-14'>
+            <div className='flex justify-center items-center bg-[var(--blue-color)] w-full min-h-screen py-28 px-2 sm:px-8 md:px-14'>
               <div className='flex flex-col bg-white rounded-lg w-full p-2 sm:p-6'>
                 <div className='grid auto-rows-auto grid-cols-1 2sm:grid-cols-[minmax(200px,max-content),minmax(250px,1fr)] gap-3 mb-14'>
                   <img className='max-w-[300px] w-full justify-self-center self-center' src={product ? product.image : ''}></img>

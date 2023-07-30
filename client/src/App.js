@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUserStatus, userSelector, updateCart } from './slices/user';
 import { cartSelector } from './slices/cart';
 import { productsSelector, setProducts } from './slices/products';
+import Loading from './components/Loading';
 
 export const CartContext = createContext();
 
@@ -101,18 +102,25 @@ function App() {
     <BrowserRouter basename='/'>
       <CartContext.Provider value = {cartContextValue}>
         <div className="App">
-          <BuyAnimation />
-          <Header />
-          <ScrollToTop>
-            <Routes>
-                <Route path="/" element = {<Home />} />
-                <Route path="/shop" element = {<Shop />} />
-                <Route path="/product/:id" element = {<ProductData />} />
-                <Route path="/:id/:edit/review" element = {<ReviewForm />} />
-                <Route path="/sign-up" element = {<SignUpForm />} />
-                <Route path="/login" element = {<LoginForm />} />
-            </Routes>
-          </ScrollToTop>
+          {
+            isLoading 
+            ? <Loading />
+            :
+            <>
+              <BuyAnimation />
+              <Header />
+              <ScrollToTop>
+                <Routes>
+                    <Route path="/" element = {<Home />} />
+                    <Route path="/shop" element = {<Shop />} />
+                    <Route path="/product/:id" element = {<ProductData />} />
+                    <Route path="/:id/:edit/review" element = {<ReviewForm />} />
+                    <Route path="/sign-up" element = {<SignUpForm />} />
+                    <Route path="/login" element = {<LoginForm />} />
+                </Routes>
+              </ScrollToTop>
+            </>
+          }
         </div>
       </CartContext.Provider>
     </BrowserRouter>

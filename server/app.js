@@ -16,14 +16,15 @@ const apiRouter = require('./routes/api');
 
 var app = express();
 
-if(process.env.NODE_ENV !== 'production'){
-  require('dotenv').config();
-  const cors = require('cors');
-  app.use(  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  }))
-}
+const origin = process.NODE_ENV !== 'production' ? "http://localhost:3000" : "https://houser97.github.io/Shopping-cart/"
+
+require('dotenv').config();
+const cors = require('cors');
+app.use(  cors({
+  origin,
+  credentials: true,
+}))
+
 
 const MongoDB = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.cjswbgn.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`
 mongoose.connect(MongoDB, {useNewUrlParser: true, useUnifiedTopology: true});

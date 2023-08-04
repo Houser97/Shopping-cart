@@ -1,5 +1,6 @@
 {
   "name": "shopping-cart",
+  "homepage": "http://houser97.github.io/Shopping-Cart",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

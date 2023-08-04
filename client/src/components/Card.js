@@ -29,7 +29,7 @@ const Card = ({image, name, price, id, isLazy, rating, reviewsCount}) => {
     
     return(
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] grid-rows-[repeat(auto-fit,minmax(0px,max-content))] 
-        auto-rows-fr w-full h-full gap-2 gap-x-6 p-2 relative bg-white shadow-cardShadow 2sm:grid-cols-[max-content_minmax(300px,1fr)]">
+        auto-rows-fr w-full h-full gap-2 gap-x-6 p-2 relative bg-white shadow-cardShadow 2sm:grid-cols-[max-content_auto]">
             <div className='flex flex-row justify-center items-center absolute top-[-15px] left-[-15px] bg-[var(--yellow-color)] w-16 h-16 
             rounded-full text-xl font-bold text-black'>${price}</div>
             <Link className='justify-self-center self-center' to={`/product/${id}`}>

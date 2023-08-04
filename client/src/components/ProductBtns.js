@@ -22,7 +22,7 @@ const ProductBtns = ({productId, reduceState = {numberOfProducts: 1}}) => {
             <Link className={`justify-center bg-[var(--blue-color)] font-bold rounded-lg text-white w-24 p-2 text-center ${user.reviews.includes(productId) ? 'hidden':'flex'}`} to={`/${productId}/0/review`}>Review</Link>
           </div>
           :
-          <div className='text-lg font-bold text-center w-full 2sm:text-2xl'>
+          <div className='text-lg font-bold text-center min-w-full 2sm:text-2xl'>
             Sign in to add and review products
           </div>
       }

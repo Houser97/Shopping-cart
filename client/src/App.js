@@ -99,7 +99,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter basename='/Shopping-Cart'>
+    <BrowserRouter basename='/Shopping-cart'>
       <CartContext.Provider value = {cartContextValue}>
         <div className="App">
           {

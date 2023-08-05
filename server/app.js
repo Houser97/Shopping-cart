@@ -16,13 +16,11 @@ const apiRouter = require('./routes/api');
 
 var app = express();
 
-const origin = process.NODE_ENV !== 'production' ? "http://localhost:3000" : "https://houser97.github.io/Shopping-cart/"
-
-if(process.NODE_ENV !== 'production'){
+if(process.env.NODE_ENV !== 'production'){
   require('dotenv').config();
   const cors = require('cors');
   app.use(  cors({
-    origin,
+    origin: "http://localhost:3000",
     credentials: true,
   }))
 }

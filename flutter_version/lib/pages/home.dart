@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_version/widgets/categories.dart';
 import 'package:flutter_version/widgets/hero_card.dart';
 import 'package:flutter_version/widgets/search.dart';
 
@@ -7,10 +8,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
+    return Scaffold(
+      body: const SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -28,10 +29,30 @@ class HomePage extends StatelessWidget {
               SizedBox(
                 height: 30,
               ),
-              HeroCard()
+              HeroCard(),
+              SizedBox(
+                height: 10,
+              ),
+              Categories()
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          )
+        ],
       ),
     );
   }

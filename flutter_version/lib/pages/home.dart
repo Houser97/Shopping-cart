@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_version/widgets/HeroCard.dart';
-import 'package:flutter_version/widgets/Search.dart';
+import 'package:flutter_version/widgets/hero_card.dart';
+import 'package:flutter_version/widgets/search.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

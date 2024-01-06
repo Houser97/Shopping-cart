@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 
 class ProductDetails extends StatelessWidget {
-  const ProductDetails({super.key});
+  final String image;
+  final String title;
+  final double price;
+  final double rating;
+  const ProductDetails({
+    super.key,
+    required this.image,
+    required this.price,
+    required this.rating,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -13,13 +24,13 @@ class ProductDetails extends StatelessWidget {
             children: [
               SizedBox(
                 width: double.infinity,
-                child: Image.asset('assets/images/xbox.png'),
+                child: Image.asset(image),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text(
-                    'Xbox series X',
+                    title,
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black,
@@ -52,24 +63,30 @@ class ProductDetails extends StatelessWidget {
                       border: Border.all(width: 1, color: Colors.grey),
                     ),
                     child: Row(children: [
-                      Icon(
+                      const Icon(
                         Icons.star,
                         size: 18.0,
                         color: Colors.orangeAccent,
                       ),
-                      Text('4.8')
+                      Text('$rating')
                     ]),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
-                  Text('117 Reviews')
+                  const Text('117 Reviews')
                 ],
               ),
               Row(
                 children: [
-                  Text('\$200'),
-                  SizedBox(
+                  Text(
+                    '\$$price',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(
                     width: 30,
                   ),
                   Expanded(
@@ -83,7 +100,7 @@ class ProductDetails extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Add to Cart',
                         style: TextStyle(
                           color: Colors.white,

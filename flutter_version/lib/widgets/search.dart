@@ -5,7 +5,7 @@ class Search extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const fillColor = Color.fromARGB(241, 243, 242, 255);
+    const fillColor = Color.fromRGBO(240, 242, 241, 1);
 
     const border = OutlineInputBorder(
       borderSide: BorderSide(color: fillColor),

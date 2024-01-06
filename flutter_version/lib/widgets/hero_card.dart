@@ -14,59 +14,59 @@ class HeroCard extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          height: 190, // Altura de la carta
+          height: 140, // Altura de la carta
           width: double.infinity,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 15),
           decoration: BoxDecoration(
             color: greenColor,
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Clearance \nSales',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Clearance \nSales',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(50),
+                  ),
+                  color: Colors.white,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 12,
+                ),
+                child: const Text(
+                  '% Up to 50%',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+                    color: greenColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(50),
-                    ),
-                    color: Colors.white,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 5,
-                    horizontal: 20,
-                  ),
-                  child: const Text(
-                    '% Up to 50%',
-                    style: TextStyle(
-                      color: greenColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
         Positioned(
-          bottom: -20,
-          right: -10,
+          bottom: 0,
+          right: 5,
           child: Image.asset(
-            'assets/images/iphone.png',
+            'assets/images/iPhoneHero.png',
             fit: BoxFit.fitWidth,
-            height: 240,
+            height: 153,
           ),
         ),
       ],

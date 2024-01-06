@@ -14,7 +14,7 @@ class HeroCard extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          height: 200, // Altura de la carta
+          height: 190, // Altura de la carta
           width: double.infinity,
           decoration: BoxDecoration(
             color: greenColor,
@@ -45,7 +45,7 @@ class HeroCard extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 5,
-                    horizontal: 40,
+                    horizontal: 20,
                   ),
                   child: const Text(
                     '% Up to 50%',
@@ -62,11 +62,11 @@ class HeroCard extends StatelessWidget {
         ),
         Positioned(
           bottom: -20,
-          right: 0,
+          right: -10,
           child: Image.asset(
-            'assets/images/iPhone.png',
+            'assets/images/iphone.png',
             fit: BoxFit.fitWidth,
-            height: 260,
+            height: 240,
           ),
         ),
       ],

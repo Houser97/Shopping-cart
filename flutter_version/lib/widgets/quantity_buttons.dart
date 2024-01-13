@@ -5,11 +5,12 @@ class QuantityButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double buttonsSize = 35;
     return Row(
       children: [
         SizedBox(
-          height: 40,
-          width: 40,
+          height: buttonsSize,
+          width: buttonsSize,
           child: AspectRatio(
             aspectRatio: 1,
             child: TextButton(
@@ -38,15 +39,15 @@ class QuantityButtons extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          width: 5,
+          width: 6,
         ),
         Text('1'),
         const SizedBox(
-          width: 5,
+          width: 6,
         ),
         SizedBox(
-          height: 40,
-          width: 40,
+          height: buttonsSize,
+          width: buttonsSize,
           child: AspectRatio(
             aspectRatio: 1,
             child: TextButton(

@@ -10,6 +10,7 @@ class Cart extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ListView.builder(
@@ -25,7 +26,17 @@ class Cart extends StatelessWidget {
                     );
                   }),
             ),
-            SizedBox(
+            const SizedBox(
+              height: 10,
+            ),
+            const Text(
+              'Total: \$1304',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
+              ),
+            ),
+            const SizedBox(
               height: 10,
             ),
             SizedBox(

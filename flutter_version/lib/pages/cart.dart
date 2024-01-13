@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_version/widgets/constants.dart';
 import 'package:flutter_version/widgets/product_cart.dart';
 
 class Cart extends StatelessWidget {
@@ -6,44 +7,19 @@ class Cart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            ProductCart(
-              image: 'assets/images/xbox.png',
-              title: 'Xbox',
-              price: 320.0,
-            ),
-            ProductCart(
-              image: 'assets/images/mouse.png',
-              title: 'Xbox',
-              price: 320.0,
-            ),
-            ProductCart(
-              image: 'assets/images/mac.png',
-              title: 'Xbox',
-              price: 320.0,
-            ),
-            ProductCart(
-              image: 'assets/images/headphones.png',
-              title: 'Xbox',
-              price: 320.0,
-            ),
-            ProductCart(
-              image: 'assets/images/airpods.png',
-              title: 'Xbox',
-              price: 320.0,
-            ),
-            ProductCart(
-              image: 'assets/images/iPhone.png',
-              title: 'Xbox',
-              price: 320.0,
-            ),
-          ],
-        ),
-      ),
-    );
+    return Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListView.builder(
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final title = products[index]['title'];
+              final price = products[index]['price'];
+              final image = products[index]['image'];
+              return ProductCart(
+                image: image as String,
+                title: title as String,
+                price: price as double,
+              );
+            }));
   }
 }

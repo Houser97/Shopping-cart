@@ -5,8 +5,30 @@ import 'package:flutter_version/widgets/hero_card.dart';
 import 'package:flutter_version/widgets/product_card.dart';
 import 'package:flutter_version/widgets/search.dart';
 
-class ProductList extends StatelessWidget {
+class ProductList extends StatefulWidget {
   const ProductList({super.key});
+
+  @override
+  State<ProductList> createState() => _ProductListState();
+}
+
+class _ProductListState extends State<ProductList> {
+  List<Map<String, dynamic>> filteredProducts = products;
+  String selectedFilter = 'All';
+
+  void updateProducts(String filter) {
+    setState(() {
+      selectedFilter = filter;
+      if (selectedFilter == 'All') {
+        filteredProducts = products;
+      } else {
+        filteredProducts = products
+            .where((product) => (product['categories'] as List<String>)
+                .contains(selectedFilter))
+            .toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +48,7 @@ class ProductList extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Search(),
+            const Search(),
             const SizedBox(
               height: 30,
             ),
@@ -34,7 +56,10 @@ class ProductList extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Categories(),
+            Categories(
+              updateProducts: updateProducts,
+              selectedCategory: selectedFilter,
+            ),
             const SizedBox(
               height: 10,
             ),
@@ -42,19 +67,19 @@ class ProductList extends StatelessWidget {
                 shrinkWrap:
                     true, // Le permite ocupar solo el espacio que necesita.
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: products.length,
+                itemCount: filteredProducts.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 2,
                   crossAxisSpacing: 15,
                   childAspectRatio: MediaQuery.of(context).size.width /
-                      (MediaQuery.of(context).size.height / 1.5),
+                      (MediaQuery.of(context).size.height / 1.3),
                 ),
                 itemBuilder: (context, index) {
-                  final title = products[index]['title'];
-                  final price = products[index]['price'];
-                  final rating = products[index]['rating'];
-                  final image = products[index]['image'];
+                  final title = filteredProducts[index]['title'];
+                  final price = filteredProducts[index]['price'];
+                  final rating = filteredProducts[index]['rating'];
+                  final image = filteredProducts[index]['image'];
                   return ProductCard(
                     title: title as String,
                     price: price as double,

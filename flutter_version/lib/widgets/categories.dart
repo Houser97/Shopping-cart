@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 
-class Categories extends StatefulWidget {
-  const Categories({super.key});
-
-  @override
-  State<Categories> createState() => _CategoriesState();
-}
-
-class _CategoriesState extends State<Categories> {
-  final categories = ['All', 'Smartphones', 'Laptops', 'Headphones'];
-  late String selectedCategory;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedCategory = categories[0];
-  }
+class Categories extends StatelessWidget {
+  final void Function(String) updateProducts;
+  final String selectedCategory;
+  const Categories(
+      {super.key,
+      required this.updateProducts,
+      required this.selectedCategory});
 
   @override
   Widget build(BuildContext context) {
+    const categories = ['All', 'Smartphones', 'Laptops', 'Headphones'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,9 +30,7 @@ class _CategoriesState extends State<Categories> {
                 final category = categories[index];
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      selectedCategory = category;
-                    });
+                    updateProducts(category);
                   },
                   child: Padding(
                     padding:

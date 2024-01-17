@@ -15,6 +15,10 @@ class ProductDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const space = SizedBox(
+      height: 10,
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -22,12 +26,14 @@ class ProductDetails extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SizedBox(
-                width: double.infinity,
-                child: Image.asset(image),
+              Expanded(
+                child: Image.asset(
+                  image,
+                ),
               ),
+              space,
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     title,
@@ -53,6 +59,7 @@ class ProductDetails extends StatelessWidget {
                   ),
                 ],
               ),
+              space,
               Row(
                 children: [
                   Container(
@@ -77,6 +84,10 @@ class ProductDetails extends StatelessWidget {
                   const Text('117 Reviews')
                 ],
               ),
+              space,
+              const Text(
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec non lorem id massa iaculis vestibulum. Vivamus nunc velit, pretium ac consequat eget, tempus laoreet lacus.'),
+              space,
               Row(
                 children: [
                   Text(

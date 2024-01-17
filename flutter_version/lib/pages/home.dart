@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentPage = 1;
+  int currentPage = 0;
 
   List<Widget> pages = const [
     ProductList(),
@@ -20,7 +20,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: currentPage == 0 ? ProductList() : Card()),
+      body: SafeArea(
+          child: currentPage == 0 ? const ProductList() : const Cart()),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentPage,
         onTap: (value) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_version/widgets/constants.dart';
 
 class Categories extends StatelessWidget {
   final void Function(String) updateProducts;
@@ -10,7 +11,6 @@ class Categories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const categories = ['All', 'Smartphones', 'Laptops', 'Headphones'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

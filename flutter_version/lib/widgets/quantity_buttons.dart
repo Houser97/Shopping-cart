@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class QuantityButtons extends StatelessWidget {
-  const QuantityButtons({super.key});
+  final void Function(bool) updateQuantity;
+  final int currentQty;
+  const QuantityButtons({
+    super.key,
+    required this.updateQuantity,
+    required this.currentQty,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +20,9 @@ class QuantityButtons extends StatelessWidget {
           child: AspectRatio(
             aspectRatio: 1,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                updateQuantity(false);
+              },
               style: TextButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                 shape: const RoundedRectangleBorder(
@@ -41,7 +49,7 @@ class QuantityButtons extends StatelessWidget {
         const SizedBox(
           width: 6,
         ),
-        Text('1'),
+        Text('$currentQty'),
         const SizedBox(
           width: 6,
         ),
@@ -51,7 +59,9 @@ class QuantityButtons extends StatelessWidget {
           child: AspectRatio(
             aspectRatio: 1,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                updateQuantity(true);
+              },
               style: TextButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                 shape: RoundedRectangleBorder(

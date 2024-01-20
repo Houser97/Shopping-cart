@@ -1,33 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_version/widgets/quantity_buttons.dart';
 
-class ProductCart extends StatefulWidget {
+class ProductCart extends StatelessWidget {
   final String image;
   final String title;
   final double price;
+  final int currentQty;
+  final void Function(bool) updateQuantity;
   const ProductCart({
     super.key,
     required this.image,
     required this.title,
     required this.price,
+    required this.currentQty,
+    required this.updateQuantity,
   });
-
-  @override
-  State<ProductCart> createState() => _ProductCartState();
-}
-
-class _ProductCartState extends State<ProductCart> {
-  int currentQty = 1;
-
-  void updateQuantity(isSum) {
-    setState(() {
-      if (!isSum && currentQty > 1) {
-        currentQty -= 1;
-      } else if (isSum) {
-        currentQty += 1;
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +36,7 @@ class _ProductCartState extends State<ProductCart> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              widget.image,
+              image,
               height: 90,
             ),
           ),
@@ -64,7 +51,7 @@ class _ProductCartState extends State<ProductCart> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.title,
+                    title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 18,
@@ -74,7 +61,7 @@ class _ProductCartState extends State<ProductCart> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$${widget.price}',
+                        '\$$price',
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_version/widgets/quantity_buttons.dart';
 
-class ProductCart extends StatelessWidget {
+class ProductCart extends StatefulWidget {
   final String image;
   final String title;
   final double price;
@@ -11,6 +11,23 @@ class ProductCart extends StatelessWidget {
     required this.title,
     required this.price,
   });
+
+  @override
+  State<ProductCart> createState() => _ProductCartState();
+}
+
+class _ProductCartState extends State<ProductCart> {
+  int currentQty = 1;
+
+  void updateQuantity(isSum) {
+    setState(() {
+      if (!isSum && currentQty > 1) {
+        currentQty -= 1;
+      } else if (isSum) {
+        currentQty += 1;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +49,7 @@ class ProductCart extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              image,
+              widget.image,
               height: 90,
             ),
           ),
@@ -47,7 +64,7 @@ class ProductCart extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    title,
+                    widget.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 18,
@@ -57,13 +74,16 @@ class ProductCart extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$$price',
+                        '\$${widget.price}',
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
                         ),
                       ),
-                      const QuantityButtons(),
+                      QuantityButtons(
+                        updateQuantity: updateQuantity,
+                        currentQty: currentQty,
+                      ),
                     ],
                   )
                 ],

@@ -76,16 +76,8 @@ class _ProductListState extends State<ProductList> {
                       (MediaQuery.of(context).size.height / 1.3),
                 ),
                 itemBuilder: (context, index) {
-                  final title = filteredProducts[index]['title'];
-                  final price = filteredProducts[index]['price'];
-                  final rating = filteredProducts[index]['rating'];
-                  final image = filteredProducts[index]['image'];
-                  return ProductCard(
-                    title: title as String,
-                    price: price as double,
-                    image: image as String,
-                    rating: rating as double,
-                  );
+                  final product = filteredProducts[index];
+                  return ProductCard(product: product);
                 })
           ],
         ),

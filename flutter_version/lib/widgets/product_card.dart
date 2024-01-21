@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_version/pages/product_details.dart';
 
 class ProductCard extends StatelessWidget {
-  final String title;
-  final double price;
-  final double rating;
-  final String image;
+  final Map<String, dynamic> product;
   const ProductCard({
     super.key,
-    required this.title,
-    required this.price,
-    required this.image,
-    required this.rating,
+    required this.product,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String title = product['title'];
+    final double price = product['price'];
+    final double rating = product['rating'];
+    final String image = product['image'];
     return SizedBox(
       width: 140,
       child: Column(
@@ -25,7 +23,8 @@ class ProductCard extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return ProductDetails(
-                    image: image, price: price, rating: rating, title: title);
+                  product: product,
+                );
               }));
             },
             child: Container(

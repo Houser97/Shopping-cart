@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_version/provider/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetails extends StatelessWidget {
-  final String image;
-  final String title;
-  final double price;
-  final double rating;
+  final Map<String, dynamic> product;
   const ProductDetails({
     super.key,
-    required this.image,
-    required this.price,
-    required this.rating,
-    required this.title,
+    required this.product,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String title = product['title'];
+    final double price = product['price'];
+    final double rating = product['rating'];
+    final String image = product['image'];
+    final int id = product['id'];
+
+    void addProduct() {
+      Provider.of<CartProvider>(context, listen: false).addProduct({
+        'id': id,
+        'title': title,
+        'price': price,
+        'image': image,
+        'rating': rating,
+        'quantity': 1
+      });
+    }
+
     const space = SizedBox(
       height: 10,
     );
@@ -102,7 +115,9 @@ class ProductDetails extends StatelessWidget {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        addProduct();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         padding: const EdgeInsets.symmetric(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_version/provider/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class QuantityButtons extends StatelessWidget {
-  final void Function(bool) updateQuantity;
   final int currentQty;
+  final int productId;
   const QuantityButtons({
     super.key,
-    required this.updateQuantity,
     required this.currentQty,
+    required this.productId,
   });
 
   @override
@@ -21,7 +23,10 @@ class QuantityButtons extends StatelessWidget {
             aspectRatio: 1,
             child: TextButton(
               onPressed: () {
-                updateQuantity(false);
+                if (currentQty > 1) {
+                  Provider.of<CartProvider>(context, listen: false)
+                      .decreaseProductQuantity(productId);
+                }
               },
               style: TextButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -60,7 +65,8 @@ class QuantityButtons extends StatelessWidget {
             aspectRatio: 1,
             child: TextButton(
               onPressed: () {
-                updateQuantity(true);
+                Provider.of<CartProvider>(context, listen: false)
+                    .increaseProductQuantity(productId);
               },
               style: TextButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),

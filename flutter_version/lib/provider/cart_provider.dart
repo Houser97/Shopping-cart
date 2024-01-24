@@ -12,4 +12,20 @@ class CartProvider extends ChangeNotifier {
     cart.remove(product);
     notifyListeners();
   }
+
+  void increaseProductQuantity(int productId) {
+    Map<String, dynamic> product =
+        cart.firstWhere((element) => element['id'] == productId);
+
+    product['quantity'] += 1;
+    notifyListeners();
+  }
+
+  void decreaseProductQuantity(int productId) {
+    Map<String, dynamic> product =
+        cart.firstWhere((element) => element['id'] == productId);
+
+    product['quantity'] -= 1;
+    notifyListeners();
+  }
 }

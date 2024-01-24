@@ -10,6 +10,15 @@ class Cart extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>().cart;
 
+    double totalPrice = 0;
+
+    for (final product in cart) {
+      double price = product['price'];
+      int quantity = product['quantity'];
+
+      totalPrice += price * quantity;
+    }
+
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -36,9 +45,9 @@ class Cart extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            const Text(
-              'Total: \$100',
-              style: TextStyle(
+            Text(
+              'Total: \$$totalPrice',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 17,
               ),

@@ -3,17 +3,17 @@ import 'package:flutter_version/widgets/quantity_buttons.dart';
 
 class ProductCart extends StatelessWidget {
   final String image;
+  final int id;
   final String title;
   final double price;
   final int currentQty;
-  final void Function(bool) updateQuantity;
   const ProductCart({
     super.key,
     required this.image,
+    required this.id,
     required this.title,
     required this.price,
     required this.currentQty,
-    required this.updateQuantity,
   });
 
   @override
@@ -68,7 +68,7 @@ class ProductCart extends StatelessWidget {
                         ),
                       ),
                       QuantityButtons(
-                        updateQuantity: updateQuantity,
+                        productId: id,
                         currentQty: currentQty,
                       ),
                     ],

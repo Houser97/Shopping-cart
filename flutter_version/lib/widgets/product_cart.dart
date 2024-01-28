@@ -50,12 +50,31 @@ class ProductCart extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
+                        ),
+                      ),
+                      RawMaterialButton(
+                        onPressed: () {},
+                        constraints: const BoxConstraints.expand(
+                          width: 30,
+                          height: 30,
+                        ),
+                        elevation: 1.0,
+                        fillColor: Colors.white,
+                        shape: const CircleBorder(),
+                        child: const Icon(
+                          Icons.remove_shopping_cart,
+                          size: 15.0,
+                        ),
+                      )
+                    ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

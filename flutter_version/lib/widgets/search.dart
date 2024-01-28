@@ -8,13 +8,19 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  TextEditingController _searchTextController = new TextEditingController();
+  final TextEditingController _searchTextController = TextEditingController();
+  String _searchResult = '';
+
+  void _search() {
+    setState(() {
+      _searchResult = _searchTextController.text;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _searchTextController.addListener(() {
-      print(_searchTextController.text);
       setState(() {});
     });
   }
@@ -36,9 +42,12 @@ class _SearchState extends State<Search> {
 
     return TextField(
       controller: _searchTextController,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         hintText: 'Search',
-        suffixIcon: Icon(Icons.search),
+        suffixIcon: IconButton(
+          onPressed: _search,
+          icon: const Icon(Icons.search),
+        ),
         border: border,
         enabledBorder: border,
         focusedBorder: border,

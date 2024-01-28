@@ -8,8 +8,8 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeProduct(Map<String, dynamic> product) {
-    cart.remove(product);
+  void removeProductById(int productId) {
+    cart.removeWhere((product) => product['id'] == productId);
     notifyListeners();
   }
 

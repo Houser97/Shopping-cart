@@ -9,10 +9,11 @@ class Cart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>().cart;
+    final List<int> cartKeys = cart.keys.toList();
 
     double totalPrice = 0;
 
-    for (final product in cart) {
+    for (final product in cart.values) {
       double price = product['price'];
       int quantity = product['quantity'];
 
@@ -26,13 +27,14 @@ class Cart extends StatelessWidget {
           children: [
             Expanded(
               child: ListView.builder(
-                  itemCount: cart.length,
+                  itemCount: cartKeys.length,
                   itemBuilder: (context, index) {
-                    final id = cart[index]['id'];
-                    final title = cart[index]['title'];
-                    final price = cart[index]['price'];
-                    final image = cart[index]['image'];
-                    final currentQty = cart[index]['quantity'];
+                    final product = cart[cartKeys[index]]!;
+                    final id = product['id'];
+                    final title = product['title'];
+                    final price = product['price'];
+                    final image = product['image'];
+                    final currentQty = product['quantity'];
                     return ProductCart(
                       id: id as int,
                       image: image as String,

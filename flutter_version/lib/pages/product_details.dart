@@ -28,6 +28,11 @@ class ProductDetails extends StatelessWidget {
       });
     }
 
+    void productMessage(String message) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
+
     const space = SizedBox(
       height: 10,
     );
@@ -117,6 +122,7 @@ class ProductDetails extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         addProduct();
+                        productMessage("Product added.");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,

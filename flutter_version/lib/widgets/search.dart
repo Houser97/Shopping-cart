@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
-  const Search({super.key});
+  final String searchFilter;
+  final void Function(String) updateSearchFilter;
+  const Search(
+      {super.key,
+      required this.searchFilter,
+      required this.updateSearchFilter});
 
   @override
   State<Search> createState() => _SearchState();
@@ -9,11 +14,10 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   final TextEditingController _searchTextController = TextEditingController();
-  String _searchResult = '';
 
   void _search() {
     setState(() {
-      _searchResult = _searchTextController.text;
+      widget.updateSearchFilter(_searchTextController.text);
     });
   }
 

@@ -15,6 +15,7 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   List<Map<String, dynamic>> filteredProducts = products;
   String selectedFilter = 'All';
+  String searchFilter = '';
 
   void updateProducts(String filter) {
     setState(() {
@@ -27,6 +28,12 @@ class _ProductListState extends State<ProductList> {
                 .contains(selectedFilter))
             .toList();
       }
+    });
+  }
+
+  void updateSearchFilter(String search) {
+    setState(() {
+      searchFilter = search;
     });
   }
 
@@ -48,7 +55,10 @@ class _ProductListState extends State<ProductList> {
             const SizedBox(
               height: 10,
             ),
-            const Search(),
+            Search(
+              searchFilter: searchFilter,
+              updateSearchFilter: updateSearchFilter,
+            ),
             const SizedBox(
               height: 30,
             ),

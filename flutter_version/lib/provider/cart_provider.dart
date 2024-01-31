@@ -27,7 +27,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   void decreaseProductQuantity(int productId) {
-    cart[productId]!['quantity'] -= 1;
-    notifyListeners();
+    int currentQty = cart[productId]!['quantity'];
+    if (currentQty > 1) {
+      cart[productId]!['quantity'] -= 1;
+      notifyListeners();
+    }
   }
 }

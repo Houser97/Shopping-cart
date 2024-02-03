@@ -14,35 +14,40 @@ class ProductList extends StatefulWidget {
 
 class _ProductListState extends State<ProductList> {
   List<Map<String, dynamic>> filteredProducts = products;
-  String selectedFilter = 'All';
+  String categoryFilter = 'All';
   String searchFilter = '';
 
-  void getProductsByTitle() {
+  void updateSearchFilter(String filter) {
     setState(() {
-      filteredProducts = filteredProducts
-          .where((product) => product['title'].contains(searchFilter))
+      searchFilter = filter;
+      updateProducts();
+    });
+  }
+
+  void updateCategoryFilter(String filter) {
+    setState(() {
+      categoryFilter = filter;
+      updateProducts();
+    });
+  }
+
+  void updateProducts() {
+    if (categoryFilter == 'All') {
+      filteredProducts = products
+          .where((product) => (product['title'] as String)
+              .toLowerCase()
+              .contains(searchFilter.toLowerCase()))
           .toList();
-    });
-  }
-
-  void getProductsByCategory(String filter) {
-    setState(() {
-      selectedFilter = filter;
-      if (selectedFilter == 'All') {
-        filteredProducts = products;
-      } else {
-        filteredProducts = products
-            .where((product) => (product['categories'] as List<String>)
-                .contains(selectedFilter))
-            .toList();
-      }
-    });
-  }
-
-  void updateSearchFilter(String search) {
-    setState(() {
-      searchFilter = search;
-    });
+    } else {
+      filteredProducts = products
+          .where((product) =>
+              (product['categories'] as List<String>)
+                  .contains(categoryFilter) &&
+              (product['title'] as String)
+                  .toLowerCase()
+                  .contains(searchFilter.toLowerCase()))
+          .toList();
+    }
   }
 
   @override
@@ -64,7 +69,6 @@ class _ProductListState extends State<ProductList> {
               height: 10,
             ),
             Search(
-              searchFilter: searchFilter,
               updateSearchFilter: updateSearchFilter,
             ),
             const SizedBox(
@@ -75,8 +79,8 @@ class _ProductListState extends State<ProductList> {
               height: 10,
             ),
             Categories(
-              updateProducts: getProductsByCategory,
-              selectedCategory: selectedFilter,
+              updateProducts: updateCategoryFilter,
+              selectedCategory: categoryFilter,
             ),
             const SizedBox(
               height: 10,

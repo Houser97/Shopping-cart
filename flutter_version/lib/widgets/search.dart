@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
-  final String searchFilter;
   final void Function(String) updateSearchFilter;
-  const Search(
-      {super.key,
-      required this.searchFilter,
-      required this.updateSearchFilter});
+  const Search({super.key, required this.updateSearchFilter});
 
   @override
   State<Search> createState() => _SearchState();

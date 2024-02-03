@@ -17,7 +17,15 @@ class _ProductListState extends State<ProductList> {
   String selectedFilter = 'All';
   String searchFilter = '';
 
-  void updateProducts(String filter) {
+  void getProductsByTitle() {
+    setState(() {
+      filteredProducts = filteredProducts
+          .where((product) => product['title'].contains(searchFilter))
+          .toList();
+    });
+  }
+
+  void getProductsByCategory(String filter) {
     setState(() {
       selectedFilter = filter;
       if (selectedFilter == 'All') {
@@ -67,7 +75,7 @@ class _ProductListState extends State<ProductList> {
               height: 10,
             ),
             Categories(
-              updateProducts: updateProducts,
+              updateProducts: getProductsByCategory,
               selectedCategory: selectedFilter,
             ),
             const SizedBox(

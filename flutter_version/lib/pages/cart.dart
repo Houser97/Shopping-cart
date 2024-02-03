@@ -60,7 +60,9 @@ class Cart extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Provider.of<CartProvider>(context, listen: false).checkout();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(

@@ -33,4 +33,9 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void checkout() {
+    cart.clear();
+    notifyListeners();
+  }
 }

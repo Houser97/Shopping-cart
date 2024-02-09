@@ -1,3 +1,10 @@
+using dotenv.net;
+using MongoDB.Driver;
+using server.Models;
+using server.Services;
+
+DotEnv.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+
+// Configure MongoDB connection
+var mongoClient = new MongoClient(configuration["ConnectionString"]);
+var databaseName = configuration["DatabasetName"];
+var database = mongoClient.GetDatabase(databaseName);
 
 var app = builder.Build();
 

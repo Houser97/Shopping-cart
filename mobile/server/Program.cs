@@ -20,6 +20,15 @@ var mongoClient = new MongoClient(configuration["ConnectionString"]);
 var databaseName = configuration["DatabasetName"];
 var database = mongoClient.GetDatabase(databaseName);
 
+// Register MongoDB database instance as a service
+builder.Services.AddSingleton<IMongoDatabase>(database);
+
+// Register DatabaseCollections
+builder.Services.AddSingleton<IDatabaseCollections, DatabaseCollections>();
+
+// Register ReviewsService
+builder.Services.AddSingleton<ReviewsService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

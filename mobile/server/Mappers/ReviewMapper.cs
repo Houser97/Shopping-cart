@@ -11,6 +11,10 @@ namespace server.Mappers
             {
                 Id = reviewModel.Id,
                 Author = reviewModel.Author,
+                Rating = reviewModel.Rating,
+                Likes = reviewModel.Likes,
+                Dislikes = reviewModel.Dislikes,
+                Date = reviewModel.Date,
                 Comment = reviewModel.Comment,
             };
         }

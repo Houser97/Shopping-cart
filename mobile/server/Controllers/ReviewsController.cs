@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using server.Mappers;
 using server.Models;
 using server.Services;
 
@@ -22,7 +23,11 @@ namespace server.Controllers
             // Realiza una consulta para obtener todas las reviews
             var reviews = await _reviewsService.GetAll();
 
-            return Ok(reviews);
+            // Se usa Mapper para aplicar DTO
+
+            var reviewsDto = reviews.Select(review => review.ToReviewDto());
+
+            return Ok(reviewsDto);
         }
 
         [HttpGet]

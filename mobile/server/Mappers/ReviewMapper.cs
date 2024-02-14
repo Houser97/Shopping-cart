@@ -18,5 +18,16 @@ namespace server.Mappers
                 Comment = reviewModel.Comment,
             };
         }
+
+        public static Review ToReviewFromCreateDTO(this CreateReviewDto reviewDto)
+        {
+            return new Review
+            {
+                Author = reviewDto.Author,
+                Rating = reviewDto.Rating,
+                Item = reviewDto.Item,
+                Comment = reviewDto.Comment,
+            };
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace server.Models
         [BsonElement("dislikes")]
         public List<string> Dislikes { get; init; } = [];
         [BsonElement("date")]
-        public DateTime Date { get; init; }
+        public DateTime Date { get; init; } = DateTime.UtcNow;
         [BsonElement("comment")]
         public string Comment { get; init; } = String.Empty;
         [BsonIgnoreIfDefault]

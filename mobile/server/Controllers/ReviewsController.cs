@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using server.DTOs;
 using server.Mappers;
 using server.Models;
 using server.Services;
@@ -18,7 +19,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetReviews()
+        public async Task<IActionResult> GetAll()
         {
             // Realiza una consulta para obtener todas las reviews
             var reviews = await _reviewsService.GetAll();
@@ -37,6 +38,14 @@ namespace server.Controllers
             var review = await _reviewsService.GetById(id);
             Console.WriteLine(review);
             return Ok(review);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateReviewDto reviewDto)
+        {
+            var reviewModel = reviewDto.ToReviewFromCreateDTO();
+            await _reviewsService.Create(reviewModel);
+            return CreatedAtAction(nameof(GetById), new { id = reviewModel.Id }, reviewModel.ToReviewDto());
         }
     }
 

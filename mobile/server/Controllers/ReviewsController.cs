@@ -47,6 +47,20 @@ namespace server.Controllers
             await _reviewsService.Create(reviewModel);
             return CreatedAtAction(nameof(GetById), new { id = reviewModel.Id }, reviewModel.ToReviewDto());
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] string id)
+        {
+            var res = await _reviewsService.Delete(id);
+
+            if (res == null)
+                return NotFound();
+
+            return NoContent();
+
+        }
+
     }
 
 }

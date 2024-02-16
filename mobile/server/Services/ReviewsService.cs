@@ -28,5 +28,19 @@ namespace server.Services
             await _reviews.InsertOneAsync(review);
             return review;
         }
+
+        public async Task<Review?> Delete(string id)
+        {
+            var objectId = ObjectId.Parse(id);
+            var filter = Builders<Review>.Filter.Eq("_id", objectId);
+
+            var deletedReview = await _reviews.FindOneAndDeleteAsync(filter);
+
+            if (deletedReview == null)
+                return null;
+
+            return deletedReview;
+
+        }
     }
 }

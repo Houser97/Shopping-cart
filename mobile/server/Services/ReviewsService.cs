@@ -23,5 +23,10 @@ namespace server.Services
             return await _reviews.Find(filter).FirstOrDefaultAsync();
         }
 
+        public async Task<Review> Create(Review review)
+        {
+            await _reviews.InsertOneAsync(review);
+            return review;
+        }
     }
 }

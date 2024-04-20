@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
-    "deployment": "cd .. && cd client && npm run build && cd .. && cd server && cp -a ../client/build/. ./public"
+    "deployment": "cd .. && cd client && npm run build && cd .. && cd server && cp -a ../client/build/. ./public",
+    "dev": "tsnd --respawn --clear src/app.ts",
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node dist/app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

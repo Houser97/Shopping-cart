@@ -25,6 +25,10 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "@types/node": "^20.12.7",
+    "nodemon": "^2.0.20",
+    "rimraf": "^5.0.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
   }
 }

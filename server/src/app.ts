@@ -7,19 +7,19 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('./models/user')
+const User = require('../models/user')
 const bcryptjs = require('bcryptjs');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-const apiRouter = require('./routes/api');
+var indexRouter = require('../routes/index');
+var usersRouter = require('../routes/users');
+const apiRouter = require('../routes/api');
 
 var app = express();
 
-if(process.env.NODE_ENV !== 'production'){
+if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
   const cors = require('cors');
-  app.use(  cors({
+  app.use(cors({
     origin: "http://localhost:3000",
     credentials: true,
   }))
@@ -27,7 +27,7 @@ if(process.env.NODE_ENV !== 'production'){
 
 
 const MongoDB = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.cjswbgn.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`
-mongoose.connect(MongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(MongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind((console, 'MongoDB connection error: ')))
 
@@ -36,13 +36,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 passport.use(
-  new LocalStrategy({usernameField: 'email'},(email, password, done) => {
-    User.findOne({email}, (err, user) => {
-      if(err) return done(err);
-      if(!user) return done(null, false, {message:'Incorrect username'});
+  new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+    User.findOne({ email }, (err, user) => {
+      if (err) return done(err);
+      if (!user) return done(null, false, { message: 'Incorrect username' });
       bcryptjs.compare(password, user.password, (err, res) => {
-        if(res) return done(null, user);
-        else return done(null, false, {message: 'Incorrect password'});
+        if (res) return done(null, user);
+        else return done(null, false, { message: 'Incorrect password' });
       })
     })
   })
@@ -62,15 +62,15 @@ passport.deserializeUser((id, done) => {
 //PASSPORT
 app.use(session(
   {
-    secret:'cats', 
-    resave: false, 
+    secret: 'cats',
+    resave: false,
     saveUninitialized: true,
     cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 7 } // Opciones de la cookie
   }
 ));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -87,12 +87,12 @@ app.get('*', (req, res) => {
 })
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

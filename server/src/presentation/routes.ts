@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ReviewRoutes } from "./reviews/routes";
 
 export class AppRoutes {
 
@@ -6,7 +7,7 @@ export class AppRoutes {
 
         const router = Router();
 
-        router.use('/api/reviews',);
+        router.use('/api/reviews', ReviewRoutes.routes);
         router.use('/api/products',);
         router.use('/api/auth',);
         //router.use('/api/upload',);

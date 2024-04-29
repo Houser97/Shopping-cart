@@ -9,7 +9,7 @@ export class ReviewRoutes {
         const reviewService = new ReviewService();
         const controller = new ReviewController(reviewService);
 
-        router.get('/', controller.getReviews);
+        router.get('/:productId', controller.getReviews);
         router.post('/', controller.createReview);
         router.put('/', controller.updateReview);
         router.delete('/', controller.deleteReview);

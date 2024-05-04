@@ -1,31 +1,40 @@
 import passport from 'passport'
 import { Strategy } from 'passport-local';
 import { UserModel } from '../data/mongo/models/user.model';
-import { BcryptAdapter } from './bcrypt.adapter';
+import { AuthService } from '../presentation/services/auth.service';
+import { CustomError } from '../domain/errors/custom.error';
 
 interface User {
     id: string;
 }
 
+interface Options {
+    usernameField: string;
+    authService: AuthService
+}
+
 export class Passport {
 
-    constructor(
-        private readonly username_field: string,
-    ) { }
+    private readonly usernameField: string;
+    private readonly authService: AuthService;
+
+    constructor(options: Options) {
+        const { usernameField, authService } = options;
+
+        this.usernameField = usernameField;
+        this.authService = authService;
+    }
 
     public configure() {
         passport.use(
-            new Strategy({ usernameField: this.username_field }, async (username, password, done) => {
+            new Strategy({ usernameField: this.usernameField }, async (username, password, done) => {
                 try {
-                    if (!username) return done(null, false);
-                    const user = await UserModel.findOne({ [this.username_field]: username });
-                    if (!user) return done(null, false, { message: `Incorrect ${this.username_field}` });
-                    const passwordMatches = BcryptAdapter.compare(password, user.password);
-
-                    if (!passwordMatches) return done(null, false, { message: `Password is incorrect` });
-                    return done(null, user);
+                    const authenticateOptions = {
+                        username, password, done, usernameField: this.usernameField
+                    }
+                    return await this.authService.authenticate(authenticateOptions);
                 } catch (error) {
-                    throw error;
+                    CustomError.internalServer('Internal server error');
                 }
             })
         );
@@ -37,7 +46,7 @@ export class Passport {
 
         passport.deserializeUser((id, done) => {
             UserModel.findById(id, (err: string, user: User) => {
-                done(err, user)
+                done(err, user);
             })
         });
     }

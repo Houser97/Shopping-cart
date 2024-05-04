@@ -28,4 +28,4 @@ userSchema.set('toJSON', {
     }
 });
 
-export const UserModel = mongoose.model('User', userSchema)
+export const UserModel = mongoose.model('User', userSchema);

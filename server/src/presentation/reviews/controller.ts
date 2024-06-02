@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ReviewService } from "../services/review.service";
 import { PaginationDto } from "../../domain/dtos/shared/pagination.dto";
 import { CustomError } from "../../domain/errors/custom.error";
+import { CreateReviewDto } from "../../domain/dtos/reviews/create-review.dto";
 
 export class ReviewController {
     constructor(
@@ -30,7 +31,12 @@ export class ReviewController {
     }
 
     createReview = (req: Request, res: Response) => {
-        throw 'Unimplemented method';
+        const [error, createReviewDto] = CreateReviewDto.create({ ...req.body });
+        if (error) return res.status(400).json({ error });
+
+        this.reviewService.create(createReviewDto!)
+            .then(review => res.status(201).json(review))
+            .catch(error => this.handleError(error, res));
     }
 
     updateReview = (req: Request, res: Response) => {

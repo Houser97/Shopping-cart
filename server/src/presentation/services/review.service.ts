@@ -1,4 +1,5 @@
 import { ReviewModel } from "../../data/mongo/models/review.model";
+import { CreateReviewDto } from "../../domain/dtos/reviews/create-review.dto";
 import { PaginationDto } from "../../domain/dtos/shared/pagination.dto";
 import { CustomError } from "../../domain/errors/custom.error";
 
@@ -29,8 +30,16 @@ export class ReviewService {
         }
     }
 
-    async createReview() {
-        throw 'Unimplemented method';
+    async create(createReviewDto: CreateReviewDto) {
+        try {
+            const review = new ReviewModel(createReviewDto);
+
+            await review.save();
+
+            return review;
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
     }
 
     async updateReview() {

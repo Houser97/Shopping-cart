@@ -1,28 +1,23 @@
-import { IVerifyOptions } from "passport-local";
-import { UserModel } from "../../data/mongo/models/user.model";
-import { BcryptAdapter } from "../../config/bcrypt.adapter";
-
-interface AuthenticateOptions {
-    username: string;
-    password: string;
-    usernameField: string;
-    done: (error: any, user?: false | Express.User | undefined, options?: IVerifyOptions | undefined) => void
-}
+import passport from "passport";
+import { Request, Response } from "express";
+import { User } from "../../domain/interfaces/user.interfaces";
+import { UserEntity } from "../../domain/entities/user.entity";
 
 export class AuthService {
     constructor() { }
 
-    public async authenticate(authenticateOptions: AuthenticateOptions) {
-        const { username, password, usernameField, done } = authenticateOptions;
+    public login(req: Request, res: Response) {
+        passport.authenticate('local',
+            function (
+                err: unknown,
+                user: User | undefined,
+                info: { [key: string]: string } | undefined) {
+                if (err) return res.status(500).json({ error: 'Internal server error' })
+                if (!user && info) return res.status(401).json({ error: info.message })
 
-        if (!username) return done(null, false);
-
-        const user = await UserModel.findOne({ [usernameField]: username });
-        if (!user) return done(null, false, { message: `Incorrect ${usernameField}` });
-
-        const passwordMatches = BcryptAdapter.compare(password, user.password);
-        if (!passwordMatches) return done(null, false, { message: `Password is incorrect` });
-
-        return done(null, user);
+                const { password, ...rest } = UserEntity.fromObject(user!);
+                return res.status(200).json({ user: rest })
+            })(req, res);
     }
 }
+

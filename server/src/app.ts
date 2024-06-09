@@ -18,7 +18,7 @@ async function main() {
   const server = new Server({
     port: envs.PORT,
     routes: AppRoutes.routes,
-    passport: new Passport({ usernameField: 'email', authService: new AuthService() }),
+    passport: new Passport('email'),
   });
 
   server.start();

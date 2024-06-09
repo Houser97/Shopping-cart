@@ -28,10 +28,16 @@ export class Server {
     }
 
     async start() {
-        //* Middlewares
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: false })); // x-www-form-urlencoded
-        this.app.use(cookieParser());
+        if (process.env.NODE_ENV !== 'production') {
+            require('dotenv').config();
+            const cors = require('cors');
+            this.app.use(cors({
+                origin: "http://localhost:3001",
+                credentials: true,
+            }))
+        }
+        //* Passport
+        this.passport.configure();
         this.app.use(session(
             {
                 secret: 'cats',
@@ -42,6 +48,12 @@ export class Server {
         ));
         this.app.use(this.passport.initialize());
         this.app.use(this.passport.createSession());
+
+
+        //* Middlewares
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({ extended: false })); // x-www-form-urlencoded
+        this.app.use(cookieParser());
 
         //* Public Folder
         this.app.use(express.static(this.public_path));

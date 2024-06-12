@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AuthController } from "./controller";
 import { AuthService } from "../services/auth.service";
-import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { Validators } from "../../config/validators";
 
 export class AuthRoutes {
     static get routes(): Router {
@@ -10,13 +10,15 @@ export class AuthRoutes {
         const authService = new AuthService();
         const controller = new AuthController(authService);
 
-        // passport.authenticate must be invoked in the middleware chain
         router.post('/login', [
-            AuthMiddleware.sanitizeEmail,
-            AuthMiddleware.authenticate
+            Validators.isValidEmail(),
         ], controller.login);
 
-        router.get('/login', controller.login);
+        router.post('/register', [
+            Validators.isValidEmail(),
+            Validators.isValidPassword(),
+            Validators.validateFields
+        ], controller.register);
 
         return router;
 

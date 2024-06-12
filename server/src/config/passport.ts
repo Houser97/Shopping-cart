@@ -3,6 +3,8 @@ import { IVerifyOptions, Strategy } from 'passport-local';
 import { UserModel } from '../data/mongo/models/user.model';
 import { CustomError } from '../domain/errors/custom.error';
 import { BcryptAdapter } from './bcrypt.adapter';
+import { Request, Response } from 'express';
+import { UserEntity } from '../domain/entities/user.entity';
 
 interface User {
     id: string;
@@ -70,5 +72,19 @@ export class Passport {
     public createSession() {
         // allow passport to use "express-session".
         return passport.session();
+    }
+
+    static login(req: Request, res: Response) {
+        passport.authenticate('local',
+            function (
+                err: unknown,
+                user: { [key: string]: any } | undefined,
+                info: { [key: string]: string } | undefined) {
+                if (err) return res.status(500).json({ error: 'Internal server error' })
+                if (!user && info) return res.status(401).json({ error: info.message })
+
+                const { password, ...rest } = UserEntity.fromObject(user!);
+                return res.status(200).json({ user: rest })
+            })(req, res);
     }
 }

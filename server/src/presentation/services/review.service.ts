@@ -1,5 +1,6 @@
 import { ReviewModel } from "../../data/mongo/models/review.model";
 import { CreateReviewDto } from "../../domain/dtos/reviews/create-review.dto";
+import { UpdateReviewDto } from "../../domain/dtos/reviews/update-review.dto";
 import { PaginationDto } from "../../domain/dtos/shared/pagination.dto";
 import { CustomError } from "../../domain/errors/custom.error";
 
@@ -42,11 +43,59 @@ export class ReviewService {
         }
     }
 
-    async updateReview() {
+    async update(updateReviewDto: UpdateReviewDto) {
+        const { id, authorId, comment, like, dislike, rating } = updateReviewDto;
+        let review;
+
+        switch (true) {
+            case like:
+                review = await this.handleLike(id, authorId, 'like');
+                break;
+            case dislike:
+                review = await this.handleLike(id, authorId, 'dislike');
+                break;
+            case !!comment:
+                review = await ReviewModel.findByIdAndUpdate(id, { comment });
+                break;
+            case !!rating:
+                // TODO: Cambiar rating a arreglo de objetos authorId: rating
+                review = await ReviewModel.findByIdAndUpdate(id, { rating });
+                break;
+            default:
+                break
+        }
+
+        return review;
+    }
+
+    async delete() {
         throw 'Unimplemented method';
     }
 
-    async deleteReview() {
-        throw 'Unimplemented method';
+    private async handleLike(reviewId: string, userId: string, action: 'like' | 'dislike') {
+        try {
+            const review = await ReviewModel.findById(reviewId);
+            if (!review) throw CustomError.notFound('Review not found');
+
+            let updateQuery;
+
+            if (action === 'like') {
+                updateQuery = {
+                    $addToSet: { likes: userId },
+                    $pull: { dislikes: userId }
+                }
+            } else {
+                updateQuery = {
+                    $addToSet: { dislikes: userId },
+                    $pull: { likes: userId }
+                }
+            }
+
+            const updatedReview = await ReviewModel.findByIdAndUpdate(reviewId, updateQuery);
+            // TODO: do not return review's author.
+            return review;
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
     }
 }

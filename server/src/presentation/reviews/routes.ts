@@ -12,8 +12,8 @@ export class ReviewRoutes {
 
         router.get('/:productId', controller.getReviews);
         router.post('/', [AuthMiddleware.validatePassportAuth], controller.createReview);
-        router.put('/', controller.updateReview);
-        router.delete('/', controller.deleteReview);
+        router.put('/', [AuthMiddleware.validatePassportAuth, AuthMiddleware.validateAuthorId], controller.updateReview);
+        router.delete('/', [AuthMiddleware.validatePassportAuth, AuthMiddleware.validateAuthorId], controller.deleteReview);
 
         return router;
     }

@@ -50,6 +50,9 @@ export class ReviewController {
     }
 
     deleteReview = (req: Request, res: Response) => {
-        throw 'Unimplemented method';
+        const { id } = req.body;
+        this.reviewService.delete(id)
+            .then(review => res.status(201).json(review))
+            .catch(error => this.handleError(error, res));
     }
 }

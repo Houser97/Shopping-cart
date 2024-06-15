@@ -46,39 +46,23 @@ export class ReviewService {
     async update(updateReviewDto: UpdateReviewDto) {
         const { id, comment } = updateReviewDto;
 
-        const updatedReview = await ReviewModel.findByIdAndUpdate(id, { comment });
-
-        return updatedReview;
-    }
-
-    async delete() {
-        throw 'Unimplemented method';
-    }
-
-    private async handleLike(reviewId: string, userId: string, action: 'like' | 'dislike') {
         try {
-            const review = await ReviewModel.findById(reviewId);
-            if (!review) throw CustomError.notFound('Review not found');
+            const updatedReview = await ReviewModel.findByIdAndUpdate(id, { comment });
 
-            let updateQuery;
+            return updatedReview;
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
+    }
 
-            if (action === 'like') {
-                updateQuery = {
-                    $addToSet: { likes: userId },
-                    $pull: { dislikes: userId }
-                }
-            } else {
-                updateQuery = {
-                    $addToSet: { dislikes: userId },
-                    $pull: { likes: userId }
-                }
-            }
+    async delete(id: string) {
 
-            const updatedReview = await ReviewModel.findByIdAndUpdate(reviewId, updateQuery);
-            // TODO: do not return review's author.
+        try {
+            const review = await ReviewModel.findByIdAndDelete(id);
             return review;
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }
+
     }
 }

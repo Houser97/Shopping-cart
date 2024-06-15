@@ -44,28 +44,11 @@ export class ReviewService {
     }
 
     async update(updateReviewDto: UpdateReviewDto) {
-        const { id, authorId, comment, like, dislike, rating } = updateReviewDto;
-        let review;
+        const { id, comment } = updateReviewDto;
 
-        switch (true) {
-            case like:
-                review = await this.handleLike(id, authorId, 'like');
-                break;
-            case dislike:
-                review = await this.handleLike(id, authorId, 'dislike');
-                break;
-            case !!comment:
-                review = await ReviewModel.findByIdAndUpdate(id, { comment });
-                break;
-            case !!rating:
-                // TODO: Cambiar rating a arreglo de objetos authorId: rating
-                review = await ReviewModel.findByIdAndUpdate(id, { rating });
-                break;
-            default:
-                break
-        }
+        const updatedReview = await ReviewModel.findByIdAndUpdate(id, { comment });
 
-        return review;
+        return updatedReview;
     }
 
     async delete() {

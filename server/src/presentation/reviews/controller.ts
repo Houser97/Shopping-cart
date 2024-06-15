@@ -3,6 +3,7 @@ import { ReviewService } from "../services/review.service";
 import { PaginationDto } from "../../domain/dtos/shared/pagination.dto";
 import { CustomError } from "../../domain/errors/custom.error";
 import { CreateReviewDto } from "../../domain/dtos/reviews/create-review.dto";
+import { UpdateReviewDto } from "../../domain/dtos/reviews/update-review.dto";
 
 export class ReviewController {
     constructor(
@@ -40,7 +41,12 @@ export class ReviewController {
     }
 
     updateReview = (req: Request, res: Response) => {
-        throw 'Unimplemented method';
+        const [error, updateReviewDto] = UpdateReviewDto.create({ ...req.body });
+        if (error) return res.status(400).json({ error });
+
+        this.reviewService.update(updateReviewDto!)
+            .then(review => res.status(201).json(review))
+            .catch(error => this.handleError(error, res));
     }
 
     deleteReview = (req: Request, res: Response) => {

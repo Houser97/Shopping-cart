@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { CustomError } from "../../domain/errors/custom.error";
 import { LoginUserDto } from "../../domain/dtos/auth/login-user.dto";
@@ -18,11 +18,13 @@ export class AuthController {
         return res.status(500).json({ error: 'Internal server error' });
     }
 
-    login = async (req: Request, res: Response) => {
-        const [error,] = LoginUserDto.login(req.body)
-        if (error) return CustomError.badRequest(error);
+    login = async (req: Request, res: Response, next: NextFunction) => {
+        const [error, loginUserDto] = LoginUserDto.login(req.body)
+        if (error) throw CustomError.badRequest(error);
 
-        this.authService.login(req, res);
+        this.authService.login(loginUserDto!)
+            .then(user => res.json(user))
+            .catch(error => this.handleError(error, res));
     }
 
     register = async (req: Request, res: Response) => {
@@ -34,6 +36,6 @@ export class AuthController {
     }
 
     logout = (req: Request, res: Response) => {
-
+        this.authService.logout(req, res)
     }
 }

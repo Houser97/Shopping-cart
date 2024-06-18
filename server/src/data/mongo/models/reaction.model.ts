@@ -1,35 +1,42 @@
 import mongoose, { Schema } from 'mongoose';
 import { DateTime } from 'luxon';
 
-const ReviewSchema = new mongoose.Schema({
-    productId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product'
-    },
+export enum ReactionType {
+    Like = 'like',
+    Dislike = 'dislike',
+    Love = 'love'
+}
+
+const ReactionSchema = new mongoose.Schema({
     authorId: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    comment: {
+    reviewId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    },
+    reaction: {
         type: String,
-        required: [true, 'Comment is required']
+        enum: Object.values(ReactionType),
+        required: true
     },
     createdAt: {
         type: Date,
     },
 })
 
-ReviewSchema.virtual('formatted_date')
+ReactionSchema.virtual('formatted_date')
     .get(function () {
         return DateTime.fromJSDate(this.createdAt!).toFormat('d LLL yyyy, T')
     })
 
-ReviewSchema.pre('save', function (next) {
+ReactionSchema.pre('save', function (next) {
     this.createdAt = new Date(Date.now());
     next();
 });
 
-ReviewSchema.set('toJSON', {
+ReactionSchema.set('toJSON', {
     virtuals: true,
     versionKey: false,
     transform: function (doc, ret, options) {
@@ -38,4 +45,4 @@ ReviewSchema.set('toJSON', {
     }
 })
 
-export const ReviewModel = mongoose.model('Review', ReviewSchema)
+export const ReactionModel = mongoose.model('Reaction', ReactionSchema)

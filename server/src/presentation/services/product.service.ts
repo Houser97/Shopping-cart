@@ -34,4 +34,15 @@ export class ProductService {
             throw CustomError.internalServer(`${error}`);
         }
     }
+
+    async delete(id: string) {
+        try {
+            const product = await ProductModel.findByIdAndDelete(id);
+            if (!product)
+                throw CustomError.notFound(`Product with id: ${id} not found`);
+            return product;
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
+    }
 }

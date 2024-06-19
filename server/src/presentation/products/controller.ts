@@ -36,4 +36,12 @@ export class ProductController {
             .catch(error => this.handleError(error, res));
     }
 
+    deleteProduct = (req: Request, res: Response) => {
+        const { productId } = req.params;
+
+        this.productService.delete(productId)
+            .then(product => res.json(product))
+            .catch(error => this.handleError(error, res));
+    }
+
 }

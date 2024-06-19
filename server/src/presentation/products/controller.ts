@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ProductService } from "../services/product.service";
 import { CustomError } from "../../domain/errors/custom.error";
 import { CreateProductDto } from "../../domain/dtos/products/create-product.dto";
+import { UpdateProductDto } from "../../domain/dtos/products/update-product.dto";
 
 export class ProductController {
     constructor(
@@ -22,6 +23,15 @@ export class ProductController {
         if (error) return res.status(400).json({ error });
 
         this.productService.create(createProductDto!)
+            .then(product => res.json(product))
+            .catch(error => this.handleError(error, res));
+    }
+
+    updateProduct = (req: Request, res: Response) => {
+        const [error, updateProductDto] = UpdateProductDto.create({ ...req.body });
+        if (error) return res.status(400).json({ error });
+
+        this.productService.update(updateProductDto!)
             .then(product => res.json(product))
             .catch(error => this.handleError(error, res));
     }

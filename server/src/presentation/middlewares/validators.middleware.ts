@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { body, check, validationResult } from "express-validator";
+import { Validators } from "../../config/validators";
 
 export class ValidatorsMiddleware {
 
@@ -26,6 +27,15 @@ export class ValidatorsMiddleware {
             return res.status(401).json({ error: messages });
         }
         next()
+    }
+
+    static validateMongoId(req: Request, res: Response, next: NextFunction) {
+        const { productId } = req.params;
+
+        if (!Validators.isMongoID(productId))
+            return res.status(400).json({ error: 'Invalid Product Id' });
+
+        next();
     }
 
 }

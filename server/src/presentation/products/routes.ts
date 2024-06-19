@@ -11,6 +11,7 @@ export class ProductRoutes {
         const controller = new ProductController(productService);
 
         router.post('/', [AuthMiddleware.validateAuth], controller.createProduct);
+        router.put('/', [AuthMiddleware.validateAuth], controller.updateProduct);
 
         return router;
     }

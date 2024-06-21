@@ -10,6 +10,10 @@ const RatingSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Review'
     },
+    productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    },
     rating: {
         type: Number,
         required: [true, 'Rating is required']

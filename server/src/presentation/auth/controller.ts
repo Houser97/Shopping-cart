@@ -20,7 +20,7 @@ export class AuthController {
 
     login = async (req: Request, res: Response, next: NextFunction) => {
         const [error, loginUserDto] = LoginUserDto.login(req.body)
-        if (error) throw CustomError.badRequest(error);
+        if (error) return res.status(400).json({ error });
 
         this.authService.login(loginUserDto!)
             .then(user => res.json(user))

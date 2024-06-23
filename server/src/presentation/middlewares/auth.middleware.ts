@@ -1,14 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import { CustomError } from "../../domain/errors/custom.error";
 import { Passport } from "../../config/passport/passport";
 import { RequestWithUser } from "../../domain/interfaces/request-with-user.interface";
+import { JwtAdapter } from "../../config/jwt.adapter";
 
 export class AuthMiddleware {
-    static validateAuthorId(req: RequestWithUser, res: Response, next: NextFunction) {
-        const { _id } = req.user;
-        const { authorId: userInBody } = req.body;
+    static async validateAuthorId(req: RequestWithUser, res: Response, next: NextFunction) {
+        const token = (req.headers['authorization']?.split(' '))![1]
 
-        if (_id as any !== userInBody) throw CustomError.unauthorized('User Id does not match the Author Id');
+        const decodedToken = await JwtAdapter.validateToken(token);
+        if (!decodedToken) return res.status(401).json({ error: 'Token was not provided' });
+
+        const { id: userIdLogged } = decodedToken
+        const { authorId: userIdInBody } = req.body;
+
+        if (userIdLogged !== userIdInBody)
+            return res.status(401).json({ error: 'User Id does not match the Author Id' });
 
         next();
     }

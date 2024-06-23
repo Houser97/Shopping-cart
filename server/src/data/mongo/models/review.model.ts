@@ -10,6 +10,10 @@ const ReviewSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    rating: {
+        type: Number,
+        required: [true, 'Rating is required']
+    },
     comment: {
         type: String,
         required: [true, 'Comment is required']

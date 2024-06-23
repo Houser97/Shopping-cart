@@ -18,6 +18,12 @@ export class ProductController {
         return res.status(500).json({ error: 'Internal server error' });
     }
 
+    getProductsWithRating = (req: Request, res: Response) => {
+        this.productService.getProductsWithRating()
+            .then(products => res.json(products))
+            .catch(error => this.handleError(error, res));
+    }
+
     createProduct = (req: Request, res: Response) => {
         const [error, createProductDto] = CreateProductDto.create({ ...req.body });
         if (error) return res.status(400).json({ error });

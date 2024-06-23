@@ -11,6 +11,7 @@ export class ProductRoutes {
         const productService = new ProductService();
         const controller = new ProductController(productService);
 
+        router.get('/', controller.getProductsWithRating);
         router.post('/', [AuthMiddleware.validateAuth], controller.createProduct);
         router.put('/', [AuthMiddleware.validateAuth], controller.updateProduct);
         router.delete('/:productId', [

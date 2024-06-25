@@ -29,13 +29,14 @@ export class ValidatorsMiddleware {
         next()
     }
 
-    static validateMongoId(req: Request, res: Response, next: NextFunction) {
-        const { productId } = req.params;
+    static validateMongoId(paramName: string) {
+        return (req: Request, res: Response, next: NextFunction) => {
+            const id = req.params[paramName];
 
-        if (!Validators.isMongoID(productId))
-            return res.status(400).json({ error: 'Invalid Product Id' });
-
-        next();
+            if (!Validators.isMongoID(id))
+                return res.status(400).json({ error: 'Invalid Mongo Id' });
+            next();
+        }
     }
 
 }

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CustomError } from "../../domain/errors/custom.error";
 import { ReactionService } from "../services/reaction.service";
 import { CreateReactionDto } from "../../domain/dtos/reactions/create-reaction.dto";
+import { UpdateReactionDto } from "../../domain/dtos/reactions/update-reaction.dto";
 
 export class ReactionController {
     constructor(
@@ -22,6 +23,16 @@ export class ReactionController {
         if (error) return res.status(400).json({ error });
 
         this.reactionService.create(createReactionDto!)
+            .then(reaction => res.json(reaction))
+            .catch(error => this.handleError(error, res));
+    }
+
+    updateReaction = (req: Request, res: Response) => {
+        const { reactionId } = req.params;
+        const [error, updateProductDto] = UpdateReactionDto.create({ ...req.body });
+        if (error) return res.status(400).json({ error });
+
+        this.reactionService.update(reactionId, updateProductDto!)
             .then(reaction => res.json(reaction))
             .catch(error => this.handleError(error, res));
     }

@@ -1,8 +1,7 @@
-import express, { Router } from 'express';
 import path from 'path';
-import cookieParser from 'cookie-parser';
-import { Passport } from '../config/passport';
-import session from 'express-session';
+import fileUpload from 'express-fileupload';
+import express, { Router } from 'express';
+import { Passport } from '../config/passport/passport';
 
 interface Options {
     port: number;
@@ -38,22 +37,15 @@ export class Server {
         }
         //* Passport
         this.passport.configure();
-        this.app.use(session(
-            {
-                secret: 'cats',
-                resave: false,
-                saveUninitialized: true,
-                cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 7 } // Opciones de la cookie
-            }
-        ));
         this.app.use(this.passport.initialize());
-        this.app.use(this.passport.createSession());
-
 
         //* Middlewares
         this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: false })); // x-www-form-urlencoded
-        this.app.use(cookieParser());
+        this.app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded
+        this.app.use(fileUpload({
+            limits: { fileSize: 50 * 4096 * 4096 }
+        }))
+
 
         //* Public Folder
         this.app.use(express.static(this.public_path));

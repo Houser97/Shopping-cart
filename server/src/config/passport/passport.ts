@@ -5,7 +5,10 @@ import { UserEntity } from '../../domain/entities/user.entity';
 import { PassportStrategies } from './strategies';
 
 interface User {
-    id: string;
+    _id: string;
+    password: string;
+    cart: string[],
+    username: string
 }
 
 export class Passport {
@@ -35,11 +38,6 @@ export class Passport {
     public initialize() {
         // init passport on every route call.
         return passport.initialize();
-    }
-
-    public createSession() {
-        // allow passport to use "express-session".
-        return passport.session();
     }
 
     static validateLocalAuth(req: Request, res: Response, next: NextFunction) {

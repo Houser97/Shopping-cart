@@ -3,6 +3,7 @@ import { AuthMiddleware } from "../middlewares/auth.middleware";
 import { ProductService } from "../services/product.service";
 import { ProductController } from "./controller";
 import { ValidatorsMiddleware } from "../middlewares/validators.middleware";
+import { FileUploadMiddleware } from "../middlewares/file-upload.middleware";
 
 export class ProductRoutes {
     static get routes(): Router {
@@ -11,12 +12,12 @@ export class ProductRoutes {
         const productService = new ProductService();
         const controller = new ProductController(productService);
 
-        router.get('/', controller.getProductsWithRating);
-        router.post('/', [AuthMiddleware.validateAuth], controller.createProduct);
+        router.get('/', controller.getProducts);
+        router.post('/', [AuthMiddleware.validateAuth, FileUploadMiddleware.containFiles], controller.createProduct);
         router.put('/', [AuthMiddleware.validateAuth], controller.updateProduct);
         router.delete('/:productId', [
             AuthMiddleware.validateAuth,
-            ValidatorsMiddleware.validateMongoId
+            ValidatorsMiddleware.validateMongoId('productId')
         ], controller.deleteProduct);
 
         return router;

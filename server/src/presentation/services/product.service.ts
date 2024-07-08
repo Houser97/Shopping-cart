@@ -1,5 +1,6 @@
+import { UploadedFile } from "express-fileupload";
+import { CloudinaryAdapter } from "../../config/cloudinary/cloudinary.adapter";
 import { ProductModel } from "../../data/mongo/models/product.model";
-import { ReviewModel } from "../../data/mongo/models/review.model";
 import { CreateProductDto } from "../../domain/dtos/products/create-product.dto";
 import { UpdateProductDto } from "../../domain/dtos/products/update-product.dto";
 import { ProductEntity } from "../../domain/entities/product.entity";
@@ -10,7 +11,11 @@ export class ProductService {
 
     async create(createProductDto: CreateProductDto) {
         try {
-            const product = new ProductModel(createProductDto);
+
+            const { images, ...rest } = createProductDto;
+            const imageUploadPromises = images.map((image: UploadedFile) => CloudinaryAdapter.uploadImages(image));
+            const imageUrls = await Promise.all(imageUploadPromises);
+            const product = new ProductModel({ ...rest, images: imageUrls });
 
             await product.save();
             const productEntity = ProductEntity.fromObject(product);
@@ -21,20 +26,20 @@ export class ProductService {
         }
     }
 
-    async getProductsWithRating() {
+    async getProducts() {
         try {
             const productsWithRating = await ProductModel.aggregate([
                 {
                     $lookup: {
-                        from: "ratings",
+                        from: "reviews",
                         localField: "_id",
                         foreignField: "productId",
-                        as: "ratings"
+                        as: "reviews"
                     }
                 },
                 {
                     $addFields: {
-                        rating: { $avg: "$ratings.rating" }
+                        rating: { $avg: "$reviews.rating" }
                     }
                 },
             ]);

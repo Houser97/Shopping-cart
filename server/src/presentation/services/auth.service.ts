@@ -19,8 +19,7 @@ export class AuthService {
             if (!passwordMatches) throw CustomError.badRequest('Password is incorrect');
 
             const { password, ...rest } = UserEntity.fromObject(user);
-            const token = await JwtAdapter.generateToken({ id: user.id });
-            if (!token) throw CustomError.internalServer('Error while creating JWT');
+            const token = await this.generateToken(user.id);
 
             return {
                 user: rest,
@@ -28,7 +27,7 @@ export class AuthService {
             }
 
         } catch (error) {
-
+            throw CustomError.internalServer(`${error}`);
         }
     }
 
@@ -43,8 +42,12 @@ export class AuthService {
 
             await user.save();
             const { password, ...rest } = UserEntity.fromObject(user);
+            const token = await this.generateToken(user.id);
 
-            return { user: rest };
+            return {
+                user: rest,
+                token: token
+            };
 
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
@@ -56,6 +59,13 @@ export class AuthService {
             if (err) return res.json(err);
             return res.json(true);
         })
+    }
+
+    private async generateToken(id: string) {
+        const token = await JwtAdapter.generateToken({ id });
+        if (!token) throw CustomError.internalServer('Error while creating JWT');
+
+        return token
     }
 }
 

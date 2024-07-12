@@ -10,7 +10,8 @@ export class ProductMapper {
             authorId: product.authorId,
             images: product.images,
             description: product.description,
-            rating: product.rating
+            rating: product.rating,
+            totalReviews: product.totalReviews
         }
     }
 }

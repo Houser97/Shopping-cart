@@ -5,5 +5,6 @@ export interface ProductDB {
     authorId: string;
     images: string[];
     description: string;
-    rating: null;
+    rating: number | null;
+    totalReviews: number;
 }

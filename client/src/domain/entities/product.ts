@@ -5,5 +5,6 @@ export interface Product {
     authorId: string,
     images: string[],
     description: string,
-    rating: number
+    rating: number | null,
+    totalReviews: number,
 }

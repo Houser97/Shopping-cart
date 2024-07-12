@@ -18,8 +18,16 @@ export class ProductController {
         return res.status(500).json({ error: 'Internal server error' });
     }
 
-    getProductsWithRating = (req: Request, res: Response) => {
-        this.productService.getProductsWithRating()
+    getProducts = (req: Request, res: Response) => {
+        this.productService.getProducts()
+            .then(products => res.json(products))
+            .catch(error => this.handleError(error, res));
+    }
+
+    getProductById = (req: Request, res: Response) => {
+        const { productId } = req.params;
+
+        this.productService.getProductById(productId)
             .then(products => res.json(products))
             .catch(error => this.handleError(error, res));
     }

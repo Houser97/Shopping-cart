@@ -13,6 +13,7 @@ export class ProductRoutes {
         const controller = new ProductController(productService);
 
         router.get('/', controller.getProducts);
+        router.get('/:productId', [ValidatorsMiddleware.validateMongoId('productId')], controller.getProductById);
         router.post('/', [AuthMiddleware.validateAuth, FileUploadMiddleware.containFiles], controller.createProduct);
         router.put('/', [AuthMiddleware.validateAuth], controller.updateProduct);
         router.delete('/:productId', [

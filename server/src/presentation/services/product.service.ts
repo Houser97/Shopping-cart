@@ -5,6 +5,7 @@ import { CreateProductDto } from "../../domain/dtos/products/create-product.dto"
 import { UpdateProductDto } from "../../domain/dtos/products/update-product.dto";
 import { ProductEntity } from "../../domain/entities/product.entity";
 import { CustomError } from "../../domain/errors/custom.error";
+import mongoose from "mongoose";
 
 export class ProductService {
     constructor() { }
@@ -28,23 +29,55 @@ export class ProductService {
 
     async getProducts() {
         try {
-            const productsWithRating = await ProductModel.aggregate([
+            const products = await ProductModel.aggregate([
                 {
                     $lookup: {
                         from: "reviews",
                         localField: "_id",
                         foreignField: "productId",
                         as: "reviews"
-                    }
+                    },
                 },
                 {
                     $addFields: {
-                        rating: { $avg: "$reviews.rating" }
+                        rating: { $avg: "$reviews.rating" },
+                        totalReviews: { $size: "$reviews" }
                     }
                 },
             ]);
 
-            return productsWithRating.map(product => ProductEntity.fromObject(product));
+            return products.map(product => ProductEntity.fromObject(product));
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
+    }
+
+    async getProductById(id: string) {
+        try {
+            const product = await ProductModel.aggregate([
+                {
+                    $match: { _id: new mongoose.Types.ObjectId(id) }
+                },
+                {
+                    $lookup: {
+                        from: 'reviews',
+                        localField: '_id',
+                        foreignField: 'productId',
+                        as: 'reviews'
+                    }
+                },
+                {
+                    $addFields: {
+                        rating: { $avg: 'reviews.rating' },
+                        totalReviews: { $size: "$reviews" }
+                    }
+                }
+            ]);
+
+            if (product.length === 0)
+                throw CustomError.notFound(`Product with id ${id} not found`);
+
+            return ProductEntity.fromObject(product[0]);
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }

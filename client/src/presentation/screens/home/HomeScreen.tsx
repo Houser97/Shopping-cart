@@ -1,12 +1,11 @@
-import Incentives from '../../components/home/Incentives';
-import Presentation from '../../components/home/Presentation';
+import { Testimonials, Presentation, Incentives } from '../../components/home';
 
 export const HomeScreen = () => {
     return (
         <div className='flex flex-col w-full'>
             <Presentation />
             <Incentives />
-            {/*   <Testimonials /> */}
+            <Testimonials />
         </div>
     )
 }

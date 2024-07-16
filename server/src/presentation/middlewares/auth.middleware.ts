@@ -22,4 +22,25 @@ export class AuthMiddleware {
     static validateAuth(req: Request, res: Response, next: NextFunction) {
         Passport.validateJwtAuth(req, res, next);
     }
+
+    static async optionalAuth(req: Request, res: Response, next: NextFunction) {
+        const authHeader = req.headers.authorization;
+
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.substring('Bearer '.length);
+            try {
+                const decoded = await JwtAdapter.validateToken(token); // Usa tu clave secreta
+                if (decoded) {
+                    req.user = decoded.id;
+                }
+            } catch (error) {
+                console.log(error);
+                req.user = '';
+            }
+        } else {
+            req.user = '';
+        }
+
+        next();
+    }
 }

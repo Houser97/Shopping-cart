@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ReactionModel } from "../../data/mongo/models/reaction.model";
 import { ReviewModel } from "../../data/mongo/models/review.model";
 import { CreateReactionDto } from "../../domain/dtos/reactions/create-reaction.dto";
@@ -7,6 +8,26 @@ import { CustomError } from "../../domain/errors/custom.error";
 
 export class ReactionService {
     constructor() { }
+
+
+    async get(productId: string, authorId: string) {
+        if (authorId.length === 0)
+            return []
+
+        try {
+            const productObjectId = new mongoose.Types.ObjectId(productId);
+            const authorObjectId = new mongoose.Types.ObjectId(authorId);
+
+            const reactions = await ReactionModel.find({
+                productId: productObjectId,
+                authorId: authorObjectId
+            });
+
+            return reactions.map(ReactionEntity.fromObject);
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
+    }
 
     async create(createReactionDto: CreateReactionDto) {
         const { reviewId, authorId } = createReactionDto;

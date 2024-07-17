@@ -12,6 +12,10 @@ const ReactionSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    },
     reviewId: {
         type: Schema.Types.ObjectId,
         ref: 'Review'

@@ -20,7 +20,7 @@ export class ReviewRoutes {
             AuthMiddleware.validateAuthorId,
         ], controller.createReview);
         router.put('/:id', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.updateReview);
-        router.delete('/', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.deleteReview);
+        router.delete('/:id', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.deleteReview);
 
         return router;
     }

@@ -11,8 +11,7 @@ export class ReactionService {
 
 
     async get(productId: string, authorId: string) {
-        if (authorId.length === 0)
-            return []
+        if (authorId.length === 0) return {}
 
         try {
             const productObjectId = new mongoose.Types.ObjectId(productId);
@@ -23,7 +22,13 @@ export class ReactionService {
                 authorId: authorObjectId
             });
 
-            return reactions.map(ReactionEntity.fromObject);
+            const reactionsObject = reactions.reduce((prev, reaction) => {
+                const object = ReactionEntity.toReviewIdObject(reaction);
+
+                return { ...prev, ...object };
+            }, {});
+
+            return reactionsObject;
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }

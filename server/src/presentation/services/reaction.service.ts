@@ -23,12 +23,40 @@ export class ReactionService {
             });
 
             const reactionsObject = reactions.reduce((prev, reaction) => {
-                const object = ReactionEntity.toReviewIdObject(reaction);
+                const object = ReactionEntity.reactionsToReviewIdObject(reaction);
 
                 return { ...prev, ...object };
             }, {});
 
             return reactionsObject;
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
+    }
+
+    async getTotalReactions(reviewsId: string[]) {
+        try {
+            const reviewsObjectId = reviewsId.map(id => new mongoose.Types.ObjectId(id));
+
+            const totalReactions = await ReactionModel.aggregate([
+                { $match: { reviewId: { $in: reviewsObjectId } } },
+                {
+                    $group: {
+                        _id: { reaction: "$reaction", reviewId: "$reviewId" },
+                        total: { $sum: 1 }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        reviewId: "$_id.reviewId",
+                        reaction: "$_id.reaction",
+                        total: 1
+                    }
+                }
+            ]);
+
+            return ReactionEntity.reactionsCountToReviewIdObject(totalReactions);
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }

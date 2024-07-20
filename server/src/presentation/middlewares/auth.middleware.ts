@@ -5,7 +5,7 @@ import { JwtAdapter } from "../../config/jwt.adapter";
 
 export class AuthMiddleware {
     static async validateAuthorId(req: RequestWithUser, res: Response, next: NextFunction) {
-        const token = (req.headers['authorization']?.split(' '))![1]
+        const token = this.getTokenFromHeader(req);
 
         const decodedToken = await JwtAdapter.validateToken(token);
         if (!decodedToken) return res.status(401).json({ error: 'Token was not provided' });
@@ -24,23 +24,21 @@ export class AuthMiddleware {
     }
 
     static async optionalAuth(req: Request, res: Response, next: NextFunction) {
-        const authHeader = req.headers.authorization;
+        req.user = '';
 
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.substring('Bearer '.length);
+        const authHeader = req.headers.authorization;
+        if (authHeader?.startsWith('Bearer ')) {
+            const token = this.getTokenFromHeader(req);
             try {
-                const decoded = await JwtAdapter.validateToken(token); // Usa tu clave secreta
-                if (decoded) {
-                    req.user = decoded.id;
-                }
+                const decoded = await JwtAdapter.validateToken(token);
+                req.user = decoded?.id || '';
             } catch (error) {
-                console.log(error);
-                req.user = '';
+                console.error('Error validating token:', error);
             }
-        } else {
-            req.user = '';
         }
 
         next();
     }
+
+    static getTokenFromHeader = (req: Request) => (req.headers['authorization']?.split(' '))![1]
 }

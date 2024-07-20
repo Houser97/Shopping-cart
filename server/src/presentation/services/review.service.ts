@@ -46,7 +46,7 @@ export class ReviewService {
                 return [...prev, current._id];
             }, []);
 
-            const reactionsTotal = await this.reactionService.getTotalReactions(reviewsId);
+            const totalReactions = await this.reactionService.getTotalReactions(reviewsId);
 
             return {
                 page,
@@ -57,7 +57,7 @@ export class ReviewService {
                 prev: (page > 1) ? `/api/reviews/${productId}?page=${page - 1}&limit=${limit}` : null,
                 reviews: reviews,
                 userReactions: reactions,
-                reactionTotal: reactionsTotal
+                totalReactions: totalReactions
             };
         } catch (error) {
             throw CustomError.internalServer(`${error}`);

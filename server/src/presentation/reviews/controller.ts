@@ -21,12 +21,14 @@ export class ReviewController {
 
     getReviews = (req: Request, res: Response) => {
         const { productId } = req.params;
+        const userId = req.user as string;
+
         const { page = 1, limit = 10 } = req.query;
         const [error, paginationDto] = PaginationDto.create(+page, +limit);
 
         if (error) return res.status(400).json({ error });
 
-        this.reviewService.getReviews(productId, paginationDto!)
+        this.reviewService.getReviews(productId, paginationDto!, userId)
             .then(reviews => res.json(reviews))
             .catch(error => this.handleError(error, res));
     }
@@ -41,16 +43,17 @@ export class ReviewController {
     }
 
     updateReview = (req: Request, res: Response) => {
+        const { id } = req.params;
         const [error, updateReviewDto] = UpdateReviewDto.create({ ...req.body });
         if (error) return res.status(400).json({ error });
 
-        this.reviewService.update(updateReviewDto!)
+        this.reviewService.update(id, updateReviewDto!)
             .then(review => res.status(201).json(review))
             .catch(error => this.handleError(error, res));
     }
 
     deleteReview = (req: Request, res: Response) => {
-        const { id } = req.body;
+        const { id } = req.params;
         this.reviewService.delete(id)
             .then(review => res.status(201).json(review))
             .catch(error => this.handleError(error, res));

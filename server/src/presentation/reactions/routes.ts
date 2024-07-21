@@ -13,7 +13,6 @@ export class ReactionRoutes {
         router.post('/', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.createReaction);
         router.put('/:reactionId', [
             AuthMiddleware.validateAuth,
-            AuthMiddleware.validateAuthorId,
             ValidatorsMiddleware.validateMongoId('reactionId')
         ], controller.updateReaction)
 

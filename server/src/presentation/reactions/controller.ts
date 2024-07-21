@@ -29,10 +29,11 @@ export class ReactionController {
 
     updateReaction = (req: Request, res: Response) => {
         const { reactionId } = req.params;
-        const [error, updateProductDto] = UpdateReactionDto.create({ ...req.body });
+        const [error, updateReactionDto] = UpdateReactionDto.create({ ...req.body });
+
         if (error) return res.status(400).json({ error });
 
-        this.reactionService.update(reactionId, updateProductDto!)
+        this.reactionService.update(reactionId, updateReactionDto!)
             .then(reaction => res.json(reaction))
             .catch(error => this.handleError(error, res));
     }

@@ -5,13 +5,14 @@ export enum ReactionsEnum {
 }
 
 export interface Reaction {
+    id: string,
     reviewId: string,
     authorId: string,
     reaction: string
 }
 
-export interface UserReactions {
-    [reviewId: string]: any
+export interface ReactionsReviewIdObject {
+    [reviewId: string]: Reaction
 }
 
 export interface ReactionCounts {

@@ -38,9 +38,7 @@ export class ReviewService {
                 }
             ]);
 
-            const reactionsPromise = this.reactionService.get(productId, authorId);
-
-            const [totalReviews, reviews, reactions] = await Promise.all([totalReviewsPromise, reviewsPromise, reactionsPromise])
+            const [totalReviews, reviews] = await Promise.all([totalReviewsPromise, reviewsPromise])
 
             const reviewsId = reviews.reduce((prev, current) => {
                 return [...prev, current._id];
@@ -56,7 +54,6 @@ export class ReviewService {
                 next: (page * limit < totalReviews) ? `/api/reviews/${productId}?page=${page + 1}&limit=${limit}` : null,
                 prev: (page > 1) ? `/api/reviews/${productId}?page=${page - 1}&limit=${limit}` : null,
                 reviews: reviews,
-                userReactions: reactions,
                 totalReactions: totalReactions
             };
         } catch (error) {

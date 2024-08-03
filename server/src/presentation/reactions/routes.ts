@@ -10,7 +10,8 @@ export class ReactionRoutes {
         const reactionService = new ReactionService();
         const controller = new ReactionController(reactionService);
 
-        router.post('/', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.createReaction);
+        router.get('/:productId', [AuthMiddleware.optionalAuth], controller.getReactions);
+        router.post('/', [AuthMiddleware.validateAuth], controller.createReaction);
         router.put('/:reactionId', [
             AuthMiddleware.validateAuth,
             ValidatorsMiddleware.validateMongoId('reactionId')

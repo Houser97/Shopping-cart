@@ -18,6 +18,15 @@ export class ReactionController {
         return res.status(500).json({ error: 'Internal server error' });
     }
 
+    getReactions = (req: Request, res: Response) => {
+        const { productId } = req.params;
+        const userId = req.user as string;
+
+        this.reactionService.get(productId, userId)
+            .then(reaction => res.json(reaction))
+            .catch(error => this.handleError(error, res));
+    }
+
     createReaction = (req: Request, res: Response) => {
         const [error, createReactionDto] = CreateReactionDto.create({ ...req.body });
         if (error) return res.status(400).json({ error });

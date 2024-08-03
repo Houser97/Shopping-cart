@@ -22,13 +22,7 @@ export class ReactionService {
                 authorId: authorObjectId
             });
 
-            const reactionsObject = reactions.reduce((prev, reaction) => {
-                const object = ReactionEntity.reactionsToReviewIdObject(reaction);
-
-                return { ...prev, ...object };
-            }, {});
-
-            return reactionsObject;
+            return reactions.map(ReactionEntity.fromObject);
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }

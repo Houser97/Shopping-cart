@@ -1,15 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ProductCart } from "../../../domain/entities/product.cart";
 
 export interface CartState {
-  products: Record<string, any>,
-  priceProducts: Record<string, any>,
+  productsInCart: Record<string, ProductCart>,
   totalPrice: number,
   totalProducts: number,
 }
 
 const initialState: CartState = {
-  products: {},
-  priceProducts: {},
+  productsInCart: {},
   totalPrice: 0,
   totalProducts: 0,
 }
@@ -19,14 +18,12 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     onUpdate: (state, { payload }) => {
-      state.products = payload.products;
-      state.priceProducts = payload.priceProducts;
+      state.productsInCart = payload.productsInCart;
       state.totalPrice = payload.totalPrice;
       state.totalProducts = payload.totalProducts;
     },
     onClear: (state) => {
-      state.products = {};
-      state.priceProducts = {};
+      state.productsInCart = {};
       state.totalPrice = 0;
       state.totalProducts = 0;
     },

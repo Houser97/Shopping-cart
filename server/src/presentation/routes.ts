@@ -3,6 +3,7 @@ import { ReviewRoutes } from "./reviews/routes";
 import { AuthRoutes } from "./auth/routes";
 import { ReactionRoutes } from "./reactions/routes";
 import { ProductRoutes } from "./products/routes";
+import { productCartRoutes } from "./productsCart/routes";
 
 export class AppRoutes {
 
@@ -14,6 +15,7 @@ export class AppRoutes {
         router.use('/api/reviews', ReviewRoutes.routes);
         router.use('/api/reactions', ReactionRoutes.routes);
         router.use('/api/products', ProductRoutes.routes);
+        router.use('/api/cart', productCartRoutes.routes);
 
         return router;
     }

@@ -3,7 +3,7 @@ import { ReviewRoutes } from "./reviews/routes";
 import { AuthRoutes } from "./auth/routes";
 import { ReactionRoutes } from "./reactions/routes";
 import { ProductRoutes } from "./products/routes";
-import { productCartRoutes } from "./productsCart/routes";
+import { productCartRoutes } from "./cart/routes";
 
 export class AppRoutes {
 

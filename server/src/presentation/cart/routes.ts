@@ -15,11 +15,14 @@ export class productCartRoutes {
         router.get('/products', [AuthMiddleware.validateAuth], controller.getProducts);
 
         router.post('/products', [AuthMiddleware.validateAuth], controller.createProductCart);
-        router.put('/products', [AuthMiddleware.validateAuth], controller.updateProduct);
-        router.delete('/:productId', [
+        router.put('/products/:productId', [
             AuthMiddleware.validateAuth,
             ValidatorsMiddleware.validateMongoId('productId')
-        ], controller.deleteProduct);
+        ], controller.updateProductCart);
+        router.delete('/products/:productId', [
+            AuthMiddleware.validateAuth,
+            ValidatorsMiddleware.validateMongoId('productId')
+        ], controller.deleteProductCart);
 
         return router;
     }

@@ -4,6 +4,7 @@ import { UpdateProductDto } from "../../domain/dtos/products/update-product.dto"
 import { CreateProductCartDto } from "../../domain/dtos/cart/products/create-product-cart.dto";
 import { CartService } from "../services/cart.service";
 import { RequestWithUser } from "../../domain/interfaces/request-with-user.interface";
+import { UpdateProductCartDto } from "../../domain/dtos/cart/products/update-product-cart.dto";
 
 export class CartController {
     constructor(
@@ -38,21 +39,22 @@ export class CartController {
             .catch(error => this.handleError(error, res));
     }
 
-    updateProduct = (req: Request, res: Response) => {
-        const [error, updateProductDto] = UpdateProductDto.create({ ...req.body });
+    updateProductCart = (req: Request, res: Response) => {
+        const [error, updateProductCartDto] = UpdateProductCartDto.create({ ...req.body });
+        const { productId } = req.params;
         if (error) return res.status(400).json({ error });
 
-        // this.productCartService.update(updateProductDto!)
-        //     .then(product => res.json(product))
-        //     .catch(error => this.handleError(error, res));
+        this.cartService.updateProduct(productId, updateProductCartDto!)
+            .then(product => res.json(product))
+            .catch(error => this.handleError(error, res));
     }
 
-    deleteProduct = (req: Request, res: Response) => {
+    deleteProductCart = (req: Request, res: Response) => {
         const { productId } = req.params;
 
-        // this.productCartService.delete(productId)
-        //     .then(product => res.json(product))
-        //     .catch(error => this.handleError(error, res));
+        this.cartService.deleteProduct(productId)
+            .then(product => res.json(product))
+            .catch(error => this.handleError(error, res));
     }
 
 }

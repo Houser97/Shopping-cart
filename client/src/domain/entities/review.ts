@@ -1,13 +1,15 @@
 import { Author } from "./author";
 
 export interface Review {
-    id: string;
-    productId: string;
-    authorId: string;
-    rating: number;
-    comment: string;
+    id: string,
+    authorId: string,
+    productId: string,
+    rating: number,
+    comment: string
+}
+
+export interface DetailedReview extends Review {
     createdAt: Date;
-    ratings: string[];
     reactions: string[];
     author: Author;
 }

@@ -3,16 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { ShoppingApp } from './ShoppingApp';
 import { Provider } from 'react-redux'
-import { persistor, store } from './presentation/store/store';
-import { PersistGate } from 'redux-persist/integration/react';
-
+import { store } from './presentation/store/store';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ShoppingApp />
-      </PersistGate>
+      <ShoppingApp />
     </Provider>
   </React.StrictMode>,
 )

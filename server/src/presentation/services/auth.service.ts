@@ -61,6 +61,16 @@ export class AuthService {
         })
     }
 
+    public async checkStatus(req: Request, res: Response) {
+        const token = (req.headers['authorization']?.split(' '))![1];
+        const user = req.user as any;
+        const { password, ...rest } = UserEntity.fromObject(user);
+        return res.json({
+            user: rest,
+            token
+        })
+    }
+
     private async generateToken(id: string) {
         const token = await JwtAdapter.generateToken({ id });
         if (!token) throw CustomError.internalServer('Error while creating JWT');

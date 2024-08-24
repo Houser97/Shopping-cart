@@ -77,5 +77,16 @@ export class CartService {
         }
     }
 
+    public async handlePayment(userId: string) {
+        try {
+
+            const mongoUserId = new mongoose.Types.ObjectId(userId);
+            await ProductCartModel.deleteMany({ 'userId': mongoUserId });
+            return true;
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`);
+        }
+    }
+
 }
 

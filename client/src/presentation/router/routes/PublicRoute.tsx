@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, TypedUseSelectorHook } from 'react-redux';
 import { RootState } from '../../store/store';
 
@@ -11,12 +11,18 @@ interface PublicRouteProps {
 
 export const PublicRoute = ({ children }: PublicRouteProps) => {
     const { status } = useTypedSelector(state => state.auth);
+    const navigate = useNavigate();
     const location = useLocation();
-    const previousPath = location.state?.from?.pathname || '/';
 
-    if (status === 'authenticated') {
-        return <Navigate to={previousPath} replace />;
+    if (status === 'authenticated' && !(location.key === 'default')) {
+        navigate(-1);
     }
+
+    useEffect(() => {
+        if (status === 'authenticated' && location.key === 'default') {
+            navigate('/');
+        }
+    }, [status, location.key]);
 
     return children ? <>{children}</> : <Outlet />;
 };

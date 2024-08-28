@@ -1,8 +1,8 @@
 import { TotalReactions } from "../entities/reaction";
-import { Review } from "../entities/review";
+import { DetailedReview, Review } from "../entities/review";
 
 export interface GetReviewsType {
-    reviews: Review[];
+    reviews: DetailedReview[];
     totalReactions: TotalReactions;
 }
 

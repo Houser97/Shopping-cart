@@ -1,4 +1,4 @@
-export interface ProductDB {
+export interface ProductDBResponse {
     id: string;
     title: string;
     price: number;

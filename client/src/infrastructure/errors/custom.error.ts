@@ -6,9 +6,11 @@ export class CustomError extends Error {
         super(message)
     }
 
-    static formatError(message: string, status: number) {
-        return {
-            status, message
+    static formatError(error: any) {
+        if (error.response) {
+            const { status, data } = error.response;
+            return new CustomError(status, data.error);
         }
+        return new CustomError(500, error.message);
     }
 }

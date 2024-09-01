@@ -22,7 +22,7 @@ export class CartResporityImpl extends CartRepository {
     deleteProduct(id: string): Promise<ProductCart> {
         return this.datasource.deleteProduct(id);
     }
-    handlePayment(): Promise<ProductCart[]> {
+    handlePayment(): Promise<boolean> {
         return this.datasource.handlePayment();
     }
 

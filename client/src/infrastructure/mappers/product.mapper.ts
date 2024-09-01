@@ -1,8 +1,8 @@
 import { Product } from "../../domain/entities/product";
-import { ProductDB } from "../interfaces/product-db.response";
+import { ProductDBResponse } from "../interfaces/product-db.response";
 
 export class ProductMapper {
-    static fromDbCastToEntity(product: ProductDB): Product {
+    static fromDbCastToEntity(product: ProductDBResponse): Product {
         return {
             id: product.id,
             title: product.title,

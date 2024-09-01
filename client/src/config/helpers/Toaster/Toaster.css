@@ -1,0 +1,12 @@
+.toaster {
+    background: #fbc4c4;
+    border: 2px solid #ff9696;
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    font-weight: bolder;
+    gap: 20px;
+}
+
+.toater-error {
+    background: #f85050;
+}

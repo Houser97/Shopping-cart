@@ -15,7 +15,7 @@ const Header = () => {
 
     return (
         <header className='flex flex-row justify-between items-center
-        text-5xl fixed w-full z-10 h-[80px] font-bold bg-[var(--header-color)] px-8 text-white sm:px-10'>
+        text-5xl fixed w-full z-20 h-[80px] font-bold bg-[var(--header-color)] px-8 text-white sm:px-10'>
             <ToggleButton toggle={toggleNavbar} setToggle={setToggleNavbar} />
             <Navbar toggle={toggleNavbar} setToggleNavbar={setToggleNavbar} />
             <h1 className="text-2xl mx-2 xs:text-4xl sm:text-5xl">Shopping Cart</h1>

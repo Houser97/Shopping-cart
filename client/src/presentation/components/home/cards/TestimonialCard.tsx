@@ -16,7 +16,7 @@ export const TestimonialCard = ({ userPicture, username, mainSentence, testimoni
         </div>
       */}
       <div className='flex flex-row text-lg font-bold w-full justify-center py-10'>
-        <img alt='testimonial-img' src={userPicture} className='flex text-center items-center justify-center rounded-full w-24 h-24 border-[var(--yellow-color)] border-solid border-4 bg-white mr-6'></img>
+        {/* <img alt='testimonial-img' src={userPicture} className='flex text-center items-center justify-center rounded-full w-24 h-24 border-[var(--yellow-color)] border-solid border-4 bg-white mr-6'></img> */}
         <div className='flex flex-col items-start justify-center'>
           <div>{username}</div>
         </div>

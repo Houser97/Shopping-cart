@@ -9,10 +9,17 @@ import { CreateProductScreen } from "../screens/products/CreateProductScreen";
 import { ShopScreen } from "../screens/shop/ShopScreen";
 import { ProductScreen } from "../screens/products/ProductScreen";
 import ReviewScreen from "../screens/reviews/CreateReview";
+import { NotFound } from "../layouts/NotFound";
+
 
 export const AppRouter = createBrowserRouter([
     {
         element: <MainLayout />,
+        errorElement:
+            <NotFound>
+                <span>404</span>
+                <span>Not Found</span>
+            </NotFound>,
         children: [
             {
                 path: '/',
@@ -52,8 +59,11 @@ export const AppRouter = createBrowserRouter([
                 element: <ProductScreen />
             },
             {
-                path: '/review/:productId/:reviewId',
-                element: <ReviewScreen />
+                path: '/review/:productId',
+                element:
+                    <ProtectedRoute>
+                        <ReviewScreen />
+                    </ProtectedRoute>
             },
         ]
     },

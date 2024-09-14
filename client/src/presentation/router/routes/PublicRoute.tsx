@@ -14,13 +14,13 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    if (status === 'authenticated' && !(location.key === 'default')) {
-        navigate(-1);
-    }
 
     useEffect(() => {
         if (status === 'authenticated' && location.key === 'default') {
             navigate('/');
+        }
+        else if (status === 'authenticated' && !(location.key === 'default')) {
+            navigate(-1);
         }
     }, [status, location.key]);
 

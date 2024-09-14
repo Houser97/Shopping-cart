@@ -49,7 +49,7 @@ export const ProductCard = ({ product, isLazy }: Props) => {
                 <StarRate product={id} rating={rating} isCustomizable={false} setRating={undefined} />
                 <Link to={`/product/${id}`} className='font-bold text-center text-blue-800 text-lg'>{totalReviewsMessage}</Link>
                 <IncDecProduct dispatch={dispatch} state={state} />
-                <ProductBtns productId={id} productImage={images[0]} reduceState={state} product={product} />
+                <ProductBtns productId={id} reduceState={state} />
             </div>
         </div>
     )

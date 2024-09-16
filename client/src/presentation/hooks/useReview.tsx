@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { reviewRepositoryProvider } from "../providers";
-import { toast } from "sonner";
 import { Review } from "../../domain/entities/review";
 import { ReviewMapper } from "../../infrastructure/mappers/review.mapper";
+import { ToastTypes, toast } from "../../config/helpers/Toaster/Toaster";
 
 
 export const useReview = () => {
@@ -15,7 +15,7 @@ export const useReview = () => {
             setReview(review);
             return review;
         } catch (error) {
-            toast.error(error.message);
+            toast(error.message, ToastTypes.ERROR);
             return ReviewMapper.emptyReview();
         }
     }
@@ -26,29 +26,29 @@ export const useReview = () => {
             setReview(review);
             return review;
         } catch (error) {
-            toast.error(error.message);
+            toast(error.message, ToastTypes.ERROR);
             return ReviewMapper.emptyReview();
         }
     }
 
-    const updateReview = async (id, userId, comment, rating) => {
+    const updateReview = async (id: string, userId: string, comment: string, rating: number) => {
         try {
             const review = await reviewRepositoryProvider.updateReview(id, userId, comment, rating);
             setReview(review);
             return review;
         } catch (error) {
-            toast.error(error.message);
+            toast(error.message, ToastTypes.ERROR);
             return ReviewMapper.emptyReview();
         }
     }
 
-    const deleteReview = async (id) => {
+    const deleteReview = async (id: string) => {
         try {
             const review = await reviewRepositoryProvider.deleteReview(id);
             setReview(review);
             return review;
         } catch (error) {
-            toast.error(error.message);
+            toast(error.message, ToastTypes.ERROR);
             return ReviewMapper.emptyReview();
         }
     }

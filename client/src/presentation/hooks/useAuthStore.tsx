@@ -19,10 +19,7 @@ export const useAuthStore = () => {
 
         } catch (error) {
             console.log(error)
-            dispatch(onLogout('Credenciales incorrectas'));
-            setTimeout(() => {
-                dispatch(clearErrorMessage());
-            }, 10);
+            dispatch(onLogout('Incorrect credentials'));
         }
     }
 
@@ -51,9 +48,9 @@ export const useAuthStore = () => {
             const { data } = await shoppingApi.get('/auth');
             localStorage.setItem('token', data.token);
             localStorage.setItem('token-init-date', new Date().getTime().toString());
+            dispatch(onLogin(data.user));
         } catch (error) {
-            localStorage.clear();
-            dispatch(onLogout(''));
+            startLogout();
         }
     }
 

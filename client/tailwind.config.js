@@ -52,5 +52,20 @@ module.exports = {
       }
     }
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '.cart-scrollbar::-webkit-scrollbar': {
+          width: '4px',
+        },
+        '.cart-scrollbar::-webkit-scrollbar-track': {
+          background: '#929497',
+        },
+        '.cart-scrollbar::-webkit-scrollbar-thumb': {
+          backgroundColor: 'var(--blue-color)',
+          borderRadius: '20px',
+        },
+      });
+    },
+  ],
 }

@@ -8,18 +8,18 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { CreateProductScreen } from "../screens/products/CreateProductScreen";
 import { ShopScreen } from "../screens/shop/ShopScreen";
 import { ProductScreen } from "../screens/products/ProductScreen";
-import ReviewScreen from "../screens/reviews/CreateReview";
-import { NotFound } from "../layouts/NotFound";
+import { ReviewScreen } from "../screens/reviews/ReviewScreen";
+import { NotFoundLayout } from "../layouts/NotFoundLayout";
 
 
 export const AppRouter = createBrowserRouter([
     {
         element: <MainLayout />,
         errorElement:
-            <NotFound>
+            <NotFoundLayout>
                 <span>404</span>
                 <span>Not Found</span>
-            </NotFound>,
+            </NotFoundLayout>,
         children: [
             {
                 path: '/',

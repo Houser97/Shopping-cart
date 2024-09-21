@@ -1,4 +1,4 @@
-import '../../../../styles/CartIcon.css'
+import './CartIcon.css'
 import { useCartStore } from '../../../hooks/useCartStore'
 
 const CartIcon = ({ toggle, setToggleCart }) => {

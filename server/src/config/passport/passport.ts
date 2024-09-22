@@ -65,6 +65,8 @@ export class Passport {
                 if (err) return res.status(500).json({ error: 'Internal server error' })
                 if (!user && info) return res.status(401).json({ error: info.message })
 
+                req.user = user;
+
                 next()
             })(req, res, next);
     }

@@ -18,7 +18,7 @@ export class AuthController {
         return res.status(500).json({ error: 'Internal server error' });
     }
 
-    login = async (req: Request, res: Response, next: NextFunction) => {
+    login = async (req: Request, res: Response) => {
         const [error, loginUserDto] = LoginUserDto.login(req.body)
         if (error) return res.status(400).json({ error });
 
@@ -37,5 +37,9 @@ export class AuthController {
 
     logout = (req: Request, res: Response) => {
         this.authService.logout(req, res)
+    }
+
+    checkStatus = (req: Request, res: Response) => {
+        this.authService.checkStatus(req, res);
     }
 }

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthController } from "./controller";
 import { AuthService } from "../services/auth.service";
 import { ValidatorsMiddleware } from "../middlewares/validators.middleware";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 export class AuthRoutes {
     static get routes(): Router {
@@ -19,6 +20,8 @@ export class AuthRoutes {
             ValidatorsMiddleware.isValidPassword(),
             ValidatorsMiddleware.validateFields
         ], controller.register);
+
+        router.get('/', [AuthMiddleware.validateAuth], controller.checkStatus)
 
         return router;
 

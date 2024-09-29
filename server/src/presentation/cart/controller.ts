@@ -57,4 +57,13 @@ export class CartController {
             .catch(error => this.handleError(error, res));
     }
 
+    handlePayment = (req: Request, res: Response) => {
+        const user = req.user as any;
+        const userId = user!.id;
+
+        this.cartService.handlePayment(userId)
+            .then(product => res.json(product))
+            .catch(error => this.handleError(error, res));
+    }
+
 }

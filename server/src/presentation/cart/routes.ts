@@ -23,6 +23,9 @@ export class productCartRoutes {
             AuthMiddleware.validateAuth,
             ValidatorsMiddleware.validateMongoId('productId')
         ], controller.deleteProductCart);
+        router.delete('/products', [
+            AuthMiddleware.validateAuth
+        ], controller.handlePayment);
 
         return router;
     }

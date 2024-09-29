@@ -3,9 +3,11 @@ import { Passport } from "../../config/passport/passport";
 import { RequestWithUser } from "../../domain/interfaces/request-with-user.interface";
 import { JwtAdapter } from "../../config/jwt.adapter";
 
+const getTokenFromHeader = (req: Request) => (req.headers['authorization']?.split(' '))![1]
+
 export class AuthMiddleware {
     static async validateAuthorId(req: RequestWithUser, res: Response, next: NextFunction) {
-        const token = this.getTokenFromHeader(req);
+        const token = getTokenFromHeader(req);
 
         const decodedToken = await JwtAdapter.validateToken(token);
         if (!decodedToken) return res.status(401).json({ error: 'Token was not provided' });
@@ -28,7 +30,7 @@ export class AuthMiddleware {
 
         const authHeader = req.headers.authorization;
         if (authHeader?.startsWith('Bearer ')) {
-            const token = this.getTokenFromHeader(req);
+            const token = getTokenFromHeader(req);
             try {
                 const decoded = await JwtAdapter.validateToken(token);
                 req.user = decoded?.id || '';
@@ -40,5 +42,5 @@ export class AuthMiddleware {
         next();
     }
 
-    static getTokenFromHeader = (req: Request) => (req.headers['authorization']?.split(' '))![1]
+
 }

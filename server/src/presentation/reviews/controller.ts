@@ -33,6 +33,16 @@ export class ReviewController {
             .catch(error => this.handleError(error, res));
     }
 
+    getReviewByProductIdAndUserId = (req: Request, res: Response) => {
+        const { productId } = req.params;
+        const user = req.user as any;
+        const userId = user!.id;
+
+        this.reviewService.getByProductIdAndUserId(productId, userId)
+            .then(review => res.json(review))
+            .catch(error => this.handleError(error, res));
+    }
+
     createReview = (req: Request, res: Response) => {
         const [error, createReviewDto] = CreateReviewDto.create({ ...req.body });
         if (error) return res.status(400).json({ error });
@@ -54,7 +64,10 @@ export class ReviewController {
 
     deleteReview = (req: Request, res: Response) => {
         const { id } = req.params;
-        this.reviewService.delete(id)
+        const user = req.user as any;
+        const userId = user!.id;
+
+        this.reviewService.delete(id, userId)
             .then(review => res.status(201).json(review))
             .catch(error => this.handleError(error, res));
     }

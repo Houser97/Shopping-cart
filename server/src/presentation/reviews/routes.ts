@@ -14,13 +14,14 @@ export class ReviewRoutes {
         const reviewService = new ReviewService(reactionService);
         const controller = new ReviewController(reviewService);
 
-        router.get('/:productId', AuthMiddleware.optionalAuth, controller.getReviews);
+        router.get('/product/:productId', AuthMiddleware.optionalAuth, controller.getReviews);
+        router.get('/:productId', AuthMiddleware.validateAuth, controller.getReviewByProductIdAndUserId);
         router.post('/', [
             AuthMiddleware.validateAuth,
             AuthMiddleware.validateAuthorId,
         ], controller.createReview);
         router.put('/:id', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.updateReview);
-        router.delete('/:id', [AuthMiddleware.validateAuth, AuthMiddleware.validateAuthorId], controller.deleteReview);
+        router.delete('/:id', [AuthMiddleware.validateAuth], controller.deleteReview);
 
         return router;
     }

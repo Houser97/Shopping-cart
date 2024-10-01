@@ -68,7 +68,7 @@ export class ProductService {
                 },
                 {
                     $addFields: {
-                        rating: { $avg: 'reviews.rating' },
+                        rating: { $avg: '$reviews.rating' },
                         totalReviews: { $size: "$reviews" }
                     }
                 }

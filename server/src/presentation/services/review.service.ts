@@ -6,6 +6,7 @@ import { UpdateReviewDto } from "../../domain/dtos/reviews/update-review.dto";
 import { PaginationDto } from "../../domain/dtos/shared/pagination.dto";
 import { CustomError } from "../../domain/errors/custom.error";
 import { ReactionService } from "./reaction.service";
+import { ReviewEntity } from "../../domain/entities/review.entity";
 
 export class ReviewService {
     constructor(
@@ -61,6 +62,32 @@ export class ReviewService {
         }
     }
 
+    async getById(id: string) {
+        try {
+            const review = await ReviewModel.findById(id);
+            if (!review) {
+                throw CustomError.notFound(`Review with id: ${id} not found`);
+            }
+
+            return ReviewEntity.fromObject(review!.toObject());
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`)
+        }
+    }
+
+    async getByProductIdAndUserId(productId: string, authorId: string) {
+        try {
+
+            const review = await ReviewModel.findOne({ productId, authorId });
+
+            if (!review) return null
+
+            return ReviewEntity.fromObject(review!.toObject());
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`)
+        }
+    }
+
     async create(createReviewDto: CreateReviewDto) {
         const { productId, authorId } = createReviewDto;
 
@@ -91,22 +118,24 @@ export class ReviewService {
     }
 
     async update(id: string, updateReviewDto: UpdateReviewDto) {
-        const { comment } = updateReviewDto;
+        const { comment, rating } = updateReviewDto;
 
         try {
-            const updatedReview = await ReviewModel.findByIdAndUpdate(id, { comment });
+            const updatedReview = await ReviewModel.findByIdAndUpdate(id, { comment, rating });
 
-            return updatedReview;
+            return ReviewEntity.fromObject(updatedReview!.toObject());
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }
     }
 
-    async delete(id: string) {
-
+    async delete(id: string, authorId: string) {
+        const userIdMatches = await ReviewModel.findOne({ _id: id, authorId });
+        if (!userIdMatches)
+            throw CustomError.badRequest(`User does not match review author id`);
         try {
             const review = await ReviewModel.findByIdAndDelete(id);
-            return review;
+            return ReviewEntity.fromObject(review!.toObject());
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
         }

@@ -1,9 +1,8 @@
 import { envs } from "./config/envs";
-import { Passport } from "./config/passport";
+import { Passport } from "./config/passport/passport";
 import { MongoDatabase } from "./data/mongo/mongo-database";
 import { AppRoutes } from "./presentation/routes";
 import { Server } from "./presentation/server";
-import { AuthService } from "./presentation/services/auth.service";
 
 (async () => {
   main();

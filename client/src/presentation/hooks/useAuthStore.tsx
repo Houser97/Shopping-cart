@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { clearErrorMessage, onChecking, onLogin, onLogout } from '../store';
+import { onChecking, onLogin, onLogout } from '../store';
 import shoppingApi from '../../config/api/shoppingApi';
 import { useTypedSelector } from '../store/config/typed-selector';
 
@@ -18,8 +18,7 @@ export const useAuthStore = () => {
             dispatch(onLogin(data.user));
 
         } catch (error) {
-            console.log(error)
-            dispatch(onLogout('Incorrect credentials'));
+            dispatch(onLogout(error.response.data?.error || 'Wrong credentials'));
         }
     }
 
@@ -32,10 +31,7 @@ export const useAuthStore = () => {
             dispatch(onLogin(data.user));
 
         } catch (error) {
-            dispatch(onLogout(error.response.data?.msg || '--'));
-            setTimeout(() => {
-                dispatch(clearErrorMessage());
-            }, 10);
+            dispatch(onLogout(error.response.data?.error || 'Missing register message'));
         }
     }
 

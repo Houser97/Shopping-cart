@@ -31,7 +31,7 @@ export class Server {
             require('dotenv').config();
             const cors = require('cors');
             this.app.use(cors({
-                origin: "http://localhost:3001",
+                origin: "http://localhost:5173",
                 credentials: true,
             }))
         }

@@ -1,6 +1,5 @@
 import { FormEvent } from 'react'
 import { useAuthStore } from '../../hooks/useAuthStore';
-import { useTypedSelector } from '../../store/config/typed-selector';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { useForm } from '../../hooks/useForm';
 
@@ -12,9 +11,7 @@ export const LoginScreen = () => {
         password: ''
     })
 
-    const { errorMessage } = useTypedSelector(state => state.auth)
-
-    const { startLogin } = useAuthStore();
+    const { errorMessage, startLogin } = useAuthStore();
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()

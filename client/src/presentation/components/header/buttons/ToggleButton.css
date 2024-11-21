@@ -1,0 +1,55 @@
+:root {
+    --spans-top-bottom-offset: 5px;
+    /*Se usa para separar líneas de ToggleButton*/
+}
+
+.app_header-btn-toggle {
+    position: relative;
+    cursor: pointer;
+    width: 40px;
+    height: 30px;
+    font-family: Poppins !important;
+}
+
+.line-navbar {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: #232323;
+    transition: transform 300ms ease-in-out, opacity 250ms ease-in-out 300ms;
+}
+
+.return-animation {
+    /*Clase que anima transición a X*/
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: #232323;
+    /*Se debe esperar a que la línea media desaparezca antes de mover demás líneas.*/
+    transition: transform 300ms ease-in-out, opacity 250ms ease-in-out;
+}
+
+.upper-line-nav {
+    top: var(--spans-top-bottom-offset);
+}
+
+.middle-line-nav {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lower-line-nav {
+    bottom: var(--spans-top-bottom-offset);
+}
+
+.upper-animate {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.middle-animate {
+    opacity: 0;
+}
+
+.lower-animate {
+    transform: translateY(-9px) rotate(-45deg);
+}

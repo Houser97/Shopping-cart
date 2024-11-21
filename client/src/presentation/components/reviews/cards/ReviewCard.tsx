@@ -17,6 +17,7 @@ interface Props {
 export const ReviewCard = ({ review, productId, totalReactions, userReaction }: Props) => {
 
     const { comment, author, rating, createdAt, id: _id, authorId } = review;
+    const date = new Date(createdAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 
     const { user, status } = useAuthStore();
     const { deleteReview } = useReview();
@@ -48,7 +49,7 @@ export const ReviewCard = ({ review, productId, totalReactions, userReaction }: 
                     </button>
                 </div>
             </div>
-            <div className='w-full text-end text-xl font-bold'>{createdAt.toString()}</div>
+            <div className='w-full text-end text-xl font-bold'>{date}</div>
         </div>
     )
 }

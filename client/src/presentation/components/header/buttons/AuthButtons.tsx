@@ -7,9 +7,9 @@ const AuthButtons = ({ setToggleNavbar }) => {
     }
   }
   return (
-    <div className='flex flex-row flex-wrap text-base gap-5 items-center justify-center'>
-      <Link to='/register' className='bg-white text-black px-3 py-1 rounded-lg' onClick={() => toggleNavbar()}>Register</Link>
-      <Link to='/login' className='bg-[var(--yellow-color)] text-black px-3 py-1 rounded-lg' onClick={() => toggleNavbar()}>Login</Link>
+    <div className='flex text-lg gap-5 items-center justify-center font-normal'>
+      <Link to='/register' className=' text-black px-3 py-1 rounded-lg border-solid border-2 border-blue-950' onClick={() => toggleNavbar()}>Register</Link>
+      <Link to='/login' className=' text-black px-3 py-1 rounded-lg' onClick={() => toggleNavbar()}>Login</Link>
     </div>
   )
 }

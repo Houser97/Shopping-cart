@@ -6,7 +6,15 @@ export const REACTION_COLORS = {
 
 export const images = {
     hero: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1724608695/shopping-cart/banner_hy7qlv.jpg',
-    heroSm: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1724608695/shopping-cart/bannerVertical2_cb48df.jpg'
+    heroSm: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1724608695/shopping-cart/bannerVertical2_cb48df.jpg',
+    sodaLabel: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732378620/shopping-cart/sodaLabel_jc0rt0.jpg',
+    sodaMockup: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732378668/shopping-cart/mockup_fb9azu.png',
+    rock: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732378607/shopping-cart/rock1_bieypt.png',
+    iPhone: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732379177/shopping-cart/iPhoneApple_wjqwhk.png',
+    RayBan: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732379181/shopping-cart/RayBan_wym7nb.webp',
+    tennis: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732379185/shopping-cart/Tennis_kiu5n7.png',
+    dualsense: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732379053/shopping-cart/control_dgtuud.webp',
+    airpods: 'https://res.cloudinary.com/dluwqcce9/image/upload/v1732379173/shopping-cart/Airpods_qv7j9q.png'
 }
 
 export const itemsPromotion = [

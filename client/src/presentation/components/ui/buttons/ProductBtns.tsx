@@ -13,7 +13,6 @@ export const ProductBtns = ({ productId, reduceState = { numberOfProducts: 1 } }
 
   const handleProductAddition = async () => {
     let productCartEntity;
-    console.log(user)
     if (!(productId in productsInCart)) {
       productCartEntity = await createProduct(user.id, productId, reduceState.numberOfProducts)
     } else {
@@ -27,14 +26,10 @@ export const ProductBtns = ({ productId, reduceState = { numberOfProducts: 1 } }
 
   return (
     <div>
-      {status === 'authenticated' ?
+      {status === 'authenticated' &&
         <div className='flex flex-row flex-wrap items-center justify-center gap-2'>
-          <button className='bg-[#ffa41c] font-bold p-2 w-24 rounded-lg' onClick={async () => await handleProductAddition()}>Add to cart</button>
-          <Link className={`justify-center bg-[var(--blue-color)] font-bold rounded-lg text-white w-24 p-2 text-center ${false ? 'hidden' : 'flex'}`} to={`/review/${productId}`}>Review</Link>
-        </div>
-        :
-        <div className='text-lg font-bold text-center min-w-full 2sm:text-2xl'>
-          Sign in to add and review products
+          <button className='bg-[#ffa41c] font-bold p-2 w-24 rounded-lg text-whi' onClick={async () => await handleProductAddition()}>Add to cart</button>
+          <Link className={`justify-center bg-[#CDCDCD] font-bold rounded-lg text-black w-24 p-2 text-center ${false ? 'hidden' : 'flex'}`} to={`/review/${productId}`}>Review</Link>
         </div>
       }
     </div>

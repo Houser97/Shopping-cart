@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthButtons from './buttons/AuthButtons';
 import Cart from './Cart';
 import CartIcon from './ui/CartIcon';
@@ -9,16 +9,33 @@ import { useAuthStore } from '../../hooks/useAuthStore';
 const Header = () => {
 
     const { status } = useAuthStore();
+    const [atTop, setAtTop] = useState(true);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (document.documentElement.scrollTop === 0) {
+                setAtTop(true);
+            } else {
+                setAtTop(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const [toggleNavbar, setToggleNavbar] = useState(false);
     const [toggleCart, setToggleCart] = useState(false);
 
     return (
-        <header className='flex flex-row justify-between items-center
-        text-5xl fixed w-full z-20 h-[80px] font-bold bg-[var(--header-color)] px-8 text-white sm:px-10'>
-            <ToggleButton toggle={toggleNavbar} setToggle={setToggleNavbar} />
-            <Navbar toggle={toggleNavbar} setToggleNavbar={setToggleNavbar} />
-            <h1 className="text-2xl mx-2 xs:text-4xl sm:text-5xl">Shopping Cart</h1>
+        <header className={`flex flex-row justify-between items-center
+        text-5xl fixed w-full z-20 h-[80px] font-bold px-8 transition-all 
+        text-black ${atTop ? 'bg-transparent' : 'bg-[white]/20 backdrop-blur-sm'} sm:px-10`}>
+            <div className='flex flex-row items-center gap-5'>
+                <ToggleButton toggle={toggleNavbar} setToggle={setToggleNavbar} />
+                <h1 className="text-2xl font-light">Shopping Cart</h1>
+            </div>
             {status === 'authenticated' ?
                 <CartIcon setToggleCart={setToggleCart} toggle={toggleCart} />
                 :
@@ -28,6 +45,7 @@ const Header = () => {
                     </div>
                 </div>
             }
+            <Navbar toggle={toggleNavbar} setToggleNavbar={setToggleNavbar} />
             <Cart toggleCart={toggleCart} />
         </header>
     )

@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.banner {
+    position: relative;
+    height: 800px;
+    width: 100%;
+}
+
+.product {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 500px;
+    height: 100%;
+    transition: 0.7s;
+}
+
+.product .soda {
+    position: absolute;
+    top: 50%;
+    left: calc(50%);
+    transform: translate(-50%, -50%);
+}
+
+.soda {
+    --left: 400px;
+    background:
+        var(--url) var(--left),
+        url('https://res.cloudinary.com/dluwqcce9/image/upload/v1732378668/shopping-cart/mockup_fb9azu.png') 0 0;
+    background-size: auto 100%;
+    width: 220px;
+    aspect-ratio: 2 / 4;
+    background-blend-mode: multiply;
+    transition: 0.8s;
+    mask-image: url('https://res.cloudinary.com/dluwqcce9/image/upload/v1732378668/shopping-cart/mockup_fb9azu.png');
+    mask-size: auto 100%;
+}
+
+
+
+.product:hover .soda:nth-child(1) {
+    --left: 800px;
+}
+
+
+
+.rock {
+    position: absolute;
+    inset: 0 0 0 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+.rock img {
+    position: absolute;
+    height: 170px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 30px;
+    transition: 0.7s;
+    z-index: 1;
+}
+
+.banner:has(.product:hover) .rock img:nth-child(1) {
+    transform: translateX(-50%) translateY(50px);
+}
+
+.banner:has(.product:hover) .rock img:nth-child(2) {
+    transform: translateX(-100px) translateY(100px);
+}
+
+.banner:has(.product:hover) .rock img:nth-child(3) {
+    transform: translateX(100px) translateY(100px);
+}
+
+@media (max-width: 1200px) {
+
+    .banner {
+        position: relative;
+        height: 600px;
+        width: 100%;
+        overflow: visible;
+    }
+
+
+    .product .soda {
+        top: 30%;
+    }
+
+    .banner::before {
+
+        top: 30%;
+    }
+}
+
+@media (max-width: 550px) {
+
+
+    .product .soda {
+        width: clamp(6.25rem, -2.75rem + 48vw, 13.75rem);
+    }
+
+    .banner::before,
+    .testimonials::before {
+        height: 250px;
+        width: clamp(12.5rem, -4rem + 88vw, 26.25rem);
+    }
+}
+
+@media (max-width: 450px) {
+    .rock img {
+        bottom: 100px;
+    }
+}

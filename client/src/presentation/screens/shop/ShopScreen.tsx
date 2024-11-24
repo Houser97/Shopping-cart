@@ -34,8 +34,8 @@ export const ShopScreen = () => {
     // const contextProvider = { setFilter, filter }
 
     return (
-        <div className='flex flex-col w-full'>
-            <div className='flex flex-col mt-[var(--header-height)] w-full bg-slate-200'>
+        <div className='flex flex-col w-full bg-[var(--white-color)]'>
+            <div className='flex flex-col mt-[var(--header-height)] w-full '>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] grid-rows-[repeat(auto-fit,minmax(0,1fr))]
                 py-12 w-full m-0 px-5 gap-10 gap-y-12 justify-center 2sm:grid-cols-[repeat(auto-fit,minmax(500px,1fr))] md:px-10">
                     {productsDB.length > 0 ? (

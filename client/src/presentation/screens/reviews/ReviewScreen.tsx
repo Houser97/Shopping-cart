@@ -68,25 +68,25 @@ export const ReviewScreen = () => {
         return (<PageLoader />)
 
     return (
-        <div className='flex justify-center items-center w-full min-h-screen px-3 py-32 bg-[#091F44] xs:px-10'>
+        <div className='flex justify-center items-center w-full min-h-screen px-3 bg-[var(--white-color)] xs:px-10'>
             <div className='grid grid-rows-[min-content,minmax(0,1fr)] grid-cols-1 justify-center 
-        items-center gap-5 p-5 px-6 w-full max-w-[1800px] bg-white rounded-2xl md:grid-cols-[minmax(0,350px),minmax(350px,1fr)] md:pl-20 md:p-10'>
-                <img className='w-full max-w-[350px] justify-self-center h-auto md:mr-10' src={product ? product.images[0] : ''} alt='product'></img>
+        items-center gap-5 p-5 px-6 w-full max-w-[1800px] rounded-2xl md:grid-cols-[minmax(0,350px),minmax(350px,1fr)] md:pl-20 md:p-10'>
+                <img className='w-full max-w-[350px] justify-self-center h-auto animate-fadeIn md:mr-10' src={product ? product.images[0] : ''} alt='product'></img>
                 {status === 'authenticated' ?
                     <form className='flex flex-col w-full h-full text-3xl justify-around' onSubmit={(e) => handleReviewSubmit(e)}>
-                        <h1 className='w-full text-center md:text-5xl'>{product ? product.title : ''}</h1>
-                        <div className='flex w-full px-10 justify-center text-3xl my-5 md:text-4xl'>
+                        <h1 className='w-full text-center md:text-5xl opacity-0 animate-showContent'>{product ? product.title : ''}</h1>
+                        <div className='flex w-full px-10 justify-center text-3xl my-5 opacity-0 animate-showContent animate-delay-200 md:text-4xl'>
                             <StarRate key={`${productId}`} product={product.title} isCustomizable={true} setRating={setRating} rating={rating} />
                         </div>
-                        <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 
-                    outline-none rounded-md' minLength={4} required onChange={(e) => setComment(e.target.value)}
+                        <textarea className='max-h-60 h-56 text-xl p-2 w-full border-solid border-gray-400 border-2 animate-showContent animate-delay-[400ms] 
+                     opacity-0 outline-none rounded-md' minLength={4} required onChange={(e) => setComment(e.target.value)}
                             defaultValue={comment}></textarea>
                         {
                             isLoadingV2 ?
                                 <ProcessLoader />
                                 :
-                                <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5
-                        px-4 py-2 font-bold self-center transition-transform hover:bg-[#fcd01f] sm:px-5 sm:py-3'>Submit</button>
+                                <button className='flex text-2xl bg-[#fcc902] rounded-lg w-[min-content] mt-5  opacity-0
+                        px-4 py-2 font-light self-center transition-transform hover:bg-[#fcd01f] animate-showContent animate-delay-[600ms] sm:px-5 sm:py-3'>Submit</button>
                         }
                     </form>
                     :

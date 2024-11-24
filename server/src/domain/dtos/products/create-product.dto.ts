@@ -3,7 +3,7 @@ import { Validators } from "../../../config/validators";
 export class CreateProductDto {
     private constructor(
         public readonly title: string,
-        public readonly images: string[],
+        public readonly images: any[],
         public readonly price: number,
         public readonly authorId: string,
         public readonly description?: string,

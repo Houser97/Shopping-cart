@@ -49,14 +49,14 @@ export const RegisterScreen = () => {
     return (
         <AuthLayout handleSubmit={handleSubmit} errorMessage={errorMessage}>
             <div className='flex flex-col w-full'>
-                <label htmlFor='email' className='font-bold'>E-mail</label>
+                <label htmlFor='email' className='font-light'>E-mail</label>
                 <input type='email' id='email' name='email'
                     className='border-slate-500 border-2 rounded-md p-1 px-3 
                         outline-[var(--blue-color)]' onChange={onChange} required></input>
             </div>
 
             <div className='flex flex-col mt-4 w-full relative'>
-                <label htmlFor='password' className='font-bold'>Password</label>
+                <label htmlFor='password' className='font-light'>Password</label>
                 <input type='password' id='password' name='password'
                     className='border-slate-500 border-2 rounded-md p-1 px-3 
                         outline-[var(--blue-color)]'
@@ -69,7 +69,7 @@ export const RegisterScreen = () => {
             </div>
 
             <div className='flex flex-col my-4 w-full relative'>
-                <label htmlFor='repeatPassword' className='font-bold'>Repeat password</label>
+                <label htmlFor='repeatPassword' className='font-light'>Repeat password</label>
                 <input type='password' id='repeatPassword' name='repeatedPassword'
                     className={`border-2 rounded-md p-1 px-3 
                         ${pwdMatch ? 'border-slate-500 outline-[var(--blue-color)]' : 'border-red-400 outline-red-400'}`}
@@ -78,17 +78,17 @@ export const RegisterScreen = () => {
                     onClick={handlePasswordInputCaps}
                     onBlur={handleBlur}
                     required></input>
-                <div className={`absolute -bottom-8 right-0 text-base font-extrabold text-blue-700 ${isMayusActive && selectedPwdInput === 'repeatPwd' ? 'flex' : 'hidden'}`}>Caps Lock is on</div>
+                <div className={`absolute -bottom-8 right-0 text-base font-light text-blue-700 ${isMayusActive && selectedPwdInput === 'repeatPwd' ? 'flex' : 'hidden'}`}>Caps Lock is on</div>
             </div>
 
             <div className='flex flex-col w-full'>
-                <label htmlFor='username' className='font-bold'>Username</label>
+                <label htmlFor='username' className='font-light'>Username</label>
                 <input type='text' id='username' name='username'
                     className='border-slate-500 border-2 rounded-md p-1 px-3 
                     outline-[var(--blue-color)]' onChange={onChange} required></input>
             </div>
 
-            <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-bold'>Sign up</button>
+            <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-light'>Sign up</button>
             {/* {
                 isLoading ? <LoadingV2 /> : <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-bold'>Sign up</button>
             } */}

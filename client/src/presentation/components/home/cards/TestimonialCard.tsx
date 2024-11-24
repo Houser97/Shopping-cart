@@ -1,4 +1,4 @@
-export const TestimonialCard = ({ userPicture, username, mainSentence, testimonial }) => {
+export const TestimonialCard = ({ username, mainSentence, testimonial }) => {
   return (
     <div className='flex flex-col items-start justify-between relative px-6 pb-5 bg-white text-black rounded-xl w-full shrink-0'>
       <svg className='testimonial-quote text-[var(--yellow-color)] text-[50px] font-[Secular_One] absolute w-12 h-12 rounded-[50%]  rotate-180 top-2 right-0 sm:top-10 sm:right-10' viewBox="0 0 24 24">

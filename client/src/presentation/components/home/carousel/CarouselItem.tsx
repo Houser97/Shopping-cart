@@ -15,7 +15,7 @@ export const CarouselItem = ({ image, product, onSeeMore, isInitialRender }: Pro
                 <div className="des">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia, laborum cumque dignissimos quidem atque et eligendi aperiam voluptates beatae maxime.
                 </div>
-                <button className="seeMore" onClick={onSeeMore}>SEE MORE &#8599;</button>
+                <button className="seeMore" onClick={onSeeMore}>SEE MORE</button>
             </div>
             <div className="detail">
                 <div className="title">{product}</div>

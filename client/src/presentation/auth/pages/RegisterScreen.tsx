@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useAuthStore } from '../../hooks/useAuthStore';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { useForm } from '../../hooks/useForm';
+import { ProcessLoader } from '../../components/ui/loaders/ProcessLoader';
 
 export const RegisterScreen = () => {
 
@@ -21,7 +22,7 @@ export const RegisterScreen = () => {
     const [isMayusActive, setIsMayusActive] = useState(false)
     const [selectedPwdInput, setSelectedPwdInput] = useState(null)
 
-    const { errorMessage, startRegister } = useAuthStore();
+    const { status, errorMessage, startRegister } = useAuthStore();
 
     const handlePasswordInputCaps = (e) => {
         setIsMayusActive(e.getModifierState('CapsLock'))
@@ -88,22 +89,11 @@ export const RegisterScreen = () => {
                     outline-[var(--blue-color)]' onChange={onChange} required></input>
             </div>
 
-            <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-light'>Sign up</button>
-            {/* {
-                isLoading ? <LoadingV2 /> : <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-bold'>Sign up</button>
-            } */}
-            {/* {validationErrors.length > 0 ?
-                <ul className='list-disc list-inside text-base text-justify sm:text-xl'>
-                    {
-                        validationErrors.map((error, index) => {
-                            return (
-                                <li key={`error-${index}`} className='list-disc list-inside w-full'>{error.msg}</li>
-                            )
-                        })}
-                </ul>
+            {status !== 'checking' ?
+                <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-light'>Sign up</button>
                 :
-                <div className='hidden'></div>
-            } */}
+                <ProcessLoader />
+            }
         </AuthLayout>
     )
 }

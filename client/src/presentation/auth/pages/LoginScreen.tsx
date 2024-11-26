@@ -2,6 +2,7 @@ import { FormEvent } from 'react'
 import { useAuthStore } from '../../hooks/useAuthStore';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { useForm } from '../../hooks/useForm';
+import { ProcessLoader } from '../../components/ui/loaders/ProcessLoader';
 
 
 export const LoginScreen = () => {
@@ -11,7 +12,7 @@ export const LoginScreen = () => {
         password: ''
     })
 
-    const { errorMessage, startLogin } = useAuthStore();
+    const { status, errorMessage, startLogin } = useAuthStore();
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -33,7 +34,12 @@ export const LoginScreen = () => {
                 outline-[var(--blue-color)]' onChange={onChange} required></input>
             </div>
 
-            <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-light'>Sign in</button>
+            {status !== 'checking' ?
+                <button className='bg-[var(--blue-color)] text-white px-3 py-1 my-4 rounded-md font-light'>Login</button>
+                :
+                <ProcessLoader />
+            }
+
         </AuthLayout>
     )
 }

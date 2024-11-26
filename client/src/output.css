@@ -1459,6 +1459,11 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-red-200{
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 202 202 / var(--tw-bg-opacity));
+}
+
 .bg-gradient-to-r{
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -2081,6 +2086,16 @@ body::-webkit-scrollbar-thumb {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
   }
+
+  .xs\:py-28{
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+
+  .xs\:py-0{
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 }
 
 @media (min-width: 450px){
@@ -2313,6 +2328,11 @@ body::-webkit-scrollbar-thumb {
   .md\:px-24{
     padding-left: 6rem;
     padding-right: 6rem;
+  }
+
+  .md\:py-0{
+    padding-top: 0px;
+    padding-bottom: 0px;
   }
 
   .md\:pl-20{

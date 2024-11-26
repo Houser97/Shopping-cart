@@ -63,7 +63,7 @@ export const Carousel = () => {
             <div className="arrows">
                 <button id="prev" onClick={handlePrev} disabled={isButtonsDisabled}>-</button>
                 <button id="next" onClick={handleNext} disabled={isButtonsDisabled}>+</button>
-                <button id="back" onClick={handleBack}>See All &#8599;</button>
+                <button id="back" className={`${showDetail ? 'opacity-1' : 'opacity-0'}`} onClick={handleBack}>SEE All</button>
             </div>
         </div>
     );

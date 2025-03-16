@@ -1,0 +1,41 @@
+.rate-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 100px;
+    max-width: 200px;
+    width: 100%;
+    flex-direction: row-reverse;
+
+    /*row reverse para que al hacer hover en estrellas lo amarillo se
+    llene desde la izquierda.*/
+}
+
+.rate-container input{
+    -webkit-appearance: none;
+    appearance: none;
+    height: 40px;
+    width: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #091F44;
+}
+
+.customizable{
+    cursor: pointer;
+}
+
+.rate-container input::before{
+    content: '\f005';
+    position: absolute;
+    font-family: fontAwesome;
+}
+
+.rate-container .customizable:hover ~ input::before,
+.rate-container .customizable:hover::before,
+.rate-container input:checked ~ input::before,
+.rate-container input:checked::before{
+    color: #fcc902;
+}

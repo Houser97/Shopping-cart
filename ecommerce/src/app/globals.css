@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+@layer utilities {
+  @media (min-width: 600px) {
+    .grid-cols-custom {
+      grid-template-columns: minmax(200px, max-content), minmax(250px, 1fr);
+    }
+  }
+  
+  .incentive-svg path {
+    fill: #fcca02;
+  }
+
+  .incentive-svg {
+    width: 60px;
+    height: 60px;
+    margin-top: 20px;
+  }
+
+  .cart-container {
+    transition: opacity 300ms ease-in-out, transform 0ms ease-in-out 300ms;
+    transform: translateY(-100%);
+  }
+
+  .show-cart-container {
+    opacity: 1;
+    transform: translateY(0%);
+    transition: opacity 300ms ease-in-out, transform 0ms ease-in-out 0ms;
+  }
+
+  .animate-fadeIn{
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .animate-showContent{
+    animation: showContent 0.5s ease-in-out 1 forwards;
+  }
+
+  .product-grid {
+    grid-template-columns: minmax(200px,max-content),minmax(250px,1fr);
+  }
+
+
+}
+
+@theme {
+  --breakpoint-xs: 400px;
+  --breakpoint-xs450: 450px;
+  --breakpoint-xs480: 480px;
+  --breakpoint-sm: 500px;
+  --breakpoint-2sm: 600px;
+  --breakpoint-md750: 750px;
+  --breakpoint-md800: 800px;
+  --breakpoint-md: 850px;
+  --breakpoint-md900: 900px;
+  --breakpoint-lg: 1100px;
+  --breakpoint-2lg: 1200px;
+  --breakpoint-xl: 1400px;
+}
+
+:root {
+  --primary: #274494;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+/* 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+} */ 
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-start-rgb))
+      )
+      rgb(var(--background-end-rgb))
+}
+
+
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+} 
+
+@-webkit-keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@keyframes showContent {
+  0% { 
+    transform: translateY(-30px); 
+    filter: blur(10px); 
+    opacity: 0;
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0px);
+    filter: blur(0px);
+  }
+} 
+
+@-webkit-keyframes showContent {
+  0% { 
+    transform: translateY(-30px); 
+    filter: blur(10px); 
+    opacity: 0;
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0px);
+    filter: blur(0px);
+  }
+}
+
+.fade-in {
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded transition-all;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded transition-all;
+}
+

@@ -3,7 +3,6 @@ import { onChecking, onLogin, onLogout } from '../store';
 import shoppingApi from '../../config/api/shoppingApi';
 import { useTypedSelector } from '../store/config/typed-selector';
 
-
 export const useAuthStore = () => {
 
     const { status, user, errorMessage } = useTypedSelector(state => state.auth);
@@ -38,6 +37,7 @@ export const useAuthStore = () => {
 
     const checkAuthToken = async () => {
         const token = localStorage.getItem('token');
+        console.log(token)
         if (!token) return dispatch(onLogout(''));
 
         try {

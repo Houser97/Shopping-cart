@@ -17,6 +17,7 @@ export const useCartStore = () => {
         try {
             return await cartRepositoryProvider.getProducts();
         } catch (error) {
+            console.log(error)
             toast('Login to make this operation', ToastTypes.ERROR);
             return {};
         }
@@ -42,7 +43,6 @@ export const useCartStore = () => {
     }
 
     const addProducts = (products: ProductCart[]) => {
-
         const cart = products.reduce((prev, product) => {
             const { productId } = product;
             return { ...prev, [productId]: product }
@@ -97,6 +97,7 @@ export const useCartStore = () => {
 
             dispatch(onUpdate(payload));
         } catch (error) {
+            console.log(error)
             toast(`${error}`, ToastTypes.ERROR);
         }
     }

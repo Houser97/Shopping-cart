@@ -18,7 +18,7 @@ export class CartMapper {
     static toProductCartObject(products: ProductCartDBResponse[]): ProductCartObject {
         return products.reduce((prev, product) => {
             const { productId } = product;
-            const key = productId.toString();
+            const key = productId;
 
             return { ...prev, [key]: product };
         }, {});

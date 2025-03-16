@@ -1,17 +1,17 @@
 import { DetailedReview, Review } from "../../domain/entities/review";
-import { ReviewDB } from "../interfaces/review-db.response";
+import { ReviewDbNest } from "../interfaces/review-db.response";
 
 export class ReviewMapper {
-    static fromDbCastToDetailedReview(review: ReviewDB): DetailedReview {
+    static fromDbCastToDetailedReview(review: ReviewDbNest): DetailedReview {
         return {
-            id: review._id,
+            id: review.id,
             productId: review.productId,
             authorId: review.authorId,
             rating: review.rating,
             comment: review.comment,
             createdAt: review.createdAt,
             reactions: review.reactions,
-            author: { ...review.author, id: review._id },
+            author: { ...review.author, id: review.id },
         }
     }
 

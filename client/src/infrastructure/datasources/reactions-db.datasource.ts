@@ -4,7 +4,7 @@ import { ReactionDatasource } from "../../domain/datasources/reactions.datasourc
 import { Reaction, ReactionsReviewIdObject } from "../../domain/entities/reaction";
 
 import { CustomError } from "../errors/custom.error";
-import { ReactionDBResponse } from "../interfaces/reaction-db.response";
+import { ReactionDBResponse, ReactionDBResponseNest } from "../interfaces/reaction-db.response";
 import { ReactionMapper } from "../mappers/reaction.mapper";
 
 
@@ -12,9 +12,10 @@ export class ReactionDbDatasource extends ReactionDatasource {
 
     async getReactions(productId: string): Promise<ReactionsReviewIdObject> {
         try {
-            const { data } = await shoppingApi.get<ReactionDBResponse[]>(`/reactions/${productId}`);
-            if (!Object.keys(data).length) return {}
-            return ReactionMapper.reactionsToReviewIdObject(data);
+            const { data } = await shoppingApi.get<ReactionDBResponseNest>(`/reactions/product/${productId}`);
+            const reactionsDb = data.data;
+            if (!Object.keys(reactionsDb).length) return {}
+            return ReactionMapper.reactionsToReviewIdObject(reactionsDb);
         } catch (error) {
             throw CustomError.formatError(error);
         }
@@ -31,7 +32,7 @@ export class ReactionDbDatasource extends ReactionDatasource {
 
     async updateReaction(id: string, reviewId: string, authorId: string, reaction: string): Promise<Reaction> {
         try {
-            const { data } = await shoppingApi.put<ReactionDBResponse>(`/reactions/${id}`, {
+            const { data } = await shoppingApi.patch<ReactionDBResponse>(`/reactions/${id}`, {
                 reviewId,
                 authorId,
                 reaction

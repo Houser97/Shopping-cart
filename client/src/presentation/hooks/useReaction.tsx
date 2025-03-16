@@ -12,6 +12,7 @@ export const useReaction = (reactionEntity: Reaction | undefined = undefined) =>
     const getReactions = async (productId: string) => {
         try {
             const reactions = await reactionRepositoryProvider.getReactions(productId);
+            console.log(reactions)
             setReactions(reactions);
             return true;
         } catch (error) {

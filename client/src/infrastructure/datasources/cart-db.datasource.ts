@@ -8,45 +8,48 @@ import { CartMapper } from "../mappers/cart.mapper";
 export class CartDbDatasource extends CartDatasource {
 
     async getProducts(): Promise<ProductCartObject> {
-        const { data } = await shoppingApi.get<ProductCartDBResponse[]>('/cart/products');
+        const { data } = await shoppingApi.get<ProductCartDBResponse[]>('/cart');
         return CartMapper.toProductCartObject(data);
     }
 
     async createProduct(userId: string, productId: string, quantity: number): Promise<ProductCart> {
         try {
-            const { data } = await shoppingApi.post<ProductCartDBResponse>('/cart/products', {
-                userId,
+            const { data } = await shoppingApi.post<ProductCartDBResponse>('/cart', {
+                authorId: userId,
                 productId,
                 quantity
             });
 
             return CartMapper.toProductCart(data);
-        } catch (error) {
+        } catch (error) {+
+            console.log(error)
             throw CustomError.formatError(error);
         }
     }
 
     async updateProduct(id: string, quantity: number): Promise<ProductCart> {
         try {
-            const { data } = await shoppingApi.put(`/cart/products/${id}`, { quantity });
+            const { data } = await shoppingApi.patch(`/cart/${id}`, { quantity });
             return data;
         } catch (error) {
+            console.log(error)
             throw CustomError.formatError(error);
         }
     }
 
     async deleteProduct(id: string): Promise<ProductCart> {
         try {
-            const { data } = await shoppingApi.delete<ProductCartDBResponse>(`/cart/products/${id}`);
+            const { data } = await shoppingApi.delete<ProductCartDBResponse>(`/cart/${id}`);
             return CartMapper.toProductCart(data);
         } catch (error) {
+            console.log(error)
             throw CustomError.formatError(error);
         }
     }
 
     async handlePayment(): Promise<boolean> {
         try {
-            const { data } = await shoppingApi.delete<boolean>('/cart/products');
+            const { data } = await shoppingApi.delete<boolean>('/cart');
             return data;
         } catch (error) {
             throw CustomError.formatError(error);

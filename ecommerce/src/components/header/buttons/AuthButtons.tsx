@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-const AuthButtons = ({ setToggleNavbar }: {setToggleNavbar: any}) => {
+const AuthButtons = ({ setToggleNavbar }: {setToggleNavbar: React.Dispatch<React.SetStateAction<boolean>>}) => {
   const toggleNavbar = () => {
     if (setToggleNavbar) {
       setToggleNavbar(false)

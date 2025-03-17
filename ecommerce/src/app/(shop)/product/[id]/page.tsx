@@ -6,12 +6,11 @@ import { StarRate } from "@/components/ui/StarRate";
 import Image from "next/image";
 
 interface Props {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export default async function ProductPage({ params }: Props) {
-    const param = await params
-    const { id } = param;
+    const { id } = await params;
 
     const productPromise = getProductById(id);
     const reactionsPromise = getReactions(id);

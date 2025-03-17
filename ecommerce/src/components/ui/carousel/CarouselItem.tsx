@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface Props {
     image: string;
     product: string;
@@ -8,7 +10,12 @@ interface Props {
 export const CarouselItem = ({ image, product, onSeeMore, isInitialRender }: Props) => {
     return (
         <div className={`item ${isInitialRender && 'initial-animation'}`}>
-            <img src={image} alt="carousel item" />
+            <Image 
+                src={image} 
+                alt="carousel item" 
+                width={500}
+                height={500}
+            />
             <div className="introduce">
                 <div className="title">DESIGN SLIDER</div>
                 <div className="topic">{product}</div>

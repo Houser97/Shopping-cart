@@ -21,7 +21,7 @@ export class CartDbDatasource extends CartDatasource {
             });
 
             return CartMapper.toProductCart(data);
-        } catch (error) {+
+        } catch (error) {
             console.log(error)
             throw CustomError.formatError(error);
         }

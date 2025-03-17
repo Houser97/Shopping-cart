@@ -12,7 +12,7 @@ export const ProductBtns = ({ productId, reduceState = { numberOfProducts: 1 } }
 
   //const { productsInCart, createProduct, updateProduct, updateCart } = useCartStore();
   const productsInCart = {}
-  const user = {}
+
   let status = 'un'
 
   const handleProductAddition = async () => {

@@ -4,7 +4,7 @@ import './PageLoader.css'
 export const PageLoader = () => {
   const [currentIndex, setCurrentIndex] = useState(1)
 
-  const handleAnimation = (animationIndex) => {
+  const handleAnimation = (animationIndex: number) => {
     if (animationIndex === 4) setCurrentIndex(1)
     else setCurrentIndex(animationIndex + 1)
   }

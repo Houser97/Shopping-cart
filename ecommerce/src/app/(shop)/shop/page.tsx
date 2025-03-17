@@ -1,5 +1,7 @@
+import { validate } from '@/actions/auth/auth';
 import { getProducts } from '@/actions/products/products';
 import { ProductCard } from '@/components/Product/ProductCard';
+import { cookies } from 'next/headers';
 
 
 // import { useProductStore } from '../../hooks/useProductStore';
@@ -13,6 +15,10 @@ export default async function ShopPage () {
 
     //const { productsDB, isFetching, startFetch } = useProductStore();
     const productsDB = await getProducts();
+    const data = await validate();
+    console.log((await cookies()).toString())
+    console.log('woo')
+    console.log(data);
 
 
     // if (isFetching)

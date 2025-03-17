@@ -1,4 +1,4 @@
-import shoppingApi from "../../config/api/shoppingApi";
+import shoppingApi from "@/config/api/shoppingApiAxios";
 import { ProductDatasource } from "../../domain/datasources/products.datasource";
 import { Product } from "../../domain/entities/product";
 import { CustomError } from "../errors/custom.error";

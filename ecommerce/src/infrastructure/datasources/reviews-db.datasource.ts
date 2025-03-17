@@ -1,4 +1,4 @@
-import shoppingApi from "../../config/api/shoppingApi";
+import shoppingApi from "@/config/api/shoppingApiAxios";
 import { GetReviewsType, ReviewDatasource } from "../../domain/datasources/reviews.datasource";
 
 import { Review } from "../../domain/entities/review";

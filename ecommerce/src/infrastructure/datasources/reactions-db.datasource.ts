@@ -1,5 +1,4 @@
-import shoppingApi from "../../config/api/shoppingApi";
-
+import shoppingApi from "@/config/api/shoppingApiAxios";
 import { ReactionDatasource } from "../../domain/datasources/reactions.datasource";
 import { Reaction, ReactionsReviewIdObject } from "../../domain/entities/reaction";
 

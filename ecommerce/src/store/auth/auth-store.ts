@@ -1,4 +1,4 @@
-import { getCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 import { create } from "zustand";
 
 export enum Status {
@@ -20,6 +20,7 @@ interface State {
     setUserData: (user: User) => void;
     resetAuth: () => void;
     checkAuthStatus: () => void;
+    logout: () => void;
 }
 
 export const useAuthStore = create<State>()((set) => ({
@@ -47,4 +48,16 @@ export const useAuthStore = create<State>()((set) => ({
             set({ user: null, status: Status.UNAUTHENTICATED });
         }
     },
+
+    logout: async () => {
+        const deleteUserCookiePromise = deleteCookie('UserInfo');
+        const deleteAuthCookiePromise = deleteCookie('Authentication');
+
+        await Promise.all([
+            deleteUserCookiePromise,
+            deleteAuthCookiePromise
+        ]);
+
+        set({ user: null, status: Status.UNAUTHENTICATED });
+    }
 }))

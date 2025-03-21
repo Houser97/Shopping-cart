@@ -10,12 +10,16 @@ import { ReactionMapper } from "../mappers/reaction.mapper";
 export class ReactionDbDatasource extends ReactionDatasource {
 
     async getReactions(productId: string): Promise<ReactionsReviewIdObject> {
+        console.log(productId)
         try {
             const { data } = await shoppingApi.get<ReactionDBResponseNest>(`/reactions/product/${productId}`);
+            console.log(productId)
+            console.log(data)
             const reactionsDb = data.data;
             if (!Object.keys(reactionsDb).length) return {}
             return ReactionMapper.reactionsToReviewIdObject(reactionsDb);
         } catch (error) {
+            console.log(error)
             throw CustomError.formatError(error);
         }
     }

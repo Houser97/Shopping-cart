@@ -1,15 +1,16 @@
 import Link from 'next/link';
 import AuthButtons from './buttons/AuthButtons';
 import { LogoutButton } from './buttons/LogoutButton';
-//import { useTypedSelector } from '../../store/config/typed-selector';
+import { useAuthStore } from '@/store/auth/auth-store';
 
-const Navbar = ({ toggle, setToggleNavbar }:{
+const Navbar = ({ toggle, setToggleNavbar }: {
     toggle: boolean,
     setToggleNavbar: React.Dispatch<React.SetStateAction<boolean>>
-  }) => {
+}) => {
 
-    //const { status } = useTypedSelector(state => state.auth);
-    let status = 'un'
+
+    const status = useAuthStore(state => state.status);
+
     return (
         <div className={`flex cart-container absolute opacity-10 top-0 right-0 h-screen w-full z-0 bg-black/80 ${toggle && 'show-cart-container'}`}>
             <nav className={`flex flex-col justify-start items-start absolute left-0 top-0 bg-white text-black

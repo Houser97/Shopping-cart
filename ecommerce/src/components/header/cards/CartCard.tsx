@@ -1,4 +1,6 @@
+import { useCartStore } from '@/store/cart/cart-store';
 import { ProductCart } from '../../../domain/entities/product.cart';
+import { removeProduct } from '@/actions/cart/cart';
 
 interface Props {
     product: ProductCart
@@ -7,12 +9,14 @@ interface Props {
 export const CartCard = ({ product }: Props) => {
 
     const { id, image, quantity, name, price } = product;
+    const cart = useCartStore(state => state.cart);
+    const updateCart = useCartStore(state => state.updateCart);
 
-    //const { removeProduct } = useCartStore();
 
+    const handleRemove = async (id: string) => {
+        const updatedCart = await removeProduct(id, cart);
+        if (updatedCart) updateCart(updatedCart);
 
-    const handleRemove = (id: string) => {
-        //removeProduct(id);
     }
 
     return (

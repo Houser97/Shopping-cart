@@ -7,12 +7,12 @@ import CartIcon from './ui/CartIcon';
 //import Navbar from './Navbar';
 import { ToggleButton } from './buttons/ToggleButton';
 import Navbar from './Navbar';
-//import { useAuthStore } from '../../hooks/useAuthStore';
+import { Status, useAuthStore } from '@/store/auth/auth-store';
+import Cart from './Cart';
 
 const Header = () => {
 
-    //const { status } = useAuthStore();
-    let status = "unauthenticated";
+    const status = useAuthStore(state => state.status);
     const [atTop, setAtTop] = useState(true);
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const Header = () => {
                 <ToggleButton toggle={toggleNavbar} setToggle={setToggleNavbar} />
                 <h1 className="text-2xl font-light">Shopping Cart</h1>
             </div>
-            {status === 'authenticated' ?
+            {status === Status.AUTHENTICATED ?
                 <CartIcon setToggleCart={setToggleCart} toggle={toggleCart} />
                 :
                 <div className='hidden w-[24px] y-[24px] 2sm:flex md:w-max md:h-max'>
@@ -50,7 +50,7 @@ const Header = () => {
                 </div>
             }
             <Navbar toggle={toggleNavbar} setToggleNavbar={setToggleNavbar} />
-            {/* <Cart toggleCart={toggleCart} /> */}
+            <Cart toggleCart={toggleCart} />
         </header>
     )
 }

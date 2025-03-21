@@ -1,4 +1,5 @@
 import { Author } from "./author";
+import { ReactionsEnum } from "./reaction";
 
 export interface Review {
     id: string,
@@ -10,6 +11,6 @@ export interface Review {
 
 export interface DetailedReview extends Review {
     createdAt: Date;
-    reactions: string[];
+    reactions: Record<ReactionsEnum, number>;
     author: Author;
 }

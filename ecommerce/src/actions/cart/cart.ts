@@ -1,9 +1,8 @@
 import { ProductCart } from "@/domain/entities/product.cart";
 import { cartRepositoryProvider } from "@/providers/cart-repository.provider";
-const productsInCart = {} // viene del gestor de estado
 
 export interface CartData {
-    productsInCart: Record<string, any>;
+    productsInCart: Record<string, ProductCart>;
     totalPrice: number;
     totalProducts: number;
 }
@@ -79,29 +78,28 @@ export const updateCart = (product: ProductCart, productsInCart: Record<string, 
     }
 
     return cartData;
-
-    //dispatch(onUpdate(payload))
 }
 
-// export const removeProduct = async (id: string) => {
-//     try {
-//         const { productId } = await cartRepositoryProvider.deleteProduct(id);
-//         const { [productId]: product, ...restProducts } = { ...productsInCart };
+export const removeProduct = async (id: string, productsInCart: Record<string, ProductCart>): Promise<CartData | null> => {
+    try {
+        const { productId } = await cartRepositoryProvider.deleteProduct(id);
+        const { [productId]: product, ...restProducts } = { ...productsInCart };
 
-//         const productsData = getProductsData(restProducts);
+        const productsData = getProductsData(restProducts);
 
-//         const payload = {
-//             productsInCart: restProducts,
-//             totalPrice: productsData.price,
-//             totalProducts: productsData.count
-//         }
+        const cartData = {
+            productsInCart: restProducts,
+            totalPrice: productsData.price,
+            totalProducts: productsData.count
+        }
 
-//         //dispatch(onUpdate(payload));
-//     } catch (error) {
-//         console.log(error)
-//         //toast(`${error}`, ToastTypes.ERROR);
-//     }
-// }
+        return cartData;
+
+    } catch (error) {
+        console.log(error)
+        return null;
+    }
+}
 
 export const getProductsData = (products: Record<string, ProductCart>,) =>
     Object.keys(products).reduce((acc, id) => {

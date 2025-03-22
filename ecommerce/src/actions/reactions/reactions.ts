@@ -1,14 +1,32 @@
+'use server'
+import shoppingApi from "@/config/api/shoppingApiAxios";
+import { ReactionsReviewIdObject } from "@/domain/entities/reaction";
+import { CustomError } from "@/infrastructure/errors/custom.error";
+import { ReactionDBResponseNest } from "@/infrastructure/interfaces/reaction-db.response";
+import { ReactionMapper } from "@/infrastructure/mappers/reaction.mapper";
 import { reactionRepositoryProvider } from "@/providers/reaction-repository.provider";
+import { getCookie } from "cookies-next";
+import { cookies } from "next/headers";
 
-export const getReactions = async (productId: string) => {
+
+export const getReactions = async (productId: string): Promise<ReactionsReviewIdObject> => {
+    const cookieHeader = await getCookie('Authentication', { cookies })
+
     try {
-        const reactions = await reactionRepositoryProvider.getReactions(productId);
-        return reactions;
+        const { data } = await shoppingApi.get<ReactionDBResponseNest>(`/reactions/product/${productId}`, {
+            headers: {
+                Cookie: `Authentication=${cookieHeader}`
+            }
+        });
+        const reactionsDb = data.data;
+        if (!Object.keys(reactionsDb).length) return {}
+        return ReactionMapper.reactionsToReviewIdObject(reactionsDb);
     } catch (error) {
-        //toast(error.message, ToastTypes.ERROR);
-        return {};
+        console.log(error)
+        throw CustomError.formatError(error);
     }
 }
+
 
 
 export const createReaction = async (productId: string, reviewId: string, authorId: string, reaction: string) => {

@@ -1,21 +1,33 @@
-import { getProductById } from "@/actions/products/products";
+import { getProductById, getProductBySlug } from "@/actions/products/products";
 import { getReactions } from "@/actions/reactions/reactions";
+import { getReviews } from "@/actions/reviews/reviews";
 import { ReviewCard } from "@/components/Product/ReviewCard";
 import { ProductBtns } from "@/components/ui/buttons/ProductBtns";
 import { StarRate } from "@/components/ui/StarRate";
 import Image from "next/image";
 
 interface Props {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 export default async function ProductPage({ params }: Props) {
-    const { id } = await params;
+    const { slug } = await params;
 
-    const productPromise = getProductById(id);
-    const reactionsPromise = getReactions(id);
+    const productData = await getProductBySlug(slug);
+    if(!productData) {
+        return(
+            <div>
+                product not found
+            </div>
+        )
+    }
 
-    const [{ reviews, product, totalReactions }, reactions] = await Promise.all([productPromise, reactionsPromise]);
+    const product = productData.product!;
+    const reviewsPromise = getReviews(product!.id);
+    const reactionsPromise = getReactions(product!.id);
+
+    const [reviewsData, reactions] = await Promise.all([reviewsPromise, reactionsPromise]);
+    const { reviews, totalReactions } = reviewsData;
     const totalReviews = reviews?.length;
 
 
@@ -32,7 +44,7 @@ export default async function ProductPage({ params }: Props) {
                                 <StarRate product={product!.title} rating={product!.rating ?? 0} isCustomizable={false} setRating={undefined} />
                             </div>
                             <div className='animate-showContent opacity-0 animate-delay-[600ms] '>
-                                <ProductBtns productId={id} reduceState={{ numberOfProducts: 1 }} />
+                                <ProductBtns productId={product.id} reduceState={{ numberOfProducts: 1 }} />
                             </div>
                         </div>
                     </div>
@@ -44,13 +56,12 @@ export default async function ProductPage({ params }: Props) {
                                 const { id: reviewId } = review;
 
                                 const reviewUserReactions = reactions[reviewId] || undefined;
-                                console.log(reactions)
 
                                 return (
                                     <ReviewCard
                                         key={`review-card-${index}`}
                                         review={review}
-                                        productId={id}
+                                        productId={product.id}
                                         userReaction={reviewUserReactions}
                                     />
                                 )

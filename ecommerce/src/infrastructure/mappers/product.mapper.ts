@@ -11,7 +11,8 @@ export class ProductMapper {
             images: product.images,
             description: product.description,
             rating: product.rating,
-            totalReviews: product.totalReviews
+            totalReviews: product.totalReviews,
+            slug: product.slug
         }
     }
 }

@@ -16,4 +16,8 @@ export class ProductRepositoryImpl extends ProductRepository {
     async getProductById(id: string): Promise<Product> {
         return this.datasource.getProductById(id);
     }
+
+    async getProductBySlug(slug: string): Promise<Product> {
+        return this.datasource.getProductBySlug(slug);
+    }
 }

@@ -29,4 +29,15 @@ export class ProductDbDatasource extends ProductDatasource {
             throw CustomError.formatError(error);
         }
     }
+
+    async getProductBySlug(slug: string): Promise<Product> {
+        try {
+            const { data } = await shoppingApi.get(`/products/slug/${slug}`);
+            const productDb = data.data;
+            const product = ProductMapper.fromDbCastToEntity(productDb);
+            return product;
+        } catch (error) {
+            throw CustomError.formatError(error);
+        }
+    }
 }

@@ -1,3 +1,4 @@
+'use client'
 import { useCartStore } from '@/store/cart/cart-store';
 import { ProductCart } from '../../../domain/entities/product.cart';
 import { removeProduct } from '@/actions/cart/cart';

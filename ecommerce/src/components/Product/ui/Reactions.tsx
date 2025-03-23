@@ -1,3 +1,4 @@
+'use client'
 import { createReaction, updateReaction } from "@/actions/reactions/reactions";
 import { Reaction, ReactionsEnum } from "@/domain/entities/reaction";
 import { useAuthStore } from "@/store/auth/auth-store";

@@ -6,6 +6,8 @@ import { StarRate } from "../ui/StarRate";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { Reactions } from "./ui/Reactions";
+import { deleteReview } from "@/actions/reviews/reviews";
+import { useRouter } from "next/navigation";
 
 
 interface Props {
@@ -22,12 +24,11 @@ export const ReviewCard = ({ review, productId, userReaction }: Props) => {
     const status = useAuthStore(state => state.status);
     const user = useAuthStore(state => state.user);
 
-
-    //const { deleteReview } = useReview();
+    const router = useRouter();
 
     const handleDelete = async (id: string) => {
-        //await deleteReview(id);
-        window.location.reload();
+        await deleteReview(id);
+        router.refresh();
     }
 
     return (

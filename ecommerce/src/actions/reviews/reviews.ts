@@ -1,6 +1,18 @@
 import { ReviewMapper } from "@/infrastructure/mappers/review.mapper";
 import { reviewRepositoryProvider } from "@/providers/review-repository.provider";
 
+export const getReviews = async(productId: string) => {
+    try {
+        const reviewsData =  await reviewRepositoryProvider.getReviews(productId);
+        const { reviews, totalReactions } = reviewsData;
+    
+        return { reviews, totalReactions }   
+    } catch (error) {
+        //toast(error.message, ToastTypes.ERROR);
+        return {}
+    }
+}
+
 export const createReview = async (userId: string, comment: string, rating: number, productId: string) => {
     try {
         return await reviewRepositoryProvider.createReview(userId, comment, rating, productId);

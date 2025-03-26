@@ -1,8 +1,8 @@
 'use server'
 import shoppingApi from "@/config/api/shoppingApiAxios";
-import { ReactionsReviewIdObject } from "@/domain/entities/reaction";
+import { Reaction, ReactionsReviewIdObject } from "@/domain/entities/reaction";
 import { CustomError } from "@/infrastructure/errors/custom.error";
-import { ReactionDBResponseNest } from "@/infrastructure/interfaces/reaction-db.response";
+import { ReactionDBResponse, ReactionDBResponseNest } from "@/infrastructure/interfaces/reaction-db.response";
 import { ReactionMapper } from "@/infrastructure/mappers/reaction.mapper";
 import { reactionRepositoryProvider } from "@/providers/reaction-repository.provider";
 import { getCookie } from "cookies-next";
@@ -54,3 +54,17 @@ export const updateReaction = async (id: string, reviewId: string, authorId: str
     }
 }
 
+
+export const deleteReaction = async (id: string): Promise<Reaction> => {
+    const cookieHeader = await getCookie('Authentication', { cookies });
+    try {
+        const { data } = await shoppingApi.delete<ReactionDBResponse>(`/reactions/${id}`, {
+            headers: {
+                Cookie: `Authentication=${cookieHeader}`
+            }
+        });
+        return ReactionMapper.fromDbCastToEntity(data);
+    } catch (error) {
+        throw CustomError.formatError(error);
+    }
+}

@@ -34,7 +34,6 @@ export const useAuthStore = create<State>()((set) => ({
 
     checkAuthStatus: async () => {
         const userInfo = await getCookie("UserInfo");
-        console.log(userInfo)
 
         if (userInfo) {
             try {

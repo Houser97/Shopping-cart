@@ -20,7 +20,6 @@ export default function LoginPage() {
         e.preventDefault()
         const data = await login(email, password);
         if (data?.user) {
-            console.log(data.user)
             setUserData(data.user);
             redirect('/');
         }

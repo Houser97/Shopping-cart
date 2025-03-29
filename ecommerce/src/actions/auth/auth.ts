@@ -1,6 +1,6 @@
 'use server'
 import shoppingApi from "@/config/api/shoppingApiAxios";
-import { getCookie, setCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { cookies } from 'next/headers';
 
 export const login = async (email: string, password: string) => {
@@ -36,7 +36,6 @@ export const register = async (email: string, password: string, username: string
 }
 
 export const validate = async () => {
-
     try {
         const cookieHeader = await getCookie('Authentication', { cookies })
         const { data } = await shoppingApi.get('/auth', {
@@ -44,7 +43,22 @@ export const validate = async () => {
                 Cookie: `Authentication=${cookieHeader}`
             }
         });
-        return data;
+        if(data) {
+            const { token, user } = data;
+            await Promise.all([
+                setCookie('Authentication', token, { cookies }),
+                setCookie('UserInfo', JSON.stringify(user), { cookies })
+            ])
+            return data;
+        }
+
+        await Promise.all([
+            deleteCookie('UserInfo'),
+            deleteCookie('Authentication')
+        ]);
+
+        return [];
+        
     } catch (error) {
         console.log(error)
         return [];

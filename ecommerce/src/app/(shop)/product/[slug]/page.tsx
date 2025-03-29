@@ -1,4 +1,4 @@
-import { getProductById, getProductBySlug } from "@/actions/products/products";
+import { getProductBySlug } from "@/actions/products/products";
 import { getReactions } from "@/actions/reactions/reactions";
 import { getReviews } from "@/actions/reviews/reviews";
 import { ReviewCard } from "@/components/Product/ReviewCard";

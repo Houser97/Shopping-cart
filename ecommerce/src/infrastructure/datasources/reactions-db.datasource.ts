@@ -1,3 +1,4 @@
+
 import shoppingApi from "@/config/api/shoppingApiAxios";
 import { ReactionDatasource } from "../../domain/datasources/reactions.datasource";
 import { Reaction, ReactionsReviewIdObject } from "../../domain/entities/reaction";
@@ -5,16 +6,20 @@ import { Reaction, ReactionsReviewIdObject } from "../../domain/entities/reactio
 import { CustomError } from "../errors/custom.error";
 import { ReactionDBResponse, ReactionDBResponseNest } from "../interfaces/reaction-db.response";
 import { ReactionMapper } from "../mappers/reaction.mapper";
+import { getCookie } from "cookies-next";
 
 
 export class ReactionDbDatasource extends ReactionDatasource {
 
     async getReactions(productId: string): Promise<ReactionsReviewIdObject> {
-        console.log(productId)
+        const cookieHeader = await getCookie('Authentication')
+
         try {
-            const { data } = await shoppingApi.get<ReactionDBResponseNest>(`/reactions/product/${productId}`);
-            console.log(productId)
-            console.log(data)
+            const { data } = await shoppingApi.get<ReactionDBResponseNest>(`/reactions/product/${productId}`, {
+                headers: {
+                    Cookie: `Authentication=${cookieHeader}`
+                }
+            });
             const reactionsDb = data.data;
             if (!Object.keys(reactionsDb).length) return {}
             return ReactionMapper.reactionsToReviewIdObject(reactionsDb);

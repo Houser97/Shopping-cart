@@ -4,18 +4,39 @@ import { getReviews } from "@/actions/reviews/reviews";
 import { ReviewCard } from "@/components/Product/ReviewCard";
 import { ProductBtns } from "@/components/ui/buttons/ProductBtns";
 import { StarRate } from "@/components/ui/StarRate";
+import { Metadata } from "next";
 import Image from "next/image";
 
 interface Props {
     params: Promise<{ slug: string }>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+
+
+    try {
+        // Data is in caché, so it does not matter to make this request again.
+        const { product } = await getProductBySlug(slug);
+        return {
+            title: `${product?.slug} - ${product?.id}`,
+            description: `${product?.title} page`
+        }
+    } catch (error) {
+        return {
+            title: 'Product page',
+            description: 'Culpa cupidatat ipsum magna reprehenderit ex tempor sint ad minim reprehenderit consequat sit.'
+        }
+    }
+
+}
+
 export default async function ProductPage({ params }: Props) {
     const { slug } = await params;
 
     const productData = await getProductBySlug(slug);
-    if(!productData) {
-        return(
+    if (!productData) {
+        return (
             <div>
                 product not found
             </div>

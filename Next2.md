@@ -486,6 +486,7 @@ export const ReviewCard = ({ review, productId, userReaction }: Props) => {
     - Crear lógica para buscar productos por slug.
 5. Implementar lógica de pago.
 6. Crear página notfound  
+7. Usuarios sin sesión tienen error para ver página de productos.
 
 ## Listo
 1. Hacer query para validar token de sesión o colocar fecha de expiración para ir checando el el front.

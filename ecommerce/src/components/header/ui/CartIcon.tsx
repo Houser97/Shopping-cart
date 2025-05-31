@@ -1,3 +1,4 @@
+import { useCartStore } from '@/store/cart/cart-store';
 import './CartIcon.css'
 //import { useCartStore } from '../../../hooks/useCartStore'
 
@@ -5,8 +6,7 @@ const CartIcon = ({ toggle, setToggleCart }: {
   toggle: boolean,
   setToggleCart: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  //const { totalProducts } = useCartStore();
-  const totalProducts = 10;
+  const { totalProducts } = useCartStore();
   return (
     <div className={`cart-icon-header-number ${toggle ? 'open' : ''}`} onClick={() => setToggleCart(prev => !prev)}>
       <div className='number-cart-header'>{totalProducts}</div>

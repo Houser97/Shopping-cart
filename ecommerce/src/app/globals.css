@@ -7,7 +7,7 @@
       grid-template-columns: minmax(200px, max-content), minmax(250px, 1fr);
     }
   }
-  
+
   .incentive-svg path {
     fill: #fcca02;
   }
@@ -29,16 +29,21 @@
     transition: opacity 300ms ease-in-out, transform 0ms ease-in-out 0ms;
   }
 
-  .animate-fadeIn{
+  .animate-fadeIn {
     animation: fadeIn 0.5s ease-out;
   }
-  
-  .animate-showContent{
+
+  .animate-showContent {
     animation: showContent 0.5s ease-in-out 1 forwards;
   }
 
   .product-grid {
-    grid-template-columns: minmax(200px,max-content),minmax(250px,1fr);
+    grid-template-columns: minmax(200px, max-content), minmax(250px, 1fr);
+  }
+
+  .gradient-background {
+    background: linear-gradient(90deg, #faf8da 0%, #cfeaf5 80%), linear-gradient(173.91deg, #f5f7ff 0%, #fafdfe 43.79%, #fffae2 95.19%), linear-gradient(180deg, rgba(255, 255, 255, 0) 40.45%, #fff 100%), linear-gradient(180deg, #fcf9f2 50%, rgba(252, 249, 242, 0) 100%);
+    background-blend-mode: color;
   }
 
 
@@ -64,7 +69,14 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --header-color: #161b22;
+  --header-height: 80px;
+  --blue-color: #091F44;
+  --yellow-color: #fcc902;
+  --white-color: #FAFAFA;
+
 }
+
 /* 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -72,50 +84,59 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-} */ 
+} */
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-start-rgb))
-      )
-      rgb(var(--background-end-rgb))
+      rgb(var(--background-start-rgb))) rgb(var(--background-end-rgb))
 }
 
 
 
 @keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
-} 
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
 
 @-webkit-keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes showContent {
-  0% { 
-    transform: translateY(-30px); 
-    filter: blur(10px); 
+  0% {
+    transform: translateY(-30px);
+    filter: blur(10px);
     opacity: 0;
   }
-  100% { 
+
+  100% {
     opacity: 1;
     transform: translateY(0px);
     filter: blur(0px);
   }
-} 
+}
 
 @-webkit-keyframes showContent {
-  0% { 
-    transform: translateY(-30px); 
-    filter: blur(10px); 
+  0% {
+    transform: translateY(-30px);
+    filter: blur(10px);
     opacity: 0;
   }
-  100% { 
+
+  100% {
     opacity: 1;
     transform: translateY(0px);
     filter: blur(0px);
@@ -140,4 +161,3 @@ body {
 .btn-secondary {
   @apply bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded transition-all;
 }
-

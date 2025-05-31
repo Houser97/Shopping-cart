@@ -34,7 +34,7 @@ function reducer(state: { numberOfProducts: number; }, action: { type: string; }
 
 export const ProductCard = ({ product, isLazy }: Props) => {
 
-    const { id, title, price, images, rating, totalReviews } = product;
+    const { id, title, price, images, rating, totalReviews, slug } = product;
 
     const [state, dispatch] = useReducer(reducer, initialState);
     const totalReviewsMessage = totalReviews === 1 ? `${totalReviews} Review` : `${totalReviews} Reviews`
@@ -45,7 +45,7 @@ export const ProductCard = ({ product, isLazy }: Props) => {
     return (
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] grid-rows-[repeat(auto-fit,minmax(0px,max-content))] 
         auto-rows-fr w-full h-full gap-2 gap-x-6 p-2 relative bg-white rounded-xl shadow-cardShadow 2sm:grid-cols-[max-content_auto] animate-fadeIn">
-            <Link className='justify-self-center self-center' href={`/product/${id}`}>
+            <Link className='justify-self-center self-center' href={`/product/${slug}`}>
                 <Image 
                     className='max-w-[230px] w-full h-auto self-center justify-self-center 2sm:max-w-auto 2sm:w-auto 2sm:h-[230px] 2sm:justify-self-start' 
                     src={images[0]} 

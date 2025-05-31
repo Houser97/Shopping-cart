@@ -5,7 +5,6 @@ export const getProducts = async () => {
 
     try {
         const products = await productRepositoryProvider.getProducts();
-        console.log(products)
         return products;
     } catch (error) {
         console.log(error)
@@ -25,6 +24,17 @@ export const getProductById = async (id: string) => {
         const { reviews, totalReactions } = reviewsData;
 
         return { reviews, totalReactions, product: productData }
+
+    } catch (error) {
+        console.log(error)
+        return {}
+    }
+}
+
+export const getProductBySlug = async (slug: string) => {
+    try {
+        const productData = await productRepositoryProvider.getProductBySlug(slug)
+        return { product: productData }
 
     } catch (error) {
         console.log(error)

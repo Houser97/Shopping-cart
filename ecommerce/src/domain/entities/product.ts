@@ -7,4 +7,5 @@ export interface Product {
     description: string,
     rating: number | null,
     totalReviews: number,
+    slug: string
 }

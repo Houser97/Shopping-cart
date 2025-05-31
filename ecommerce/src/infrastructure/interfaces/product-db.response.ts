@@ -7,6 +7,7 @@ export interface ProductDBResponse {
     description: string;
     rating: number | null;
     totalReviews: number;
+    slug: string;
 }
 
 export interface Meta {

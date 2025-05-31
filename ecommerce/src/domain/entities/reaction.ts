@@ -8,7 +8,7 @@ export interface Reaction {
     id: string,
     reviewId: string,
     authorId: string,
-    reaction: string
+    reaction: ReactionsEnum
 }
 
 export interface ReactionsReviewIdObject {

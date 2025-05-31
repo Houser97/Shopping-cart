@@ -1,12 +1,10 @@
+'use client'
+
+import { useAuthStore } from "@/store/auth/auth-store";
 
 export const LogoutButton = () => {
 
-  //const { startLogout } = useAuthStore();
-
-  const logout = () => {
-    //startLogout();
-    //window.location.reload();
-  }
+  const { logout } = useAuthStore();
 
   return (
     <button onClick={() => logout()}

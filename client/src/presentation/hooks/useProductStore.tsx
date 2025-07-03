@@ -40,7 +40,6 @@ export const useProductStore = () => {
                 productRepositoryProvider.getProductById(id),
                 reviewRepositoryProvider.getReviews(id)
             ]);
-            
 
             const { reviews: fetchedReviews, totalReactions: fetchedTotalReactions } = reviewsData;
 
@@ -51,7 +50,7 @@ export const useProductStore = () => {
             setProduct(undefined);
             setReviews([]);
             setTotalReactions({});
-            console.log(error)
+
         } finally {
             setIsLoading(false);
         }

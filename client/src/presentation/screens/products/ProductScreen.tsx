@@ -12,7 +12,7 @@ import { useProductStore } from '../../hooks/useProductStore'
 export const ProductScreen = () => {
 
     const { id } = useParams();
-    const { product, reviews, getProductById } = useProductStore();
+    const { product, reviews, totalReactions, getProductById } = useProductStore();
     const { reactions, getReactions } = useReaction();
 
     const [isLoading, setIsLoading] = useState(true)
@@ -41,7 +41,6 @@ export const ProductScreen = () => {
             </NotFoundLayout>
         )
 
-
     return (
         <div className='flex w-full'>
             <div className='flex justify-center items-center bg-[var(--white-color)] w-full min-h-screen py-28 px-2 sm:px-8 md:px-14'>
@@ -66,6 +65,7 @@ export const ProductScreen = () => {
                             reviews.map((review, index) => {
                                 const { id: reviewId } = review;
 
+                                const reviewTotalReactions = totalReactions[reviewId] || {};
                                 const reviewUserReactions = reactions[reviewId] || undefined;
 
                                 return (
@@ -73,6 +73,7 @@ export const ProductScreen = () => {
                                         key={`review-card-${index}`}
                                         review={review}
                                         productId={id}
+                                        totalReactions={reviewTotalReactions}
                                         userReaction={reviewUserReactions}
                                     />
                                 )

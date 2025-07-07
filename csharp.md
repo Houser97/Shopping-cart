@@ -5,10 +5,24 @@
     - [1.2 Extensiones VS Code](#12-extensiones-vs-code)
     - [1.3 GIT](#13-git)
       - [1.3.1 Git Log - Configuración de alias](#131-git-log---configuración-de-alias)
+      - [1.3.2 Creación de gitignore](#132-creación-de-gitignore)
+    - [1.4 Configuraciones de servidor](#14-configuraciones-de-servidor)
+      - [1.4.1 Configuración camelCase](#141-configuración-camelcase)
+      - [1.4.2 Configuración de política de autorización por defecto](#142-configuración-de-política-de-autorización-por-defecto)
   - [2. Esqueleto .NET API](#2-esqueleto-net-api)
     - [2.1 Preparación de proyectos y referencias](#21-preparación-de-proyectos-y-referencias)
     - [2.2 Ejecución de proyecto](#22-ejecución-de-proyecto)
     - [2.3 Configuración de launchSettings.json](#23-configuración-de-launchsettingsjson)
+  - [3. Bases de datos](#3-bases-de-datos)
+    - [3.1 MongoDB](#31-mongodb)
+  - [4. Autenticación](#4-autenticación)
+    - [4.1 Creación de clases](#41-creación-de-clases)
+      - [4.1.2 DTOs](#412-dtos)
+    - [4.2 Autenticación con JWT](#42-autenticación-con-jwt)
+  - [5. Funcionalidades CORE](#5-funcionalidades-core)
+    - [5.1 Clase Result](#51-clase-result)
+  - [6. Extras](#6-extras)
+    - [6.1 SignalR](#61-signalr)
 
 
 
@@ -50,6 +64,43 @@ dotnet --info
 git log --all --decorate --oneline --graph
 
 git config --global alias.adog "log --all --decorate --oneline --graph"
+```
+
+#### 1.3.2 Creación de gitignore
+1. En root del servidor csharp ejecutar el siguiente comando:
+```bash
+dotnet new gitignore
+```
+
+2. Incluir siguientes archivos en .gitignore.
+   1. appsettings.json
+   2. Bases de datos
+      1. Por ejemplo, en caso de que se ocupa algo como SQLite, en donde se tiene un archivo como: reactivities.db
+
+### 1.4 Configuraciones de servidor
+#### 1.4.1 Configuración camelCase
+1. Agregar siguiente configuración en __Program.cs__.
+```c#
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+```
+
+#### 1.4.2 Configuración de política de autorización por defecto
+- Es útil para proteger endpoints cuando se implementa autenticación. Permite no tener que colocar __[Authorize]__ en todos los endpoints.
+- Los endpoints que no deben estar protegidos se les decora con __[AllowAnonymous]__.
+
+1. Se coloca la siguiente configuración en:
+
+```c#
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build());
 ```
 
 
@@ -236,4 +287,463 @@ dotnet watch
 ```bash
 dotnet dev-certs https --clean
 dotnet dev-certs https --trust
+```
+
+## 3. Bases de datos
+### 3.1 MongoDB
+1. Instalar MongoDB.Driver @MongoDB Inc. en los siguientes proyectos:
+   1. Persistence
+   2. Domain
+   3. API
+      1. Se necesita para poder hacer configuraciones como evitar que se traigan campos adicionales que no estén en la clase de entidad. Por ejemplo, el campo de MongoDB \_v\_.
+2. Colocar configuración de __API/appsettings.json__.
+  1. Se colocan valores como:
+     1. Nombre de base de datos.
+     2. Nombre de las colecciones.
+
+```json
+{
+  "InTouchIoDatabase": {
+    "ConnectionString": "...",
+    "DatabaseName": "...",
+    "ChatsCollectionName": "chats",
+    "UsersCollectionName": "users",
+    "MessagesCollectionName": "messages"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+```
+
+3. Crear __Persistence\AppDbSettings.cs__.
+   1. Se usa para tener la configuración colocada en __API/appsettings.json__.
+
+```c#
+using System;
+
+namespace Persistence;
+
+public class AppDbSettings
+{
+    public string ConnectionString { get; set; } = null!;
+    public string DatabaseName { get; set; } = null!;
+    public string MessagesCollectionName { get; set; } = null!;
+    public string ChatsCollectionName { get; set; } = null!;
+    public string UsersCollectionName { get; set; } = null!;
+}
+```
+
+4. Crear __Persistence\AppDbContext.cs.__, en donde se va a tener la conexión a la base de datos.
+   1. En __Persistence__ se debe tener en __Persistence.csproj__ el paquete __Microsoft.Extensions.Options @Microsoft__, la cual debe ser la misma versión que tiene .NET con la que se está trabajando.
+
+```c#
+using System;
+
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+
+namespace Persistence;
+
+public class AppDbContext
+{
+    private readonly IMongoDatabase _database;
+
+    public AppDbContext(IOptions<AppDbSettings> settings)
+    {
+        var client = new MongoClient(settings.Value.ConnectionString);
+        _database = client.GetDatabase(settings.Value.DatabaseName);
+    }
+
+    public IMongoDatabase Database => _database;
+}
+```
+
+5. Realizar inyección de dependencia en Program.cs, en donde el servicio __AppDbContext__ será singleton.
+   1. De igual manera se coloca __AppDbSettings__ para tener acceso a las configuraciones de base de datos. 
+
+```c#
+using Persistence;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure settings inject IOptions<AppDbSettings>
+builder.Services.Configure<AppDbSettings>(
+    builder.Configuration.GetSection("InTouchIoDatabase"));
+
+// Register AppDbContext as singleton
+builder.Services.AddSingleton<AppDbContext>();
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.MapControllers();
+
+app.Run();
+
+```
+
+
+6. Configurar MongoDB para ingorar campos que no estén definidos en la entidad Domain. Se realizan en __Program.cs__.
+   1. Esto se hace para evitar errores como: Element '__v' does not match any field or property of class Domain.Message.
+   2. Esto se debe hacer para cada Entidad.
+
+```c#
+using Application.Messages;
+using Domain;
+using MongoDB.Bson.Serialization;
+using Persistence;
+
+var builder = WebApplication.CreateBuilder(args);
+
+BsonClassMap.RegisterClassMap<Message>(cm =>
+{
+    cm.AutoMap();
+    cm.SetIgnoreExtraElements(true);
+});
+```
+
+## 4. Autenticación
+### 4.1 Creación de clases
+#### 4.1.2 DTOs
+1. Crear Application\DTOs\Auth\LoginUserDto.cs
+   1. Ejemplo con validaciones de __DataAnnotations__.
+  
+```c#
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Application.DTOs;
+
+public class LoginUserDto
+{
+    [Required(ErrorMessage = "Name is required")]
+    [MinLength(3, ErrorMessage = "Name should have at least 3 characters")]
+    public string Name { get; set; } = null!;
+
+    [Required(ErrorMessage = "Password is required")]
+    [MinLength(6, ErrorMessage = "Password should have at least 6 characters")]
+    public string Password { get; set; } = null!;
+}
+```
+
+2. Crear DTO para respuestas __Application\DTOs\Auth\AuthResultDto.cs__.
+   1. Se usa para el serivico de Auth, ya que en los servicios no se cuenta con métodos como __BadRequest__.
+3. Configurar política de autorización como se indica en [1.4.2 Configuración de política de autorización por defecto](#142-configuración-de-política-de-autorización-por-defecto).
+
+### 4.2 Autenticación con JWT
+1. Instalar versión correspondiente del paquere __Microsoft.AspNetCore.Authentication.JwtBearer @Microsoft.__ según la versión de .NET que se esté ocupando. Se instala en:
+   1. API
+   2. Application
+2. Instalar paquete __BCrypt.Net-Next @Chris McKee, Ryan D. Emerl, Damien Miller__, el cual contiene el servicio que autentica y compara/crea contraseñas. Se instala en:
+   1. Application 
+3. Crear __Application\Auth\JwtSettings.cs__
+
+```c#
+using System;
+
+namespace Application.Auth;
+
+public class JwtSettings
+{
+    public string Key { get; set; } = null!;
+    public string Issuer { get; set; } = null!; 
+    public string Audience { get; set; } = null!;
+    public int ExpiresInMinutes { get; set; }
+}
+```
+
+4. Configurar JWT en Program.cs.
+
+```c#
+// 1. JWT configuration
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("Jwt")
+);
+
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+
+// 2. Add authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings?.Issuer,
+        ValidAudience = jwtSettings?.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings!.Key))
+    };
+});
+
+// 3. Add authorization
+builder.Services.AddAuthorization();
+
+```
+
+5. Revisar que se tengan middlewares de autenticación y autorización.
+
+```c#
+app.UseAuthentication();
+app.UseAuthorization();
+```
+
+6. Agregar configuración de JWT en __API\appsettings.json__.
+   
+```json
+"Jwt": {
+  "Key": "superclaveultrasecreta",  // 🔐 cámbiala por una más segura
+  "Issuer": "IntouchApp",
+  "Audience": "IntouchUsers",
+  "ExpiresInMinutes": 60
+}
+```
+
+7. Crear generador de token __Application\Auth\JwtTokenGenerator.cs__.
+   1. Se usa la entidad User para poder generar los claims que se incluyen en el token.
+
+```c#
+using System;
+
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Domain;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+namespace Application.Auth;
+
+public class JwtTokenGenerator(IOptions<JwtSettings> options)
+{
+    private readonly JwtSettings _settings = options.Value;
+
+    public string GenerateToken(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Name)
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: _settings.Issuer,
+            audience: _settings.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(_settings.ExpiresInMinutes),          
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+}
+```
+8. Inyectar servicio como singleton en __Program.cs__.
+
+```c#
+builder.Services.AddSingleton<JwtTokenGenerator>();
+```
+
+## 5. Funcionalidades CORE
+### 5.1 Clase Result
+- Así como __Application\DTOs\Auth\AuthResultDto.cs__, se crea la clase Result para usarse en los servicios, ya que en ellos no se tiene acceso a funciones como __BadRequest, OK, etc__.
+
+```c#
+using System;
+
+namespace Application.Core;
+
+public class Result<T>
+{
+    public bool IsSuccess { get; set; }
+    public T? Value { get; set; }
+    public string? Error { get; set; }
+    public int Code { get; set; }
+    public static Result<T> Success(T value) => new() { IsSuccess = true, Value = value };
+    public static Result<T> Failure(string error, int code) => new()
+    {
+        IsSuccess = false,
+        Error = error,
+        Code = code
+    };
+}
+```
+
+## 6. Extras
+### 6.1 SignalR
+1. Crear carpeta __SignarR__ en __API__.
+   1. Al crear la carpeta, en el archivo de API.csproj debe aparecer.
+
+```xml
+  <ItemGroup>
+    <Folder Include="SignalR\" />
+  </ItemGroup>
+```
+
+2. Creación de Hub (se toma como ejemplo un chat) __API/SignalR/ChatHub.cs__.
+
+```c#
+using Application.Chats;
+using Application.Messages;
+using Microsoft.AspNetCore.SignalR;
+using Application.DTOs.Messages;
+using Application.DTOs.Chats;
+using Domain;
+using Application.DTOs;
+using System.Text.Json;
+
+namespace API.SignalR;
+
+public class ChatHub(
+    MessageService messageService,
+    ChatsService chatService
+) : Hub
+{
+    public async Task Setup(string userId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+        Console.WriteLine($"User {userId} joined their personal group.");
+    }
+
+    public async Task JoinChat(string chatId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
+        Console.WriteLine($"Joined chat {chatId}");
+    }
+
+    public async Task LeaveChat(string chatId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
+        Console.WriteLine($"Left chat {chatId}");
+    }
+
+    public async Task PersonalMessage(PersonalMessagePayload payload)
+    {
+        Console.WriteLine(payload);
+        try
+        {
+            var json = JsonSerializer.Serialize(payload); // convértelo a JSON string
+            var deserializedPayload = JsonSerializer.Deserialize<PersonalMessagePayload>(json); // deserialízalo como DTO
+
+            if (deserializedPayload == null) throw new Exception("Payload inválido");
+
+            var chat = deserializedPayload.Chat;
+            var messageData = deserializedPayload.Message;
+
+            string sender = messageData.Sender;
+            string content = messageData.Content;
+            string image = messageData.Image;
+            bool? isSeen = messageData.IsSeen;
+
+            var (error, createMessageDto) = CreateMessageDto.Create(sender, content, chat.Id!, image, isSeen);
+            if (error != null)
+            {
+                await Clients.Group(messageData.Sender.ToString())
+                    .SendAsync("personal-message-chat", error);
+                return;
+            }
+
+            // Suponiendo que puedes obtener las conexiones activas por grupo de alguna forma
+            // Aquí se omite ese detalle por ser más complejo en SignalR nativamente
+            //createMessageDto.IsSeen = true; // Asume que el otro está conectado
+
+            var messageResult = await messageService.Create(createMessageDto!);
+            Console.WriteLine(messageResult.Value);
+
+            var updateChatDto = new UpdateChatDto(messageResult.Value!.Id!);
+
+            await chatService.UpdateChat(chat.Id!.ToString(), sender, updateChatDto!);
+
+            // Supongamos que tu método `GetById` necesita el ID del otro usuario
+            var friendId = chat.Users.First(u => u.Id != messageResult.Value.Sender);
+            var updatedChat = await chatService.GetById(chat.Id.ToString(), friendId.ToString()!);
+
+            var chatPayload = (dynamic)updatedChat.Value;
+
+            foreach (var user in chat.Users)
+            {
+                await Clients.Group(user.Id.ToString()!).SendAsync("personal-message-chat", new
+                {
+                    chat = chatPayload,
+                    unseenMessages = chatPayload.unseenMessages
+                });
+            }
+
+            await Clients.Group(chat.Id.ToString()).SendAsync("personal-message-local",  messageResult.Value );
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            await Clients.Group(payload.Message.Sender.ToString())
+                .SendAsync("personal-message", ex.Message);
+        }
+    }
+}
+
+public class UserDto
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string PictureUrl { get; set; }
+    public string PictureId { get; set; }
+}
+
+public class ChatDto
+{
+    public string Id { get; set; }
+    public List<UserDto> Users { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public List<MessageDto> UnseenMessages { get; set; }
+}
+
+public class MessageDto
+{
+    public string Sender { get; set; }
+    public string Content { get; set; }
+    public string Chat { get; set; }
+    public string Image { get; set; }
+    public bool? IsSeen { get; set; }
+}
+
+
+public class PersonalMessagePayload
+{
+    public ChatDto Chat { get; set; }
+    public MessageDto Message { get; set; }
+}
+```
+
+
+3. Agregar servicio en __Program.cs__.
+
+```c#
+builder.Services.AddSignalR();
+```
+
+4. Agregar Middleware para indicarle al servidor API a dónde enviar las solicitudes que llegan a un endpoint en particular.
+
+```c#
+app.MapHub<ChatHub>("/chats");
 ```

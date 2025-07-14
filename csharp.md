@@ -25,6 +25,7 @@
     - [4.1 Creación de clases](#41-creación-de-clases)
       - [4.1.2 DTOs](#412-dtos)
     - [4.2 Autenticación con JWT](#42-autenticación-con-jwt)
+    - [4.3 Configuración de UserAccesor - Application/Infrastructure](#43-configuración-de-useraccesor---applicationinfrastructure)
   - [5. Funcionalidades CORE](#5-funcionalidades-core)
     - [5.1 Clase Result](#51-clase-result)
     - [5.2 AutoMapper](#52-automapper)
@@ -236,6 +237,7 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
 ## 2. Esqueleto .NET API
 ### 2.1 Preparación de proyectos y referencias
 - [Se puede ver una representación de la arquitectura que sigue el proyecto en el siguiente link](https://github.com/House197/NET/blob/main/Udemy/NETCore-React/02.Skeleton.NetApi.md)
+- [Representación de la arquitectura incluyendo el proyecto Infrastructure](https://github.com/House197/NET/blob/main/Udemy/NETCore-React/14.EntityFrameworkRelationships.md)
 
 1. Crear archivo de solution usando la plantilla __Solution File__, el cual tiene como short name __sln__.
     - Es un contenedor para diferentes proyectos.
@@ -334,6 +336,7 @@ dotnet sln add Infrastructure
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
@@ -784,6 +787,97 @@ public class JwtTokenGenerator(IOptions<JwtSettings> options)
 
 ```c#
 builder.Services.AddSingleton<JwtTokenGenerator>();
+```
+
+### 4.3 Configuración de UserAccesor - Application/Infrastructure
+- Se recuerda que en el proyecto de Application se requiere la habilidad de obtener la información del usuario sin saber nada sobre el usuario o cómo se obtiene el usuario del token.
+
+1. Crear interfaz de __UserAccesor__ en __Application__.
+
+__Application\Interfaces\IUserAccessor.cs.__
+```c#
+using System;
+using Domain;
+
+namespace Application.Interfaces;
+
+public interface IUserAccessor
+{
+    string GetUserId();
+    Task<User> GetUserAsync();
+}
+
+```
+
+2. Colocar siguiente grupo XML en __Infrastructure\Infrastructure.csproj__ para tener acceso a __HTTP Context Accessor__.
+   1. Es en __HTTP Context Accessor__ donde se tiene el objeto de __User__.
+
+```xml
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+```
+
+__Ejemplo de xml completo__
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>
+
+```
+
+3. Implementar __IUserAccessor__ creado en __Application__ en el proyecto __Infrastructure__.
+
+__Infrastructure\Security\UserAccessor.cs__
+```c#
+using System;
+using System.Security.Claims;
+using Application.Interfaces;
+using Domain;
+using Microsoft.AspNetCore.Http;
+using Persistence;
+
+namespace Infrastructure;
+
+public class UserAccessor(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext) : IUserAccessor
+{
+    public async Task<User> GetUserAsync()
+    {
+        return await dbContext.Users.FindAsync(GetUserId())
+            ?? throw new UnauthorizedAccessException("No user is logged in");
+    }
+
+    public string GetUserId()
+    {
+        // A partir de httpContextAccessor.HttpContext.User se pueden usar los claims que están en el token de usuario. Uno de los claims es para el user id.
+        // Este claim están provisto dentro del token, name identifier
+        return httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new Exception("No user found");
+    }
+}
+
+```
+
+4. Agregar interfaz e implementación como servicio en __Program.cs__.
+
+```c#
+// Se desea solo sea scoped a la petición http. De igual, se debe a que se usa HTTP Context en el código
+builder.Services.AddScoped<IUserAccessor, UserAccessor>();
 ```
 
 ## 5. Funcionalidades CORE

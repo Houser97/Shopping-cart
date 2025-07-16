@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Persistence;
 using Persistence.Configurations;
 
@@ -14,7 +15,13 @@ builder.Services.Configure<AppDbSettings>(
 
 builder.Services.AddSingleton<AppDbContext>();
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 var app = builder.Build();
 

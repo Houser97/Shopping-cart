@@ -1,10 +1,13 @@
 using Persistence;
+using Persistence.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 // Database
+MongoDbConventions.Register();
+
 builder.Services.Configure<AppDbSettings>(
     builder.Configuration.GetSection("Database")
 );

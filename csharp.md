@@ -21,6 +21,16 @@
     - [2.4 Proyecto de Infrastructure](#24-proyecto-de-infrastructure)
   - [3. Bases de datos](#3-bases-de-datos)
     - [3.1 MongoDB](#31-mongodb)
+    - [3.2 Configuraciones](#32-configuraciones)
+      - [3.2.1 Archivo de convenciones](#321-archivo-de-convenciones)
+        - [3.2.2 Parte 1. MongoDbConventions.Register()](#322-parte-1-mongodbconventionsregister)
+        - [3.2.3 Parte 2. EnumSerializationConvention](#323-parte-2-enumserializationconvention)
+      - [3.2.2 Ignorar campos no definidos en la entidad Domain de forma manual](#322-ignorar-campos-no-definidos-en-la-entidad-domain-de-forma-manual)
+    - [3.3 Herramientas](#33-herramientas)
+      - [3.3.1 Aggregation Framework](#331-aggregation-framework)
+        - [3.3.2 Desglose](#332-desglose)
+    - [3.4 Formas de uso](#34-formas-de-uso)
+      - [3.4.1 Forma básica de un servicio](#341-forma-básica-de-un-servicio)
   - [4. Autenticación](#4-autenticación)
     - [4.1 Creación de clases](#41-creación-de-clases)
       - [4.1.2 DTOs](#412-dtos)
@@ -34,6 +44,7 @@
         - [5.2.1.2 Mapeo a partir de subcampos o con campos con nombres diferente.](#5212-mapeo-a-partir-de-subcampos-o-con-campos-con-nombres-diferente)
         - [5.2.1.3 Evitar referencias cíclicas (Errores de serialización)](#5213-evitar-referencias-cíclicas-errores-de-serialización)
         - [5.2.1.4 Uso de proyecciones (Queryable extension)](#5214-uso-de-proyecciones-queryable-extension)
+    - [5.3 ServiceHelper](#53-servicehelper)
   - [6. Validaciones](#6-validaciones)
     - [6.1 Data Annotations](#61-data-annotations)
     - [6.2 Fluent Validation](#62-fluent-validation)
@@ -48,7 +59,17 @@
         - [6.2.2.3 Manejo de errores personalizado con Middleware](#6223-manejo-de-errores-personalizado-con-middleware)
   - [7. Extras](#7-extras)
     - [7.1 SignalR](#71-signalr)
+    - [7.2 Microsoft.Extensions.Options](#72-microsoftextensionsoptions)
+      - [Ejemplo de uso](#ejemplo-de-uso)
+      - [Ventajas](#ventajas)
+      - [Ejemplo sin su uso](#ejemplo-sin-su-uso)
+      - [TL;DR](#tldr)
+    - [7.3 Dar de alta servicios en Program.cs](#73-dar-de-alta-servicios-en-programcs)
+      - [7.3.1 Alta de clases genéricas](#731-alta-de-clases-genéricas)
+        - [Ejemplo](#ejemplo)
+        - [TL;DR](#tldr-1)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
+    - [Shopping Cart](#shopping-cart)
 
 
 
@@ -114,6 +135,8 @@ builder.Services
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 ```
+
+- Así UserDto con Id, Email → se convierte en { "id": ..., "email": ... }
 
 #### 1.4.2 Políticas de autenticación y autorización
 ##### 1.4.2.1 Configuración de política de autenticación por defecto
@@ -516,7 +539,7 @@ builder.Services.AddScoped<IUserAccessor, UserAccessor>();
 
 ## 3. Bases de datos
 ### 3.1 MongoDB
-1. Instalar MongoDB.Driver @MongoDB Inc. en los siguientes proyectos:
+1. Instalar __MongoDB.Driver @MongoDB Inc.__ en los siguientes proyectos:
    1. Persistence
    2. Domain
    3. API
@@ -565,6 +588,7 @@ public class AppDbSettings
 
 4. Crear __Persistence\AppDbContext.cs.__, en donde se va a tener la conexión a la base de datos.
    1. En __Persistence__ se debe tener en __Persistence.csproj__ el paquete __Microsoft.Extensions.Options @Microsoft__, la cual debe ser la misma versión que tiene .NET con la que se está trabajando.
+   2. Información sobre el paquete en [7.2 Microsoft.Extensions.Options](#72-microsoftextensionsoptions).
 
 ```c#
 using System;
@@ -617,8 +641,72 @@ app.Run();
 
 ```
 
+### 3.2 Configuraciones
+#### 3.2.1 Archivo de convenciones
+- Ubicación: __Persistence/Configurations__.
+- El archivo registra convenciones globales de serialización de MongoDB para:
+  1. Ignorar campos que no existen en entidades domain (tal como __v).
+  2. Serializar enums como strings (más legible y portable).
+     1. En este ejemplar se configura de esa forma a los enums ya que en el proyecto se deseaba tener el string en lugar del entero, ya que se ocupa guardar en base de datos el string.
+  3. Aplicar estas reglas a todas las clases automáticamente.
 
-6. Configurar MongoDB para ingorar campos que no estén definidos en la entidad Domain. Se realizan en __Program.cs__.
+##### 3.2.2 Parte 1. MongoDbConventions.Register()
+```c#
+public static void Register()
+{
+    var pack = new ConventionPack
+    {
+        new EnumRepresentationConvention(BsonType.String),
+        new EnumSerializationConvention(),
+        new IgnoreExtraElementsConvention(true)
+    };
+
+    ConventionRegistry.Register("DefaultMongoConventions", pack, t => true); // El nombre DefaultMongoConventions puede ser cualquiera.
+}
+``` 
+
+1. Crea un paquete de convenciones __(ConventionPack)__ que define reglas de serialización.
+2. Registra ese paquete con __ConventionRegistry__, lo que le dice a Mongo que use esas reglas para todas las clases (t => true).
+3. Se ocupa esta función para dar de alta las convenciones en __Program.cs__ antes de interactuar con Mongo.
+
+```c#
+MongoDbConventions.Register();
+```
+
+| Convención                                      | ¿Qué hace?                                                                                 |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `EnumRepresentationConvention(BsonType.String)` | Convierte enums a strings en Mongo (en lugar de enteros)                                   |
+| `EnumSerializationConvention()`                 | Personaliza cómo se serializan los enums usando `EnumSerializer<T>`                        |
+| `IgnoreExtraElementsConvention(true)`           | Ignora campos que están en Mongo pero **no están** en tus clases (como `__v`, `__t`, etc.) |
+
+
+##### 3.2.3 Parte 2. EnumSerializationConvention
+```c#
+public class EnumSerializationConvention : ConventionBase, IClassMapConvention
+{
+    public void Apply(BsonClassMap classMap)
+    {
+        foreach (var memberMap in classMap.AllMemberMaps)
+        {
+            if (memberMap.MemberType.IsEnum)
+            {
+                var enumSerializerType = typeof(EnumSerializer<>).MakeGenericType(memberMap.MemberType);
+                var serializer = (IBsonSerializer)Activator.CreateInstance(enumSerializerType, BsonType.String)!;
+                memberMap.SetSerializer(serializer);
+            }
+        }
+    }
+}
+```
+- Es básicamente un detector de enums: los detecta y los reconfigura para que no den problemas al serializar o deserializar.
+- Es una convención personalizada que:
+  - Revisa cada propiedad de cada clase (AllMemeberMaps).
+  - Si la propiedad es un enum, le asigna un serializador __(EnumSerializer<T>)__ que lo escribe como string.
+
+#### 3.2.2 Ignorar campos no definidos en la entidad Domain de forma manual
+- Es una alternativa si no se desea hacen con el archivo de convenciones.
+- Esta opción no es recomendada cuando se tienen varias entidades, ya que se debe hacer para cada una.
+- Se realizan en __Program.cs__.
    1. Esto se hace para evitar errores como: Element '__v' does not match any field or property of class Domain.Message.
    2. Esto se debe hacer para cada Entidad.
 
@@ -635,6 +723,155 @@ BsonClassMap.RegisterClassMap<Message>(cm =>
     cm.AutoMap();
     cm.SetIgnoreExtraElements(true);
 });
+```
+
+### 3.3 Herramientas
+#### 3.3.1 Aggregation Framework
+- El marco de agregación en MongoDB está diseñado para procesar un gran número de documentos en una colección pasándolos a través de una serie de etapas, conocidas como pipeline.
+
+__Ejemplo c#__
+```c#
+var productWithReviews = await _productsCollection.Aggregate()
+    .Lookup<Product, Review, ProductWithReviews>(
+        _reviewsCollection,
+        product => product.Id,
+        review => review.ProductId,
+        result => result.Reviews
+    )
+    .AppendStage<ProductWithReviews>(new BsonDocument("$addFields", new BsonDocument
+    {
+        { "rating", new BsonDocument("$avg", "$reviews.rating") },
+        { "totalReviews", new BsonDocument("$size", new BsonDocument("$ifNull", new BsonArray { "$reviews", new BsonArray() })) }
+    }))
+    .ToListAsync();
+```
+
+- Este código hace lo siguiente:
+    1. Une ($lookup) productos con sus reseñas (reviews).
+    2. Calcula el promedio de calificaciones ($avg) y total de reseñas ($size).
+    3. Retorna una lista de objetos enriquecidos con estos nuevos campos.
+
+__Ejemplo node__
+```js
+const products = await ProductModel.aggregate([
+    {
+        $lookup: {
+            from: "reviews",
+            localField: "_id",
+            foreignField: "productId",
+            as: "reviews"
+        },
+    },
+    {
+        $addFields: {
+            rating: { $avg: "$reviews.rating" },
+            totalReviews: { $size: "$reviews" }
+        }
+    },
+]);
+```
+
+##### 3.3.2 Desglose
+1. Iniciar una consulta de agregación en MongoDB sobre la colección de productos.
+```c#
+var productWithReviews = await _productsCollection.Aggregate()
+```
+
+2. Aplicar __Lookup__ (JOIN entre colecciones).
+   1. Mongo no tiene JOIN como SQL, pero $lookup lo simula.
+      1. Une productos con reseñas usando el __Id__ del producto y el __ProductId__ de la reseña.
+      2. Guarda el resultado en una propiedad llamada __Reviews__ dentro de cada __ProductWithReviews__.
+
+```c#
+    .Lookup<Product, Review, ProductWithReviews>(
+        _reviewsCollection,
+        product => product.Id,
+        review => review.ProductId,
+        result => result.Reviews
+    )
+```
+
+- Internamente es como hacer:
+
+```js
+$lookup: {
+  from: "reviews",
+  localField: "_id",
+  foreignField: "productId",
+  as: "reviews"
+}
+```
+
+3. Aplicar __AppendStage__ para agregar campos derivados con __addFiels__.
+
+```c#
+    .AppendStage<ProductWithReviews>(new BsonDocument("$addFields", new BsonDocument
+    {
+        { "rating", new BsonDocument("$avg", "$reviews.rating") },
+        { "totalReviews", new BsonDocument("$size", new BsonDocument("$ifNull", new BsonArray { "$reviews", new BsonArray() })) }
+    }))
+```
+
+- rating.
+  - Calcula el promedio de los valores rating de la lista de reseñas.
+
+```js
+$addFields: {
+  rating: { $avg: "$reviews.rating" }
+}
+```
+
+- totalReviews
+  - Calcula cuántas reseñas tiene.
+  - Usa __$ifNull__ para evitar si reviews es null.
+
+```js
+totalReviews: {
+  $size: {
+    $ifNull: ["$reviews", []]
+  }
+}
+```
+
+4. Ejecutar la consulta y convierte los resultados en una lista de objetos ProductWithReviews.
+
+```c#
+.ToListAsync();
+```
+
+### 3.4 Formas de uso
+#### 3.4.1 Forma básica de un servicio
+```c#
+using System;
+using Application.Core;
+using Domain.Entities;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using Persistence;
+
+namespace Application.Services;
+
+public class ReviewsService(    
+    AppDbContext dbContext,
+    IOptions<AppDbSettings> settings,
+    IMapper mapper,
+    ServiceHelper<ProductsService> serviceHelper)
+{
+    private readonly IMongoCollection<Review> _reviewsCollection =
+        dbContext.Database.GetCollection<Review>(settings.Value.ReviewsCollectionName);
+
+    public async Task<Result<Review[]>> GetReviewsAsync()
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            return Result<Review[]>.Failure($"Internal Server Error: {ex.Message}", 500);
+        }
+    }
+}
 ```
 
 ## 4. Autenticación
@@ -907,11 +1144,11 @@ public class Result<T>
 
 ### 5.2 AutoMapper
 1. En NuGet, se buscar __AutoMapper__, el cual fue desarrollado por la misma persona de MediatoR (Jimmy Bogard).    
-    - Se instala en Application.
+    - __AutoMapper @Jimmy Bogard__, instalar en __Application__ y __API__
+    - __AutoMapper.Extensions.Microsoft.DependencyInjection @Jimmy Bogard__, instalar en __API__.
 
 2. Configurar AutoMapper para que sepa qué está mapeando.
     - Crear en __Application__: __Application\Core\MappingProfiles.cs__
-
 ```c#
 using System;
 using AutoMapper;
@@ -929,7 +1166,7 @@ public class MappingProfiles : Profile
 }
 ```
 
-3. Dar de alta servicio en __Program.cs__.
+1. Dar de alta servicio en __Program.cs__.
    1. Se le debe especificar donde está el assembly para registar los mapping profiles. En este caso se usa __typeof__.
    2. El assembly se muestra en Filer Explorer, ejemplo: __Application\bin\Debug\net9.0\Application.dll__. En este caso el Assembly es __Application.dll__. El compilador va a colocar acá el código, en donde acá se va a encontrar el mapping profles que se creó.
 
@@ -1301,6 +1538,43 @@ public class GetActivityDetails
     }
 }
 
+```
+
+### 5.3 ServiceHelper
+- Se usa para englobar los errores de servidor o exepciones no manejadas, evitando tener que duplicar código en cada método del servicio.
+
+```c#
+using System;
+using Microsoft.Extensions.Logging;
+
+namespace Application.Core;
+
+public class ServiceHelper<T>(ILogger<T> logger)
+{
+    private readonly ILogger<T> _logger = logger;
+
+    public async Task<Result<TResult>> ExecuteSafeAsync<TResult>(Func<Task<TResult>> operation)
+    {
+        try
+        {
+            var result = await operation();
+            return Result<TResult>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception in service operation");
+            return Result<TResult>.Failure("Internal Server Error", 500);
+        }
+    }
+}
+
+```
+
+- Dar de alta en __Program.cs__.
+  - Más información de cómo dar de alta clases genéricas en [7.3.1 Alta de clases genéricas](#731-alta-de-clases-genéricas).
+
+```c#
+builder.Services.AddScoped(typeof(ServiceHelper<>));
 ```
 
 ## 6. Validaciones
@@ -2160,11 +2434,119 @@ app.MapHub<ChatHub>("/chats");
 ```
 
 
+### 7.2 Microsoft.Extensions.Options
+- Este paquete forma parte del ecosistema de configuración de .NET, y permite vincular secciones del archivo appsettings.json a clases fuertemente tipadas (como AppDbSettings). Es decir:
+    - En lugar de andar leyendo Configuration["DatabaseSettings:ConnectionString"] usas una clase como AppDbSettings que automáticamente se llena con los valores de appsettings.json.
 
+#### Ejemplo de uso
 
+```json
+"DatabaseSettings": {
+  "ConnectionString": "mongodb://localhost:27017",
+  "DatabaseName": "MiSuperBase"
+}
+```
+
+- Clase
+
+```c#
+public class AppDbSettings
+{
+    public string ConnectionString { get; set; }
+    public string DatabaseName { get; set; }
+}
+
+```
+
+- Cuando usas el sistema de configuración de .NET y haces:
+
+```c#
+services.Configure<AppDbSettings>(Configuration.GetSection("DatabaseSettings"));
+```
+
+- .NET guarda esa configuración internamente y te la inyecta donde la necesites, pero a través de IOptions<T>. Entonces cuando se hace lo siguiente, se está pidiendo una instancia ya configurada de AppDbSettings.
+
+```c#
+public AppDbContext(IOptions<AppDbSettings> settings)
+```
+
+- Se accede al valor por medio de:
+
+```c#
+settings.Value.ConnectionString
+```
+
+#### Ventajas
+1. Fuertemente tipado.
+2. Validación automática (si se requiere añadirla con lo siguiente por ejemplo).
+
+```c#
+services.Configure<AppDbSettings>().ValidateDataAnnotations()
+```
+
+3. Separación clara de configuración y lógica de negocio
+    - AppDbContext no se preocupa de dónde viene la conexión, solo sabe que AppDbSettings ya tiene los datos correctos.
+
+4. Cambio de configuración según entorno
+    - En producción se puede tener un appsettings.Production.json y .NET lo tomará sin que muevas nada en el código.
+
+#### Ejemplo sin su uso
+```c#
+public AppDbContext(string connectionString, string databaseName)
+```
+
+- Obliga a inyectar manualmente dos valores, y se pierde:
+    - La validación de configuración
+    - El tipado centralizado
+    - La consistencia al cambiar los valores en todos lados
+
+- Además, si mañana se decide cambiar a SQL Server, PostgreSQL, o Cosmos DB, solo se cambia una sección del JSON y listo.
+
+#### TL;DR
+- Microsoft.Extensions.Options permite vincular configuraciones desde appsettings.json a clases.
+- IOptions<AppDbSettings> da acceso a esa configuración lista para usarse.
+- Es limpio, escalable y la forma moderna de configurar en .NET Core y superior.
+
+### 7.3 Dar de alta servicios en Program.cs
+#### 7.3.1 Alta de clases genéricas
+- Se toma de ejemplo la clase [5.3 ServiceHelper](#53-servicehelper). 
+
+```c#
+builder.Services.AddScoped(typeof(ServiceHelper<>));
+```
+- ¿Por qué typeof(ServiceHelper<>) y no ServiceHelper<Algo>?
+    - Porque se está registrando la clase genérica abierta ServiceHelper<T>, no una implementación concreta todavía. Eso significa que:
+    - Cada vez que algún servicio solicite un ServiceHelper<MiServicio>, el contenedor sabrá cómo construirlo automáticamente.
+
+- Si no se usara __typeof()__ se tendría que registrar de forma manual cada versión concreta.
+
+```c#
+builder.Services.AddScoped<ServiceHelper<ProductsService>>();
+builder.Services.AddScoped<ServiceHelper<ReviewsService>>();
+```
+
+##### Ejemplo
+```c#
+public class ProductsService(AppDbContext dbContext, ..., ServiceHelper<ProductsService> serviceHelper)
+```
+
+- Entonces, cuando .NET vea que ProductsService necesita un ServiceHelper<ProductsService>, como ya se registró ServiceHelper<>, el sistema genera una instancia de ServiceHelper<ProductsService> automáticamente y la inyecta. Como es Scoped, se crea una por cada request HTTP.
+
+##### TL;DR
+- AddScoped(typeof(ServiceHelper<>)) es una manera genérica de decir:
+    - “Cuando alguien pida ServiceHelper<LoQueSea>, crea uno automáticamente”.
+- Se usa typeof(...) porque se está registrando un tipo genérico abierto.
+- Scoped: una instancia por request HTTP.
 
 ## Temas pendientes por documentar
 - EntityFrameworkRelationShips
 - Autenticación por cookies
 - Configuración de Identity
 - Cloudinary
+
+### Shopping Cart
+- Documentar la creación de Enum para las reacciones. Para esto se crearon convenciones para que los valores se guarden con la primera letra en minúscula.
+- Agregar configuración en Program.cs para indicar que los demás campos del documento para cada entidad se ignoren si no están definidas en la entidad.
+
+
+https://github.com/TryCatchLearn/Reactivities/blob/main/Application/Activities/Queries/GetActivityDetails.cs

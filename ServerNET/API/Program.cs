@@ -1,11 +1,13 @@
 using System.Text.Json;
+using Application.Core;
+using Application.Services;
 using Persistence;
 using Persistence.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddScoped(typeof(ServiceHelper<>));
 // Database
 MongoDbConventions.Register();
 
@@ -14,6 +16,9 @@ builder.Services.Configure<AppDbSettings>(
 );
 
 builder.Services.AddSingleton<AppDbContext>();
+
+builder.Services.AddScoped<ProductsService>();
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 builder.Services
     .AddControllers()

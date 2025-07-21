@@ -18,7 +18,7 @@ public static class MongoDbConventions
             new IgnoreExtraElementsConvention(true) // Se ignoran campos no mapeados como __v
         };
 
-        ConventionRegistry.Register("EnumAsString", pack, t => true);
+        ConventionRegistry.Register("DefaultMongoConventions", pack, t => true);
     }
 }
 

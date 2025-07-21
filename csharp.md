@@ -45,6 +45,8 @@
         - [5.2.1.3 Evitar referencias cíclicas (Errores de serialización)](#5213-evitar-referencias-cíclicas-errores-de-serialización)
         - [5.2.1.4 Uso de proyecciones (Queryable extension)](#5214-uso-de-proyecciones-queryable-extension)
     - [5.3 ServiceHelper](#53-servicehelper)
+      - [5.3.2 Versión Func\<Task\<Result\>\>](#532-versión-functaskresult)
+      - [5.3.2 Primera versión, Func\<Task\>](#532-primera-versión-functask)
   - [6. Validaciones](#6-validaciones)
     - [6.1 Data Annotations](#61-data-annotations)
     - [6.2 Fluent Validation](#62-fluent-validation)
@@ -68,6 +70,7 @@
       - [7.3.1 Alta de clases genéricas](#731-alta-de-clases-genéricas)
         - [Ejemplo](#ejemplo)
         - [TL;DR](#tldr-1)
+    - [7.4 Limpieza de procesos dotnet](#74-limpieza-de-procesos-dotnet)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -1542,6 +1545,45 @@ public class GetActivityDetails
 
 ### 5.3 ServiceHelper
 - Se usa para englobar los errores de servidor o exepciones no manejadas, evitando tener que duplicar código en cada método del servicio.
+- Separas errores esperados de errores inesperados:
+    - Errores esperados (como "no se encontró el recurso") se manejan en el cuerpo del servicio.
+    - Errores inesperados (como problemas de red, null reference, errores de configuración, etc.) los maneja el ServiceHelper.
+- Te permite ser explícito en tus servicios y controlar el mensaje, código y tipo de respuesta con claridad.
+
+```c#
+public class ServiceHelper<T>(ILogger<T> logger)
+{
+    private readonly ILogger<T> _logger = logger;
+
+    public async Task<Result<TResult>> ExecuteSafeAsync<TResult>(Func<Task<Result<TResult>>> operation)
+    {
+        try
+        {
+            return await operation();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception in service operation");
+            return Result<TResult>.Failure("Internal Server Error", 500);
+        }
+    }
+}
+```
+
+- En caso de quere lanzar excepciones personalizadas se puede expandir el código para capturarlas:
+
+```c#
+catch (NotFoundException ex)
+{
+    _logger.LogWarning(ex, "Resource not found");
+    return Result<TResult>.Failure(ex.Message, 404);
+}
+```
+
+
+#### 5.3.2 Versión Func<Task<Result<T>>>
+
+#### 5.3.2 Primera versión, Func<Task<TResult>>
 
 ```c#
 using System;
@@ -2537,6 +2579,32 @@ public class ProductsService(AppDbContext dbContext, ..., ServiceHelper<Products
     - “Cuando alguien pida ServiceHelper<LoQueSea>, crea uno automáticamente”.
 - Se usa typeof(...) porque se está registrando un tipo genérico abierto.
 - Scoped: una instancia por request HTTP.
+
+### 7.4 Limpieza de procesos dotnet
+1. Limpieza general de procesos dotnet.
+    - Esto mata todos los procesos dotnet activos, lo cual es seguro si no se está corriendo otra solución en paralelo.
+```bash
+pkill -f "dotnet"
+```
+
+- O, si se quiere ser más quirúrgico:
+
+```bash
+ps aux | grep dotnet | awk '{print $2}' | xargs kill -9
+```
+
+2. Limpia el proyecto antes de volver a compilar.
+
+```bash
+dotnet clean
+```
+
+3. Compilar de nuevo con --no-incremental por si hay un build cache corrupto.
+
+```bash
+dotnet build --no-incremental
+
+```
 
 ## Temas pendientes por documentar
 - EntityFrameworkRelationShips

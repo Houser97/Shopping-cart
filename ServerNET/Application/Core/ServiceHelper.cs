@@ -7,12 +7,11 @@ public class ServiceHelper<T>(ILogger<T> logger)
 {
     private readonly ILogger<T> _logger = logger;
 
-    public async Task<Result<TResult>> ExecuteSafeAsync<TResult>(Func<Task<TResult>> operation)
+    public async Task<Result<TResult>> ExecuteSafeAsync<TResult>(Func<Task<Result<TResult>>> operation)
     {
         try
         {
-            var result = await operation();
-            return Result<TResult>.Success(result);
+            return await operation();
         }
         catch (Exception ex)
         {

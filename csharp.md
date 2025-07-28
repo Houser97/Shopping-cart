@@ -70,7 +70,67 @@
       - [7.3.1 Alta de clases genéricas](#731-alta-de-clases-genéricas)
         - [Ejemplo](#ejemplo)
         - [TL;DR](#tldr-1)
-    - [7.4 Limpieza de procesos dotnet](#74-limpieza-de-procesos-dotnet)
+    - [7.4 Inyección de interfaces en lugar de implementación](#74-inyección-de-interfaces-en-lugar-de-implementación)
+      - [¿Por qué se debe usar la interfaz y no la implementación?](#por-qué-se-debe-usar-la-interfaz-y-no-la-implementación)
+      - [Ventajas de usar la interfaz](#ventajas-de-usar-la-interfaz)
+      - [Desventajas de inyectar la implementación](#desventajas-de-inyectar-la-implementación)
+        - [Se rompe el principio de inversión de dependencias.](#se-rompe-el-principio-de-inversión-de-dependencias)
+        - [Dificulta los tests.](#dificulta-los-tests)
+        - [Aumenta el acomplamiento.](#aumenta-el-acomplamiento)
+    - [7.5 SOLID](#75-solid)
+      - [7.5.5 Principio de inversión de dependencias (Dependency Inversion Principle DIP)](#755-principio-de-inversión-de-dependencias-dependency-inversion-principle-dip)
+        - [Módulo de bajo nivel](#módulo-de-bajo-nivel)
+        - [Qué es una abstracción](#qué-es-una-abstracción)
+        - [Analogía](#analogía)
+        - [Usos en la vida real](#usos-en-la-vida-real)
+        - [TL;DR](#tldr-2)
+    - [7.6 ASP.NET Core](#76-aspnet-core)
+      - [7.6.1 Controladores](#761-controladores)
+        - [7.6.1.1 ControllerBase](#7611-controllerbase)
+        - [7.6.1.2 ActionResult](#7612-actionresult)
+          - [Comparación de ActionResult usando ControllerBase y sin su uso](#comparación-de-actionresult-usando-controllerbase-y-sin-su-uso)
+        - [7.6.1.3 IActionResult](#7613-iactionresult)
+        - [7.6.1.4 Task\<ActionResult\>](#7614-taskactionresult)
+        - [7.6.1.5 TL;DR](#7615-tldr)
+      - [7.6.2 Middlewares](#762-middlewares)
+        - [7.6.2.1 Ejemplo: Creación de middleware personalizada](#7621-ejemplo-creación-de-middleware-personalizada)
+        - [7.6.2.2 Use, Usewhen, Run](#7622-use-usewhen-run)
+        - [7.6.2.3 Ejemplos de middlewares comunes en ASP.NET Core:](#7623-ejemplos-de-middlewares-comunes-en-aspnet-core)
+      - [7.6.3 Filtros y validaciones](#763-filtros-y-validaciones)
+        - [7.6.3.1 Filtros](#7631-filtros)
+          - [7.6.3.1.1 Tipos de filtros](#76311-tipos-de-filtros)
+          - [7.6.3.1.2 Ejemplo: Action Filter personalizado](#76312-ejemplo-action-filter-personalizado)
+          - [ServiceFilter](#servicefilter)
+          - [TypeFilter](#typefilter)
+          - [Resumen](#resumen)
+          - [7.6.3.2 Validaciones del modelo con \[ApiController\]](#7632-validaciones-del-modelo-con-apicontroller)
+    - [7.7 C#](#77-c)
+      - [7.7.1 Listas](#771-listas)
+      - [7.7.2 Switch moderno](#772-switch-moderno)
+      - [7.7.3 Dicccionario](#773-dicccionario)
+        - [Add(key, value)](#addkey-value)
+        - [Remove(key, value)](#removekey-value)
+        - [ContainsKey(key) y ContainsValue(value)](#containskeykey-y-containsvaluevalue)
+        - [TryGetValue(key, out value)](#trygetvaluekey-out-value)
+        - [Keys y Values](#keys-y-values)
+        - [Iteración](#iteración)
+        - [Clear()](#clear)
+        - [Sintaxis índice](#sintaxis-índice)
+      - [7.7.4 Extension Methods](#774-extension-methods)
+        - [Usos](#usos)
+        - [Ejemplo con tipo propio](#ejemplo-con-tipo-propio)
+          - [Extension Methods + LINQ](#extension-methods--linq)
+          - [Precauciones](#precauciones)
+          - [Usar extensiones en todo el proyecto](#usar-extensiones-en-todo-el-proyecto)
+      - [7.7.5 Constraints (restricciones genéricas)](#775-constraints-restricciones-genéricas)
+        - [Tipos de constraints](#tipos-de-constraints)
+          - [1. where T : class](#1-where-t--class)
+          - [2. where T : struct](#2-where-t--struct)
+          - [3. where T : new()](#3-where-t--new)
+          - [4. where T : BaseClass](#4-where-t--baseclass)
+          - [Uso común](#uso-común)
+          - [Qué pasa si no se usan constraints](#qué-pasa-si-no-se-usan-constraints)
+    - [7.8 Limpieza de procesos dotnet](#78-limpieza-de-procesos-dotnet)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -1712,6 +1772,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityValidator>();
 ```
 
 ##### 6.2.1.1 Validation Middleware 
+- Más acerca de las Middlewares en el apartado: [7.6.2 Middlewares](#762-middlewares).
 - En lugar de tener que hacer la inyección en __Application\Activities\Commands\CreateActivity.cs__ como se mostró en el paso 4 de la parte anterior, se puede usar __middleware MediatR__.
 
 1. Crear __Application\Core\ValidationBehavior.cs__.
@@ -2580,7 +2641,904 @@ public class ProductsService(AppDbContext dbContext, ..., ServiceHelper<Products
 - Se usa typeof(...) porque se está registrando un tipo genérico abierto.
 - Scoped: una instancia por request HTTP.
 
-### 7.4 Limpieza de procesos dotnet
+### 7.4 Inyección de interfaces en lugar de implementación
+- Se tiene el ejemplo de la implementación (realizada en Infrastructure) de la interfaz IPhotoService (la cual se definió en Application).
+  - Al inyectar en __Program.cs__ se tiene de la siguiente manera:
+
+```c#
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+```
+
+- En el servicio se inyecta usando la interfaz:
+
+```c#
+public class UserService(
+    AppDbContext dbContext,
+    IOptions<AppDbSettings> settings,
+    ServiceHelper<UserService> serviceHelper,
+    IPhotoService photoService
+)
+```
+
+#### ¿Por qué se debe usar la interfaz y no la implementación?
+- Principio de inversión de dependencias (Dependency Inversion Principle - DIP), parte de los principios SOLID
+
+#### Ventajas de usar la interfaz
+1. Testeabilidad.
+   1. Se pueden hacer mocks de IPhotoService en las pruebas unitarias.
+
+```c#
+var mockPhotoService = new Mock<IPhotoService>();
+mockPhotoService.Setup(x => x.DeletePhotoAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result<bool>.Success(true));
+
+```
+
+2. Flexibilidad y extensibilidad.
+   1. Si en un futuro debe cambiarse a otro servicio (ejemplo: cloudinary a s3), solo debe actualizarse la inyección en Program.cs:
+
+```c#
+builder.Services.AddScoped<IPhotoService, S3PhotoService>();
+```
+
+3. Claridad de responsabilidades.
+    1. El servicio en donde se inyecta no debe saber cómo funciona la implementación, solo le interesa que haga su función.
+    2. Esto reduce el acoplamiento, y facilita la lectura, mantenimiento y refactorización del código.
+4. Reutilización.
+   1. Si otra clase debe trabajar con la función de la interfaz (fotos en este caso), se puede usar la interfaz sin tener que duplicar lógica ni crear un God Service.
+
+
+#### Desventajas de inyectar la implementación
+##### Se rompe el principio de inversión de dependencias.
+- Más información sobre el principio en el aparato [7.5.5 Principio de inversión de dependencias](#755-principio-de-inversión-de-dependencias).
+- UserService es un módulo de alto nivel. PhotoService es de bajo nivel (es el que “hace cosas”). Si UserService depende de la implementación concreta, se está rompiendo la independencia.
+- Esto hace a una arquitectura frágil.
+- 
+##### Dificulta los tests.
+1. Se tienen que instanciar la clase en los tests, lo cual puede requerir muchas dependencias.
+2. No permite simular comportamientos fácilmente.
+3. No se puede verificar llamadas o validar que se ejecutaron métodos esperados.
+
+##### Aumenta el acomplamiento.
+1. Es el grado de dependencia entre componentes del software.
+2. Cuando una clase depende directamente de otra clase concreta, se dice que hay un acomplamiento fuerte.
+3. si se desea cambiar la implementación, se tienen que tocar en todas las clases que la usaban.
+4. Se rompe el principio de diseño __programa contra interfaces, no implementaciones__.
+5. Hace más difícil la reutilización de componentes en otros contextos.
+
+
+### 7.5 SOLID
+#### 7.5.5 Principio de inversión de dependencias (Dependency Inversion Principle DIP)
+"Los módulos de alto nivel no deberían depender de módulos de bajo nivel. Ambos deberían depender de abstracciones."
+
+También
+
+"Las abstracciones no deben depender de los detalles. Los detalles deben depender de las abstracciones"
+
+- Este principio resuelve acomplamientos altos entre mòdulos de alto nivel y módulos de bajo nivel.
+
+```c#
+public interface IPhotoService
+{
+    Task<string> UploadPhotoAsync(Stream file);
+}
+```
+
+```c#
+public class PhotoService : IPhotoService
+{
+    public Task<string> UploadPhotoAsync(Stream file)
+    {
+        // implementación concreta
+    }
+}
+```
+
+```c#
+// UserService ya no depende del detalle, sino de la abstracción
+public class UserService
+{
+    private readonly IPhotoService _photoService;
+
+    public UserService(IPhotoService photoService)
+    {
+        _photoService = photoService;
+    }
+
+    public async Task<string> UpdatePhoto(Stream file)
+    {
+        return await _photoService.UploadPhotoAsync(file);
+    }
+}
+```
+
+- Y en Program.cs
+
+```c#
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+```
+
+##### Módulo de alto nivel
+- Orquestra la lógica de negocio.
+- Toma decisiones, coordina acciones.
+- Ejemplos:
+  - UserService (servicios en una aplicación ASP.NET Core).
+  - OrderManager.
+  - PaymentProcessor.
+
+##### Módulo de bajo nivel
+- Es el que hace el trabajo específico o concreto.
+- Interactúa con APIs, bases de datos, archivos, etc.
+- Ejemplos:
+  - PhotoService.
+  - SqlUserRepository.
+  - CloudStorageClient.
+
+##### Qué es una abstracción
+- Una interfaz o clase base que define lo que se puede hacer, sin importar cómo lo hace.
+- Por ejemplo: IPhotoService define UploadPhotoAsync, pero no le importa si se usa Cloudinary, S3 o USB.
+
+##### Analogía
+- Se imagina que se tiene un restaurante (UserService) y se requiere comprar verduras frescas todos los días.
+  - ❌ Sin inversión de dependencias:
+    - El restaurante depende directamente de un solor proveedor (PhotoService). Si el proveedor queda ausente, el negocio se ve afectado.
+  - ✅ Con inversión de dependencias
+    - Se pide la verdura por medio de una agencia (IPhotoService).
+    - La agencia se encarga de que el proveedor cumpla el contrato. En caso de que el proveedor falle, se busca a alguien más para que el cliente (el restaurante) opere sin problemas.
+
+##### Usos en la vida real
+- Cambiar base de datos sin reescribir toda la app.
+- Se pueden hacer pruebas unitarios con __Mock<IPhotoService>__ en lugar de dependenr de servicios reales.
+- Se puede tener múltiples implementaciones para diferentes entornos y necesidades.
+
+##### TL;DR
+| Concepto                  | Significado                                                               |
+| ------------------------- | ------------------------------------------------------------------------- |
+| Módulo de alto nivel      | Orquesta lógica (UserService, OrderService)                               |
+| Módulo de bajo nivel      | Ejecuta tareas concretas (PhotoService, FileStorage, EmailSender)         |
+| Abstracción               | Interfaz o clase base (`IPhotoService`)                                   |
+| Inversión de dependencias | Hacer que ambos dependan de la **interfaz**, no uno del otro directamente |
+
+### 7.6 ASP.NET Core
+#### 7.6.1 Controladores
+- En ASP.NET Core, un controlador es una clase que responde a solicitudes HTTP. Normalmente representa un recurso de API: usuarios, productos, mensajes, etc.
+
+```c#
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+    [HttpGet]
+    public ActionResult<List<UserDto>> GetAll() => _userService.GetUsers();
+}
+```
+
+- Ciclo de vida de una petición.
+  1. 🌐 Llega una petición HTTP a /api/users/1.
+  2. 🚦 ASP.NET Core la enruta con ayuda de los [Route] y [Http...].
+  3. 🧠 Encuentra el controlador correcto (e.g. UsersController).
+  4. 🧮 Llama al método decorado (por ejemplo, [HttpGet("{id}")]).
+  5. 🗃️ Tu método ejecuta lógica, posiblemente accediendo a la base de datos.
+  6. 📨 Devuelves un ActionResult<T> (200 OK, 404, etc.).
+  7. 💡 ASP.NET convierte todo a una respuesta HTTP (headers + JSON).
+  8. 📤 Se envía la respuesta al cliente (Postman, navegador, app frontend...).
+
+##### 7.6.1.1 ControllerBase
+- En ASP.NET Core, cuando se crea una API, los controladores generalmente heredan de la clase __ControllerBase__.
+- Es una base para los controladores de APIs REST.
+- A diferencia de Controller, ControllerBase es más ligero y enfocado en APIs.
+  - Controller incluye funcionalidad para vistas Razor, como View(), RedirectToAction(), etc.
+
+Entonces
+| Clase base       | Uso recomendado           |
+| ---------------- | ------------------------- |
+| `ControllerBase` | APIs REST                 |
+| `Controller`     | Aplicaciones MVC (vistas) |
+
+
+- Proporciona métodos y propiedades útiles como:
+  - Ok(), NotFound(), BadRequest(), Created(), etc.
+    - ControllerBase da la comidad de invocar ActionResult fàcilmente con los métodos mencionados.
+  - __ModelState__ para validaciones.
+  - __User__ para infor del usuario autenticado.
+  - Request, Response, etc.
+
+```c#
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+    [HttpGet("{id}")]
+    public ActionResult<UserDto> GetUser(string id)
+    {
+        // lógica aquí...
+    }
+}
+```
+
+
+
+##### 7.6.1.2 ActionResult<T>
+- Viene del namespace __Microsoft.AspNetCore.Mvc__, y se puede usar en cualquier clase aunque no se herede de ControllerBase.
+- Es una clase concreta que implementa IActionResult.
+  - Permite hacer lo siguiente:
+    - Devikver una respuesta común como Ok(), BadRequest(), etc.
+    - Devolver directamente un objeto que será convertido en JSON.
+- ActionResult es un poco más flexible que IActionResult.
+  - Puede devolver lo que sea, siempre y cuando sea algo serializable o una repsuesta válida del servidor.
+- Es el más modero. Es un tipo genérico que:
+  - Indica que le método normalmente retorna un tipo específico T.
+  - Pero también puede retornar cualquier coma que implemente IActionResult, tal como un error HTTP.
+- Es un tipo de retorno que representa una respuesta HTTP válida.
+  - Por ejemplo: 200 OK, 404 Not Found, 500 Internal Server Error, etc.
+- Es una forma de decir:
+  - Este método retorna un objeto de tipo T o un resultado acción (como NotFound, BadRequest, etc.)
+
+```c#
+[HttpGet("{id}")]
+public ActionResult<UserDto> GetUser(string id)
+{
+    var user = FindUserById(id);
+
+    if (user == null)
+        return NotFound("No se encontró al usuario");
+
+    return Ok(user);
+}
+```
+
+- ⚠️ ¿Y qué pasa si no usas ActionResult?
+  - Si solo se devuelve UserDto, el controlador siempre devuelve 200 OK, incluso si se quiere devolver un error. Con ActionResult<T> se tiene control sobre la respuesta HTTP.
+
+- ¿Cuál uso y cuándo usar ActionResult y IActionResult?
+| Escenario                             | Recomendación                       |
+| ------------------------------------- | ----------------------------------- |
+| Solo devolver códigos de estado HTTP  | `IActionResult`                     |
+| Quieres devolver un objeto o un error | `ActionResult<T>` ✅ Moderno y claro |
+| Respuesta mixta sin indicar tipo      | `ActionResult`                      |
+
+
+###### Comparación de ActionResult usando ControllerBase y sin su uso
+- Con ControllerBase.
+
+```c#
+public class UsersController : ControllerBase
+{
+    [HttpGet("{id}")]
+    public ActionResult<UserDto> GetUser(string id)
+    {
+        var user = _userService.FindById(id);
+        if (user == null) return NotFound();
+        return Ok(user); // ← Helper que devuelve ActionResult<UserDto>
+    }
+}
+```
+
+- Sin ControllerBase.
+
+```c#
+public class UglyController
+{
+    [HttpGet("{id}")]
+    public IActionResult GetUser(string id)
+    {
+        var result = new ObjectResult(new { message = "No controller magic" })
+        {
+            StatusCode = 200
+        };
+        return result;
+    }
+}
+```
+
+
+##### 7.6.1.3 IActionResult<T>
+- Es una interfaz que define el contrato para cualquier tipo de respuesta que un controlador puede devolver.
+- Cualquier cosa que implemente IActionResult puede ser devuelta por un endpoint.
+
+```c#
+[HttpGet]
+public IActionResult Get()
+{
+    return Ok("Hola Arturo");
+}
+```
+
+- Acá Ok() devuelve un __OkObjectResult__, que implementa IActionResult.
+  - Entonces, este método puede devolver Ok(), BadRequest(), NotFound(), etc.
+  - Todlo lo que sea resultado HTTP lo cubre IActionResult.
+
+##### 7.6.1.4 Task<ActionResult<T>>
+- Task<> indica que el método es asíncrono.
+- Los métodos asíncronos ayudan a que el servidor pueda:
+  - Manejar varias peticiones simultáneamente.
+  - No bloquear hilos mientras espera una consulta a base de datos, API externa, etc.
+
+```c#
+public async Task<ActionResult<UserDto>> GetUser(string id)
+```
+
+- Lo anterior significa:
+  - Este método será ejecutado de forma asíncrona y eventualmente devolverá una respuesta HTTP que contiene un UserDto o algún tipo de resultado de error.
+- Por convención en ASP.NET Core:
+  - Si se usa async, se debe retornar Task<T>.
+  - Si es síncrono, solo ActionResult<T>.
+
+##### 7.6.1.5 TL;DR
+| Elemento                | Qué es                                                     |
+| ----------------------- | ---------------------------------------------------------- |
+| `ControllerBase`        | Clase base para APIs, con helpers HTTP (`Ok()`, etc.)      |
+| `ActionResult<T>`       | Resultado que puede ser un objeto **o** un código de error |
+| `Task<ActionResult<T>>` | Resultado asíncrono que puede ser objeto o código HTTP     |
+| `Ok()`, `NotFound()`    | Métodos helper para devolver códigos HTTP estándar         |
+| `async/await`           | Permiten manejar operaciones no bloqueantes (como BD/API)  |
+
+#### 7.6.2 Middlewares
+- Una middleware es una pieza del pipeline HTTP que procesa peticiones y/o respuestas.
+- Una middleware puede decidir:
+  - Pasar la petición al siguiente middleware.
+  - Deneter el proceso y devolver una respuesta.
+  - Hacer algo antes o después de que las demás se procesen.
+
+```
+-> [Middleware A] -> [Middleware B] -> [Middleware C] -> Controlador
+                                   <-    <-    <-
+```
+
+- Cada middleware puede actuar en la ida o en el regreso de la petición.
+- Se configuran en __Program.css__.
+
+```c#
+var app = builder.Build();
+
+app.UseHttpsRedirection();     // Middleware que fuerza HTTPS
+app.UseAuthentication();       // Middleware para autenticar tokens
+app.UseAuthorization();        // Middleware para validar roles/políticas
+app.UseMiddleware<LoggingMiddleware>(); // Middleware personalizado
+
+app.MapControllers();          // ¡Hasta aquí llegan las peticiones!
+```
+
+##### 7.6.2.1 Ejemplo: Creación de middleware personalizada
+1. Crear una clase middleware.
+
+```c#
+public class LoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public LoggingMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task Invoke(HttpContext context)
+    {
+        Console.WriteLine($"[{DateTime.Now}] Request: {context.Request.Method} {context.Request.Path}");
+
+        await _next(context); // ⬅️ Muy importante: pasa la petición al siguiente middleware
+
+        Console.WriteLine($"[{DateTime.Now}] Response: {context.Response.StatusCode}");
+    }
+}
+```
+
+2. Registrarla en Program.cs.
+
+```c#
+app.UseMiddleware<LoggingMiddleware>();
+```
+
+##### 7.6.2.2 Use, Usewhen, Run
+- Use ➝ pasa al siguiente middleware si se llama next()
+- Run ➝ termina la tubería, no hay "siguiente"
+- UseWhen ➝ ejecuta middleware solo si se cumple una condición.
+
+```c#
+app.UseWhen(context => context.Request.Path.StartsWithSegments("/admin"),
+    adminApp =>
+    {
+        adminApp.UseMiddleware<AdminLoggingMiddleware>();
+    });
+```
+
+##### 7.6.2.3 Ejemplos de middlewares comunes en ASP.NET Core:
+| Middleware            | Propósito                                     |
+| --------------------- | --------------------------------------------- |
+| `UseHttpsRedirection` | Redirige HTTP ➜ HTTPS                         |
+| `UseAuthentication`   | Procesa el JWT o cookie                       |
+| `UseAuthorization`    | Revisa si el usuario tiene permisos           |
+| `UseCors`             | Maneja políticas CORS                         |
+| `UseExceptionHandler` | Manejador global de errores                   |
+| `UseStaticFiles`      | Sirve archivos estáticos (imágenes, JS, etc.) |
+
+#### 7.6.3 Filtros y validaciones
+##### 7.6.3.1 Filtros
+- Son componentes que se ejecuten antes o después de ciertas etapas del ciclo de vida de una acción del controlador.
+- Se pueden pensar como hooks que interceptan la ejecuciòn para hacer algo adicional como:
+  - Validar modelo.
+  - Manejar excepciones.
+  - Registrar logs.
+  - Modificar la respuesta.
+
+###### 7.6.3.1.1 Tipos de filtros
+| Tipo                    | ¿Cuándo se ejecuta?                                            |
+| ----------------------- | -------------------------------------------------------------- |
+| **AuthorizationFilter** | Antes de todo (decide si alguien puede entrar)                 |
+| **ResourceFilter**      | Antes y después de leer el cuerpo del request                  |
+| **ActionFilter**        | Antes y después de ejecutar la acción del controlador          |
+| **ExceptionFilter**     | Si se lanza una excepción durante la acción                    |
+| **ResultFilter**        | Antes y después de enviar el resultado (como una vista o JSON) |
+
+###### 7.6.3.1.2 Ejemplo: Action Filter personalizado
+- Se tiene como ejemplo que se desea medir cuánto tiempo toma cada acción del controlador.
+
+```c#
+public class TimingActionFilter : IActionFilter
+{
+    private Stopwatch _stopwatch = new();
+
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
+        _stopwatch.Start();
+    }
+
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
+        _stopwatch.Stop();
+        Console.WriteLine($"⏱ Acción ejecutada en {_stopwatch.ElapsedMilliseconds} ms");
+    }
+}
+```
+
+- Se registra de la siguiente forma:
+
+__Program.cs__
+```c#
+builder.Services.AddScoped<TimingActionFilter>();
+```
+
+```c#
+[ServiceFilter(typeof(TimingActionFilter))]
+public class UsersController : ControllerBase
+{
+    // tus acciones aquí
+}
+```
+
+- De igual forma, se puede aplicar de forma global en Program.cs con:
+
+```c#
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<TimingActionFilter>();
+});
+```
+
+###### ServiceFilter
+- Indica que se desea buscar una instancia del filtro especificado para poder usarse. La instancia la busca en el contenedor de dependencias (DI).
+- Permite inyectar dependencias de un filtro.
+
+```c#
+[ServiceFilter(typeof(TimingActionFilter))]
+public class UsersController : ControllerBase
+{
+    // tus acciones aquí
+}
+```
+
+###### TypeFilter
+- Alternativa de ServiceFilter.
+- Además de hacer lo mismo que ServiceFilter también permite pasar parámetros manualmente al constructor del filtro.
+
+```c#
+[TypeFilter(typeof(MyFilter), Arguments = new object[] { "valor" })]
+```
+
+- Otra opción más válida es aplicar el filtro como clase sin usar DI.
+  - No se recomienda ya que se pierde el beneficio de DI.
+
+```c#
+[MyFilter] // si no necesitas inyecciones
+```
+
+###### Resumen
+| Elemento               | ¿Qué hace?                                                |
+| ---------------------- | --------------------------------------------------------- |
+| `ServiceFilter`        | Usa una clase registrada en DI para aplicarla como filtro |
+| `typeof(...)`          | Especifica el tipo de clase que ASP.NET debe buscar       |
+| `[ServiceFilter(...)]` | Aplica ese filtro a un controlador o acción               |
+
+###### 7.6.3.2 Validaciones del modelo con [ApiController]
+- Cuando un controlador hereda de ControllerBase y se usa el atributo [ApiController], se obtiene validación automática del modelo.
+- Si el __ModelState__ no es válido, ASP.NET Core retorna automáticamente un 400 Bad Request.
+
+```c#
+public class UserDto
+{
+    [Required]
+    public string Name { get; set; }
+
+    [EmailAddress]
+    public string Email { get; set; }
+}
+
+[HttpPost]
+public IActionResult CreateUser(UserDto userDto)
+{
+    // No necesitas hacer esto:
+    // if (!ModelState.IsValid) return BadRequest(ModelState);
+
+    return Ok("Usuario creado");
+}
+```
+
+
+- Para validaciones más complejas se puede usar FluentValidation, el cual se aborda con más detalle en el apartado: [6.2 Fluent Validation](#62-fluent-validation).
+
+```c#
+public class UserDtoValidator : AbstractValidator<UserDto>
+{
+    public UserDtoValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("El nombre es obligatorio");
+
+        RuleFor(x => x.Email)
+            .EmailAddress().WithMessage("El correo no es válido");
+    }
+}
+```
+
+- Se registran los validadores de la siguiente forma:
+
+```c#
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<UserDtoValidator>();
+```
+
+### 7.7 C#
+#### 7.7.1 Listas
+- Declaración.
+
+```c#
+var nombres = new List<string> { "Ana", "Luis", "Carlos" };
+```
+
+- Iteración.
+
+```c#
+// Clásico foreach
+foreach (var nombre in nombres)
+{
+    Console.WriteLine(nombre);
+}
+
+// Alternativamente, usando for si necesitas el índice
+for (int i = 0; i < nombres.Count; i++)
+{
+    Console.WriteLine(nombres[i]);
+}
+```
+
+#### 7.7.2 Switch moderno
+```c#
+string rol = "admin";
+
+switch (rol)
+{
+    case "admin":
+        Console.WriteLine("Tiene acceso total.");
+        break;
+    case "user":
+        Console.WriteLine("Acceso limitado.");
+        break;
+    default:
+        Console.WriteLine("Rol no reconocido.");
+        break;
+}
+
+```
+
+- Versión C# 8+:
+
+```c#
+string rol = "admin";
+
+switch (rol)
+{
+    case "admin":
+        Console.WriteLine("Tiene acceso total.");
+        break;
+    case "user":
+        Console.WriteLine("Acceso limitado.");
+        break;
+    default:
+        Console.WriteLine("Rol no reconocido.");
+        break;
+}
+```
+
+#### 7.7.3 Dicccionario
+- Definición
+
+```c#
+var edades = new Dictionary<string, int>
+{
+    { "Ana", 28 },
+    { "Luis", 35 },
+    { "Carlos", 42 }
+};
+```
+
+##### Add(key, value)
+```c#
+edades.Add("Sofía", 30);
+```
+
+- Lanza excepción si la llave ya existe.
+
+##### Remove(key, value)
+```c#
+edades.Remove("Luis"); // true si lo eliminó, false si no existía
+```
+
+##### ContainsKey(key) y ContainsValue(value)
+```c#
+edades.ContainsKey("Ana");     // true
+edades.ContainsValue(35);      // true
+```
+
+##### TryGetValue(key, out value)
+```c#
+if (edades.TryGetValue("Carlos", out int edadCarlos))
+{
+    Console.WriteLine($"Carlos tiene {edadCarlos} años.");
+}
+else
+{
+    Console.WriteLine("Carlos no fue encontrado.");
+}
+```
+
+##### Keys y Values
+```c#
+foreach (var nombre in edades.Keys)
+    Console.WriteLine(nombre);
+
+foreach (var edad in edades.Values)
+    Console.WriteLine(edad);
+```
+
+##### Iteración
+1. Clave y valor juntos:
+
+```c#
+foreach (var kvp in edades)
+{
+    Console.WriteLine($"{kvp.Key} tiene {kvp.Value} años.");
+}
+```
+
+- kvp significa KeyValuePair. También puedes hacer:
+
+```c#
+foreach (KeyValuePair<string, int> persona in edades)
+{
+    Console.WriteLine($"{persona.Key} - {persona.Value}");
+}
+```
+
+##### Clear()
+- Borra todas las entradas.
+
+```c#
+edades.Clear();
+```
+
+##### Sintaxis índice
+```c#
+edades["Sergio"] = 29; // Si no existía, lo agrega; si ya estaba, actualiza el valor
+```
+
+#### 7.7.4 Extension Methods
+- Un Extension Method permite agregar métodos a tipos existente (como string, List<T>, DateTime, clases propias, etc.) sin la necesidad de heredar o modificar su código original.
+
+- Definición de un Extension Method.
+    1. Debe tener una clase estática.
+    2. El método debe ser estático.
+    3. El primer parámetro lleva el modificaro this y el tipo al que se quiere extender.
+
+```c#
+public static class StringExtensions
+{
+    public static int CountVowels(this string input)
+    {
+        return input.Count(c => "aeiouAEIOU".Contains(c));
+    }
+}
+```
+
+- Se usa de la siguiente forma:
+
+```c#
+string nombre = "Arturo";
+int vocales = nombre.CountVowels();
+Console.WriteLine($"Tu nombre tiene {vocales} vocales.");
+```
+
+##### Usos
+- ✔️ Limpian tu código al agrupar lógica específica de un tipo.
+- 🧩 Te ayudan a crear código reutilizable y elegante.
+- 💬 Mejoran la legibilidad de tus expresiones (fluyen como lenguaje natural).
+- 🔄 Los usa LINQ todo el tiempo (Where, Select, OrderBy... ¡todos son extensiones!)
+
+##### Ejemplo con tipo propio
+```c#
+public class User
+{
+    public string Name { get; set; }
+}
+```
+
+- Se extiende de la siguente forma:
+
+```c#
+public static class UserExtensions
+{
+    public static string SayHi(this User user)
+    {
+        return $"Hola, soy {user.Name}";
+    }
+}
+```
+
+- Uso:
+
+```c#
+var user = new User { Name = "Arturo" };
+Console.WriteLine(user.SayHi()); // Hola, soy Arturo
+```
+
+###### Extension Methods + LINQ
+```c#
+.Where(x => x != null)
+.Select(x => x.Propiedad)
+```
+
+- LINQ se basa en un conjunto gigante de métodos de extensión sobre IEnumerable<T>.
+
+###### Precauciones
+- No se debe abusar, ya que pueden ensuciar la API si no están bien organizados.
+- Solo se debe extender lo que tiene sentido semántico para el tipo.
+- Si hay una instancia de método con el mismo nombre, el método normal gana prioridad.
+
+###### Usar extensiones en todo el proyecto
+- Colocar en carpeta de Extensions/ y una clase estática bien nombrada (por ejemplo, StringExtensions.cs, etc.).
+- Importar con:
+
+```c#
+using TuProyecto.Extensions;
+```
+
+#### 7.7.5 Constraints (restricciones genéricas)
+- Son reglas que se colocan a los type parameters para que se comporten como se necesita. Se pueden ver como los "filtros de acceso" del sistema genérico de C#.
+- Cuando se usan genéricos (T, TKey, TValue, etc.), C# no sabe de antemano qué tipo se va a usar. Los constraints permiten indica:
+  - "Este tipo T solo va a funcionar si cumple ciertas condiciones".
+- Esta permite:
+  - Tener más seguridad en tiempo de compilación.
+  - La posibilidad de usar miembros específicos del tipo (métodos, propiedades).
+  - Código más limpio y mantenible.
+
+##### Tipos de constraints
+###### 1. where T : class
+- Significa que T debe ser una clase de referencia (no struct, ni primitive).
+
+```c#
+public class Repository<T> where T : class
+{
+    public void Add(T entity)
+    {
+        Console.WriteLine(entity.ToString());
+    }
+}
+```
+
+###### 2. where T : struct
+- Significa que T debe ser un tipo de valor (como int, DateTime, bool).
+
+```c#
+public class NullableWrapper<T> where T : struct
+{
+    public T? Value { get; set; }
+}
+```
+
+###### 3. where T : new()
+- Indica que T debe tener un constructor público sin parámetros, lo cual permite hacer new T() dentro del código.
+  - Puede combinarse con otros constraints, pero debe ir al final.
+
+```c#
+public class Factory<T> where T : new()
+{
+    public T CreateInstance() => new T();
+}
+```
+
+###### 4. where T : BaseClass
+- Restringe T para que gerede de una clase específica o implemente un interfaz.
+
+```c#
+public class Service<T> where T : EntityBase
+{
+    public Guid GetId(T entity) => entity.Id;
+}
+```
+
+###### 5. where T : ISomeInterface
+- Solo permite tipos que implement una interfaz.
+
+```c#
+public class Logger<T> where T : ILoggable
+{
+    public void Log(T item) => item.Log();
+}
+```
+
+###### 6. where T : notnull
+- Es parte de los nullable reference types. Dice que T no puede ser null. Útil desde C# 8 para mayor seguridad.
+
+```c#
+public class SafeHolder<T> where T : notnull
+{
+    public T Value { get; }
+    public SafeHolder(T value) => Value = value;
+}
+```
+
+###### 7. Múltiples restricciones
+- Se puede combinar por comas.
+
+```c#
+public class Processor<T>
+    where T : class, ISomeInterface, new()
+{
+    public T CreateAndUse()
+    {
+        var instance = new T();
+        instance.DoSomething();
+        return instance;
+    }
+}
+```
+
+###### Uso común
+- En repositorios genéricos (Repository<T>)
+- En factories (new() constructor)
+- En lógica reusable donde se necesita que T tenga propiedades comunes
+- En behaviors (como viste en ValidationBehavior<TRequest, TResponse>). [https://github.com/House197/NET/blob/main/Udemy/NETCore-React/10.ValidationErrors.md](Link de documentación).
+
+###### Qué pasa si no se usan constraints
+- se pueden teminar con errores en tiempo de ejecución:
+
+```c#
+public void DoSomething<T>(T input)
+{
+    var x = input.ToJson(); // 🚨 Error: C# no sabe si T tiene ese método
+}
+```
+
+- Pero con constraints:
+
+```c#
+public void DoSomething<T>(T input) where T : ISerializable
+{
+    var x = input.ToJson(); // ✅ Ok, ya sabe que T tiene ese método
+}
+```
+
+### 7.8 Limpieza de procesos dotnet
 1. Limpieza general de procesos dotnet.
     - Esto mata todos los procesos dotnet activos, lo cual es seguro si no se está corriendo otra solución en paralelo.
 ```bash
@@ -2605,6 +3563,7 @@ dotnet clean
 dotnet build --no-incremental
 
 ```
+
 
 ## Temas pendientes por documentar
 - EntityFrameworkRelationShips

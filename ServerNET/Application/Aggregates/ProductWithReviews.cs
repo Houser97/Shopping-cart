@@ -1,7 +1,7 @@
 using System;
 using Domain.Entities;
 
-namespace Application.DTOs;
+namespace Application.Aggregates;
 
 public class ProductWithReviews : Product
 {

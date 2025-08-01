@@ -1,6 +1,6 @@
 using System;
+using Application.Aggregates;
 using Application.Core;
-using Application.DTOs;
 using Application.DTOs.Products;
 using AutoMapper;
 using Domain.Entities;

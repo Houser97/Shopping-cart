@@ -131,6 +131,9 @@
           - [Uso común](#uso-común)
           - [Qué pasa si no se usan constraints](#qué-pasa-si-no-se-usan-constraints)
     - [7.8 Limpieza de procesos dotnet](#78-limpieza-de-procesos-dotnet)
+  - [8. Testing](#8-testing)
+    - [8.1 xUnit](#81-xunit)
+      - [8.1.1 Setup](#811-setup)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -649,7 +652,21 @@ public class AppDbSettings
 }
 ```
 
-4. Crear __Persistence\AppDbContext.cs.__, en donde se va a tener la conexión a la base de datos.
+4. Crear __Persistence\Interfaces\IAppDbContext.cs.__.
+    - Es importante trabajar con interfaces para evitar acoplamiento en el código y poder realizar tests de forma fácil.
+```c#
+using System;
+using MongoDB.Driver;
+
+namespace Persistence.Interfaces;
+
+public interface IAppDbContext
+{
+    IMongoDatabase Database { get; }
+}
+```
+
+5. Crear __Persistence\AppDbContext.cs.__, en donde se va a tener la conexión a la base de datos.
    1. En __Persistence__ se debe tener en __Persistence.csproj__ el paquete __Microsoft.Extensions.Options @Microsoft__, la cual debe ser la misma versión que tiene .NET con la que se está trabajando.
    2. Información sobre el paquete en [7.2 Microsoft.Extensions.Options](#72-microsoftextensionsoptions).
 
@@ -675,7 +692,7 @@ public class AppDbContext
 }
 ```
 
-5. Realizar inyección de dependencia en Program.cs, en donde el servicio __AppDbContext__ será singleton.
+6. Realizar inyección de dependencia en Program.cs, en donde el servicio __AppDbContext__ será singleton.
    1. De igual manera se coloca __AppDbSettings__ para tener acceso a las configuraciones de base de datos. 
 
 ```c#
@@ -1672,11 +1689,25 @@ public class ServiceHelper<T>(ILogger<T> logger)
 
 ```
 
+- Crear interfaz (es útil sobre todo al momento de hacer testing).
+
+```c#
+using System;
+using Application.Core;
+
+namespace Application.Interfaces;
+
+public interface IServiceHelper<T>
+{
+    Task<Result<TResult>> ExecuteSafeAsync<TResult>(Func<Task<Result<TResult>>> operation);
+}
+```
+
 - Dar de alta en __Program.cs__.
   - Más información de cómo dar de alta clases genéricas en [7.3.1 Alta de clases genéricas](#731-alta-de-clases-genéricas).
 
 ```c#
-builder.Services.AddScoped(typeof(ServiceHelper<>));
+builder.Services.AddScoped(typeof(IServiceHelper<>), typeof(ServiceHelper<>));
 ```
 
 ## 6. Validaciones
@@ -2615,7 +2646,7 @@ public AppDbContext(string connectionString, string databaseName)
 - Se toma de ejemplo la clase [5.3 ServiceHelper](#53-servicehelper). 
 
 ```c#
-builder.Services.AddScoped(typeof(ServiceHelper<>));
+builder.Services.AddScoped(typeof(IServiceHelper<>), typeof(ServiceHelper<>));
 ```
 - ¿Por qué typeof(ServiceHelper<>) y no ServiceHelper<Algo>?
     - Porque se está registrando la clase genérica abierta ServiceHelper<T>, no una implementación concreta todavía. Eso significa que:
@@ -2630,7 +2661,7 @@ builder.Services.AddScoped<ServiceHelper<ReviewsService>>();
 
 ##### Ejemplo
 ```c#
-public class ProductsService(AppDbContext dbContext, ..., ServiceHelper<ProductsService> serviceHelper)
+public class ProductsService(IAppDbContext dbContext, ..., IServiceHelper<IProductsService> serviceHelper)
 ```
 
 - Entonces, cuando .NET vea que ProductsService necesita un ServiceHelper<ProductsService>, como ya se registró ServiceHelper<>, el sistema genera una instancia de ServiceHelper<ProductsService> automáticamente y la inyecta. Como es Scoped, se crea una por cada request HTTP.
@@ -3564,6 +3595,46 @@ dotnet build --no-incremental
 
 ```
 
+## 8. Testing
+### 8.1 xUnit
+- Se tienen varias librerías para hacer testing. En este ejemplo se ven las siguientes:
+  - xUnit
+  - Moq
+    - Permite hacer mocks
+  - FluentAssertions
+    - Permite hacer aserciones más leigbles.
+
+__Equivalencia con Jest__
+| Jest                    | xUnit                     |
+| ----------------------- | ------------------------- |
+| `describe()`            | Agrupar en clase          |
+| `test()` / `it()`       | `[Fact]` o `[Theory]`     |
+| `expect(val).toBe(...)` | `val.Should().Be(...)`    |
+| `beforeEach()`          | Constructor o `[Setup]`   |
+| `mock(...)`             | `var mock = new Mock<>()` |
+
+
+#### 8.1.1 Setup
+1. Crear proyecto.
+
+```bash
+dotnet new xunit -n Application.Tests
+```
+
+2. Agregar proyecto al archivo de solución.
+
+```bash
+dotnet sln add Application.Tests
+```
+
+3. Agregar referencia a Application.Tests de:
+   1. Application (este es el proyecto que se va a aplicar testing)
+   2. Domain (servicios de Application ocupan Domain)
+   3. Infrastructure (servicios de Application ocupan Infrastructure)
+
+4. Instalar paquetes en Application.Tests:
+   1. Moq
+   2. FluentAssertions
 
 ## Temas pendientes por documentar
 - EntityFrameworkRelationShips

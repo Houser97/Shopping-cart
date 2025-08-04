@@ -2,26 +2,31 @@ using System;
 using Application.Aggregates;
 using Application.Core;
 using Application.DTOs.Products;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistence;
+using Persistence.Interfaces;
 
 namespace Application.Services;
 
 public class ProductsService(
-    AppDbContext dbContext,
+    IAppDbContext dbContext,
     IOptions<AppDbSettings> settings,
     IMapper mapper,
-    ServiceHelper<ProductsService> serviceHelper)
+    IServiceHelper<ProductsService> serviceHelper
+) : IProductsService
 {
     private readonly IMongoCollection<Product> _productsCollection =
         dbContext.Database.GetCollection<Product>(settings.Value.ProductsCollectionName);
 
     private readonly IMongoCollection<Review> _reviewsCollection =
         dbContext.Database.GetCollection<Review>(settings.Value.ReviewsCollectionName);
+
+    private readonly IServiceHelper<ProductsService> _serviceHelper = serviceHelper;
 
     private IAggregateFluent<ProductWithReviews> BuildBaseProductAggregation(IMongoCollection<Product> collection)
     {
@@ -49,7 +54,7 @@ public class ProductsService(
 
     public async Task<Result<ProductDto[]>> GetProductsAsync()
     {
-        return await serviceHelper.ExecuteSafeAsync(async () =>
+        return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
             var productWithReviews = await BuildBaseProductAggregation(_productsCollection)
                 .ToListAsync();
@@ -61,7 +66,7 @@ public class ProductsService(
 
     public async Task<Result<ProductDto>> GetProductById(string id)
     {
-        return await serviceHelper.ExecuteSafeAsync(async () =>
+        return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
             var productWithReviews = await BuildBaseProductAggregation(_productsCollection)
                 .Match(p => p.Id == id)

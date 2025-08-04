@@ -1,9 +1,10 @@
 using System;
+using Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Core;
 
-public class ServiceHelper<T>(ILogger<T> logger)
+public class ServiceHelper<T>(ILogger<T> logger) : IServiceHelper<T>
 {
     private readonly ILogger<T> _logger = logger;
 

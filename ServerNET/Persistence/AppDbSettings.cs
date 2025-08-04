@@ -11,5 +11,6 @@ public class AppDbSettings
     public string UsersCollectionName { get; set; } = null!;
     public string ReviewsCollectionName { get; set; } = null!;
     public string ReactionsCollectionName { get; set; } = null!;
+    public string RatingsCollectionName { get; set; } = null!;
 
 }

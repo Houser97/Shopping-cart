@@ -10,4 +10,5 @@ public class PagedResult<T>
     public int TotalPages { get; init; }
     public string? Next { get; init; }
     public string? Prev { get; init; }
+    public T Data { get; init; } = default!;
 }

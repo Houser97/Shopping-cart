@@ -11,12 +11,10 @@ public class Ratings
     [BsonElement("_id")]
     public string Id { get; set; } = string.Empty;
 
-    [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     [BsonElement("authorId")]
     public string AuthorId { get; set; } = string.Empty;
 
-    [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     [BsonElement("reviewId")]
     public string ReviewId { get; set; } = string.Empty;

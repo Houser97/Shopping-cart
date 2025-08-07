@@ -19,6 +19,7 @@ public class ReviewsService(
     IOptions<AppDbSettings> settings,
     IServiceHelper<ReviewsService> serviceHelper,
     IProductsService productsService,
+    IReactionsService reactionsService,
     IMapper mapper
 ) : IReviewsService
 {
@@ -185,7 +186,8 @@ public class ReviewsService(
             var totalReviews = await totalReviewsTask;
             var totalPages = (int)Math.Ceiling((double)totalReviews / limit);
 
-            var reviewsIds = reviews.Select(review => review.Id).ToList();
+            var reviewIds = reviews.Select(review => review.Id).ToList();
+            var totalReactionsResult = await reactionsService.GetReviewsTotalReactions(reviewIds);
 
             var mappedReviews = _mapper.Map<List<ReviewDto>>(reviews);
 
@@ -193,8 +195,8 @@ public class ReviewsService(
             {
                 Data = new ReviewPageDataDto
                 {
-                    Reviews = mappedReviews
-                    // TODO: Add total reactions
+                    Reviews = mappedReviews,
+                    TotalReactions = totalReactionsResult.Value ?? []
                 },
                 Total = totalReviews,
                 Page = page,

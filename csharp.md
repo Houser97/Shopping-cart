@@ -47,6 +47,8 @@
     - [5.3 ServiceHelper](#53-servicehelper)
       - [5.3.2 Versión Func\<Task\<Result\>\>](#532-versión-functaskresult)
       - [5.3.2 Primera versión, Func\<Task\>](#532-primera-versión-functask)
+    - [5.4 PagedResult](#54-pagedresult)
+      - [Ejemplo de uso](#ejemplo-de-uso)
   - [6. Validaciones](#6-validaciones)
     - [6.1 Data Annotations](#61-data-annotations)
     - [6.2 Fluent Validation](#62-fluent-validation)
@@ -62,7 +64,7 @@
   - [7. Extras](#7-extras)
     - [7.1 SignalR](#71-signalr)
     - [7.2 Microsoft.Extensions.Options](#72-microsoftextensionsoptions)
-      - [Ejemplo de uso](#ejemplo-de-uso)
+      - [Ejemplo de uso](#ejemplo-de-uso-1)
       - [Ventajas](#ventajas)
       - [Ejemplo sin su uso](#ejemplo-sin-su-uso)
       - [TL;DR](#tldr)
@@ -1708,6 +1710,61 @@ public interface IServiceHelper<T>
 
 ```c#
 builder.Services.AddScoped(typeof(IServiceHelper<>), typeof(ServiceHelper<>));
+```
+
+### 5.4 PagedResult
+- Su finalidad es centralizar el tipo de dato para respuestas paginadas en el backend.
+
+```c#
+using System;
+
+namespace Application.Core;
+
+public class PagedResult<T>
+{
+    public int Page { get; init; }
+    public int Limit { get; init; }
+    public long Total { get; init; }
+    public int TotalPages { get; init; }
+    public string? Next { get; init; }
+    public string? Prev { get; init; }
+    public T Data { get; init; } = default!;
+}
+```
+
+#### Ejemplo de uso
+- Para un servicio que retorna una lista de reviews se define el siguiente tipo de dato:
+
+```c#
+using System;
+
+namespace Application.DTOs.Reviews;
+
+public class ReviewPageDataDto
+{
+    public List<ReviewDto> Reviews { get; set; } = [];
+}
+```
+
+- De esta forma, en el servicio la respuesta estará de la siguiente forma:
+
+```c#
+    var result = new PagedResult<ReviewPageDataDto>
+    {
+        Data = new ReviewPageDataDto
+        {
+            Reviews = mappedReviews
+        },
+        Total = totalReviews,
+        Page = page,
+        Limit = limit,
+        TotalPages = totalPages,
+        Next = (page * limit < totalReviews) ? $"/api/reviews/{productId}?page={page + 1}&limit={limit}" : null,
+        Prev = (page > 1) ? $"/api/reviews/{productId}?page={page - 1}&limit={limit}" : null
+    };
+
+
+    return Result<PagedResult<ReviewPageDataDto>>.Success(result);
 ```
 
 ## 6. Validaciones

@@ -1,5 +1,6 @@
 using System;
 using Application.Aggregates;
+using Application.DTOs.Cart;
 using Application.DTOs.Products;
 using Application.DTOs.Reactions;
 using Application.DTOs.Reviews;
@@ -20,5 +21,10 @@ public class MappingProfiles : Profile
         CreateMap<Reactions, ReactionDto>();
         CreateMap<ReviewWithDetails, ReviewDto>();
         CreateMap<Review, ReviewDto>();
+        CreateMap<CartProductWithDetails, CartProductDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Title))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => (double)src.Product.Price))
+            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Product.Images.FirstOrDefault() ?? ""));
+        CreateMap<Cart, CartProductDto>();
     }
 }

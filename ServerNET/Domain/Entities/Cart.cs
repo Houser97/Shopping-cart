@@ -23,6 +23,6 @@ public class Cart
     public int Quantity { get; set; } = 0;
 
     [BsonElement("createdAt")]
-    public DateTime CratedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 }

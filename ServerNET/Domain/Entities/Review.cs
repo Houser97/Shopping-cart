@@ -22,8 +22,12 @@ public class Review
     [BsonElement("comment")]
     public string Comment { get; set; } = string.Empty;
 
+    [BsonElement("rating")]
+    public int Rating { get; set; }
+
     [BsonElement("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-
+    [BsonElement("updatedAt")]
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

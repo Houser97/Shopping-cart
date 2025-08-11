@@ -136,6 +136,24 @@
   - [8. Testing](#8-testing)
     - [8.1 xUnit](#81-xunit)
       - [8.1.1 Setup](#811-setup)
+    - [8.2 Moq](#82-moq)
+      - [8.2.1 Funcionalidades](#821-funcionalidades)
+        - [8.2.1.1 Setup](#8211-setup)
+        - [8.2.1.2 Returns](#8212-returns)
+          - [8.2.1.2.1 Explicación detallada](#82121-explicación-detallada)
+        - [8.2.1.3 Verify](#8213-verify)
+        - [8.2.1.4 ReturnsAsync](#8214-returnsasync)
+        - [8.2.1.5 Callback](#8215-callback)
+        - [8.2.1.6 Resumen](#8216-resumen)
+      - [8.2.2 Ejemplo de uso](#822-ejemplo-de-uso)
+        - [8.2.2.1 Definición de servicio](#8221-definición-de-servicio)
+        - [8.2.2.2 Test con Moq](#8222-test-con-moq)
+        - [8.2.2.3 Resumen](#8223-resumen)
+    - [8.3 Plantillas base para testing](#83-plantillas-base-para-testing)
+      - [8.3.1 MongoServiceTestBase (deprecated)](#831-mongoservicetestbase-deprecated)
+        - [8.3.1.1 Explicación detallada de Setup y Returns](#8311-explicación-detallada-de-setup-y-returns)
+          - [Flujo](#flujo)
+    - [8.4 Ejemplo de uso con AuthService](#84-ejemplo-de-uso-con-authservice)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -3692,6 +3710,780 @@ dotnet sln add Application.Tests
 4. Instalar paquetes en Application.Tests:
    1. Moq
    2. FluentAssertions
+
+
+### 8.2 Moq
+- Es una librería que permite crear objetos falsos (mocks) para simular dependencias externas, como bases de datos, servicios HTTP, etc.
+- Sirve que para en las pruebas no se dependa de datos reales ni conexiones externas.
+
+#### 8.2.1 Funcionalidades
+- En estos ejemplos se toma el servicio de __ServiceHelper__ hasta que se especifique otra ejemplo.
+
+##### 8.2.1.1 Setup
+
+```c#
+_mockServiceHelper
+    .Setup(h => h.ExecuteSafeAsync(It.IsAny<Func<Task<Result<Message>>>>()))
+```
+
+- Con lo anterior se indica que:
+  - Cuando alguien llame a __ExecuteSafeAsync__ con cualquier función __Func<Task<Resut<Message>>>__, se desea que se haga algo específico.
+- La parte de __It.IsAny()__ es un comodín que significa:
+  - No importa qué argumento se pase, es válido.
+  
+##### 8.2.1.2 Returns
+- Se usa cuando se quiere controlar la lógica de cómo se obtiene el valor a devolver.
+- Acá se tiene:
+    - ExecuteSafeAsync recibe como parámetro una función (f) que, cuando se ejecute, devolverá un Task<Result<Message>>.
+    - Con Returns<Func<Task<Result<Message>>>>(f => f()) le estás diciendo al mock:
+        - "Cuando te llamen, no devuelvas un valor fijo; toma la función que te pasaron (f) y ejecútala".
+
+- Básicamente, el mock está delegando la ejecución al código que el test o el servicio haya pasado como parámetro, en lugar de devolver un valor predeterminado.
+
+```c#
+.Returns<Func<Task<Result<Message>>>>(f => f());
+```
+
+
+
+- El __Func<Task<Resut<Message>>>__ que se pasa le indica a Moq lo siguiente:
+  - El argumento que se recibva (llamado f en este caso), se ejecuta (f()) y devuelve lo que él devuelva.
+  - En otras palabras: se le indica a mock que en vez de ejecutar algo vacío o falso, ejecute realmente la función que se está pasando.
+
+- En el código real, __MessageService.Create__ luce de la siguiente forma:
+
+```c#
+return await _serviceHelper.ExecuteSafeAsync(() => 
+{
+    var message = new Message { ... };
+    await _messagesCollection.InsertOneAsync(message);
+    return Result<Message>.Success(message);
+});
+```
+
+
+- Pero como en el test el _serviceHelper es un mock, no ejecutaría nada de eso a menos que se le diga qué hacer.
+- Con tu Setup(...).Returns(f => f()), se está diciendo:
+    - Cuando me llamen con un Func<Task<Result<Message>>>...
+    - No lo ignores, ejecútalo de verdad (eso es f()).
+
+- Así se prueba la lógica de MessageService sin tocar la implementación real de ExecuteSafeAsync.
+
+###### 8.2.1.2.1 Explicación detallada
+- se tiene el helper _serviceHelper que se encarga de ejecutar código de forma segura.
+
+```c#
+public class MessageService (IServiceHelper serviceHelper)
+{
+    private readonly IServiceHelper _serviceHelper = serviceHelper;
+
+    public Task<Result<string>> Create(string text)
+    {
+        return _serviceHelper.ExecuteSafeAsync(async () =>
+        {
+            // Aquí sería la lógica real
+            return Result<string>.Success($"Mensaje: {text}");
+        });
+    }
+}
+```
+
+- En el helper se tiene __ExecuteSafeAsync__ en donde se ejecuta en un try/catch la función que se le pasa llamada operation y devolvería el resultado.
+
+```c#
+public interface IServiceHelper
+{
+    Task<Result<T>> ExecuteSafeAsync<T>(Func<Task<Result<T>>> operation);
+}
+```
+
+- El test con Moq usando f => f()
+  - En el test no interesa probar si el helper maneja las excepciones, solo que desea que se llame directamente la función que se le pasa.
+
+```c#
+[Fact]
+public async Task Create_Success()
+{
+    // 1. Preparamos el mock del helper
+    var mockHelper = new Mock<IServiceHelper>();
+
+    mockHelper
+        .Setup(h => h.ExecuteSafeAsync(It.IsAny<Func<Task<Result<string>>>>()))
+        .Returns<Func<Task<Result<string>>>>(f => f()); 
+        // Aquí f es la función que el servicio pasó
+        // y simplemente la ejecutamos para devolver su resultado.
+
+    // 2. Inyectamos el mock al servicio
+    var service = new MessageService(mockHelper.Object);
+
+    // 3. Ejecutamos el método a probar
+    var result = await service.Create("Hola");
+
+    // 4. Afirmaciones
+    Assert.True(result.IsSuccess);
+    Assert.Equal("Mensaje: Hola", result.Value);
+}
+```
+
+- Entonces, o que pasa con f => f() es lo siguiente:
+
+1. ExecuteSafeAsync recibe una función (Func<Task<Result<string>>>) como parámetro.
+
+```c#
+async () => Result<string>.Success($"Mensaje: {text}");
+```
+
+2. En el mock, f => f() significa
+    - Toma esa función f
+    - Ejecuta esa función (f())
+    - Devuelve lo que esa ejecución retorne.
+3. De esta forma, el mock no tiene que saber qué hace la función: simplemente la corre y devuelve el resultado.
+
+
+- Si en vez de esto usáramos ReturnsAsync(Result<string>.Success("algo")), el mock ignoraría la función y devolvería siempre "algo", sin ejecutar la lógica real que el servicio estaba pasando.
+
+##### 8.2.1.3 Verify
+```c#
+MockCollection.Verify(x =>
+    x.InsertOneAsync(It.IsAny<Message>(), null, It.IsAny<CancellationToken>()), Times.Once);
+```
+- Le dice a Moq:
+    - "Verifica que alguien llamó exactamente una vez a InsertOneAsync con cualquier mensaje, null como opciones y cualquier token de cancelación."
+
+- Esto confirma que tu servicio intentó guardar el mensaje.
+
+##### 8.2.1.4 ReturnsAsync
+- Se usa cuando se quiere devolver un valor directamente desde un método __Task<T>__ o __Task__.
+
+```c#
+mock.Setup(m => m.GetNumberAsync())
+    .ReturnsAsync(10); // Devuelve 10 dentro de un Task<int>
+```
+
+##### 8.2.1.5 Callback
+- Es útil cuando se desea capturar el argumento con el que se llama a un método mockeado para después hacerle aserciones o inspeccionarlo.
+- Ejemplo de uso:
+
+```c#
+[Fact]
+public async Task Register_EmailIsNormalizedToLowercase()
+{
+    // Arrange
+    var emailUpperCase = "NEWUSER@EXAMPLE.COM";
+    var registerDto = new RegisterUserDto
+    {
+        Email = emailUpperCase,
+        Name = "new-user",
+        Password = "strong-password"
+    };
+
+    _mockUserRepository
+        .Setup(x => x.GetByEmailAsync(It.IsAny<string>()))
+        .ReturnsAsync((User?)null);
+
+    _mockUserRepository
+        .Setup(x => x.InsertUserAsync(It.IsAny<User>()))
+        .Returns(Task.CompletedTask);
+
+    User? insertedUser = null;
+    _mockUserRepository
+        .Setup(x => x.InsertUserAsync(It.IsAny<User>()))
+        .Callback<User>(u => insertedUser = u)
+        .Returns(Task.CompletedTask);
+
+    // Act
+    var result = await _authService.Register(registerDto);
+
+    // Assert
+    result.IsSuccess.Should().BeTrue();
+    insertedUser.Should().NotBeNull();
+    insertedUser!.Email.Should().Be(emailUpperCase.ToLowerInvariant());
+    result.Value!.User!.Email.Should().Be(emailUpperCase.ToLowerInvariant());
+}
+```
+
+- Cuando tu test ejecuta el método InsertUserAsync del mock, pasa un objeto User.
+- El .Callback<User>(...) intercepta ese objeto y lo guarda en la variable local insertedUser.
+- Así, luego del llamado, puedes examinar esa instancia insertedUser para asegurarte de que:
+  - El email está normalizado (minúsculas).
+  - El password está hasheado.
+  - O cualquier otra propiedad que quieras validar.
+
+- Sin .Callback, solo sabes que se llamó a InsertUserAsync con algún objeto, pero no tienes forma fácil de verificar los valores con los que fue llamado.
+- Con .Callback, puedes hacer algo como:
+
+```c#
+insertedUser.Email.Should().Be("expected@email.com");
+```
+
+- Esto es perfecto para validar efectos secundarios y que tu método está creando o modificando el objeto correctamente antes de guardarlo.
+
+- También puedes usar .Callback para simular efectos secundarios, como:
+    - Modificar el argumento.
+    - Contar cuántas veces se llamó.
+    - Llamar a otros métodos.
+    - Lanzar excepciones condicionales.
+
+##### 8.2.1.6 Resumen
+- Setup → Configura qué pasa cuando se llama a un método en el mock.
+- It.IsAny<T>() → Acepta cualquier valor para ese parámetro.
+- It.Is<T>(predicate): Aquí defines una condición específica para el parámetro. El mock solo se activa si el argumento cumple esa condición.
+    - Ejemplo: Que el email coincida ignorando mayúsculas.
+    - Se usa porque se desea que el mock solo se active cuando el email que llega coincide con el email que se espera (normalizado). Esto ayuda a evitar que se active el mock para emails distintos y permite que la prueba sea más precisa
+
+```c#
+_mockUserRepository
+    .Setup(x => x.GetByEmailAsync(It.Is<string>(e => e.Equals(registerDto.Email, StringComparison.InvariantCultureIgnoreCase))))
+    .ReturnsAsync((User?)null);
+```
+
+- Returns(...) → Indica qué debe devolver el método del mock.
+  - Returns(...) → cuando necesitas ejecutar lógica o manipular el parámetro antes de devolver algo.
+- Verify(...) → Revisa si se llamó al método (y cuántas veces).
+- ReturnsAsync(valor) → cuando ya tienes el valor listo para devolver.
+- La combinación siguiente indica: __Cuando se llame a Algo en este objeto falso, devuelve este valor__.
+
+```c#
+mock.Setup(x => x.Algo).Returns(valor);
+```
+
+
+
+#### 8.2.2 Ejemplo de uso
+- Se tiene una calculadora que depende de un servicio que obtiene un número de forma externa (por ejemplo, de una API).
+
+##### 8.2.2.1 Definición de servicio
+```c#
+public interface IExternalNumberService
+{
+    Task<int> GetNumberAsync();
+}
+
+public class Calculator
+{
+    private readonly IExternalNumberService _numberService;
+
+    public Calculator(IExternalNumberService numberService)
+    {
+        _numberService = numberService;
+    }
+
+    public async Task<int> AddFiveAsync()
+    {
+        var number = await _numberService.GetNumberAsync();
+        return number + 5;
+    }
+}
+```
+
+##### 8.2.2.2 Test con Moq
+```c#
+using System.Threading.Tasks;
+using Moq;
+using Xunit;
+using FluentAssertions;
+
+public class CalculatorTests
+{
+    [Fact]
+    public async Task AddFiveAsync_ReturnsNumberPlusFive()
+    {
+        // 1️⃣ Creamos el mock del servicio externo
+        var mockNumberService = new Mock<IExternalNumberService>();
+
+        // 2️⃣ Configuramos qué debe devolver el mock cuando se llame a GetNumberAsync
+        mockNumberService
+            .Setup(service => service.GetNumberAsync())
+            .ReturnsAsync(10); // en vez de ir a internet, devuelve 10
+
+        // 3️⃣ Creamos la calculadora con el mock
+        var calculator = new Calculator(mockNumberService.Object);
+
+        // 4️⃣ Ejecutamos el método a probar
+        var result = await calculator.AddFiveAsync();
+
+        // 5️⃣ Validamos el resultado
+        result.Should().Be(15); // 10 + 5
+
+        // 6️⃣ Verificamos que el mock fue llamado exactamente 1 vez
+        mockNumberService.Verify(service => service.GetNumberAsync(), Times.Once);
+    }
+}
+```
+
+##### 8.2.2.3 Resumen
+1. new Mock<IExternalNumberService>() → Creas una versión falsa del servicio.
+2. Setup(...) → Le dices al mock qué hacer cuando alguien llame a GetNumberAsync.
+3. ReturnsAsync(10) → En vez de ejecutar lógica real, devuelve 10 inmediatamente.
+4. calculator = new Calculator(mock.Object) → Inyectas el mock en la clase real.
+5. Verify(...) → Compruebas que el método del mock fue realmente invocado.
+
+### 8.3 Plantillas base para testing
+#### 8.3.1 MongoServiceTestBase (deprecated)
+- Yano se usa debido a que se creó la capa de abstración Repository, lo cual permitió ya no depender de la configuración de la base de datos para los testings al poder hacer ahora mocks a la interfaz del repositorio correspondiente.
+- Se creó en: __Application.Tests/Shared/MongoServiceTestBase.cs__
+- El objetivo de la clase es:
+    1. Crear mocks de:
+       1. IMongoCollection<TEntity>
+       2. IAppDbContext
+       3. IOptions<AppDbSettings>
+    2. Configurarlos para que cualquier servicio que use Mongo reciba una base de datos y colección falsas.
+    3. Permitir que en los tests solo se tenga que heredar y ya usar el servicio configurado con esos mocks.
+```c#
+using System;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using Moq;
+using Persistence;
+using Persistence.Interfaces;
+
+namespace Application.Tests.Shared;
+
+public abstract class MongoServiceTestBase<TService, TEntity>
+        where TEntity : class
+{
+    protected readonly Mock<IMongoCollection<TEntity>> MockCollection; // Colección Mongo falsa (por tipo de entidad)
+    protected readonly Mock<IAppDbContext> MockDbContext; // Contexto falso (para no usar el real).
+    protected readonly Mock<IOptions<AppDbSettings>> MockSettings; // Opciones falsas (IOptions<AppDbSettings>)
+    protected readonly AppDbSettings AppSettings; // Instancia con valores falsos pero coherentes.
+
+    protected MongoServiceTestBase(string collectionName)
+    {
+        MockCollection = new Mock<IMongoCollection<TEntity>>();
+        MockDbContext = new Mock<IAppDbContext>();
+        MockSettings = new Mock<IOptions<AppDbSettings>>();
+
+        AppSettings = new AppDbSettings
+        {
+            ConnectionString = "fake-connection-string",
+            DatabaseName = "FakeDb",
+            ChatsCollectionName = "chats",
+            UsersCollectionName = "users",
+            MessagesCollectionName = "messages"
+        };
+
+        MockSettings.Setup(x => x.Value).Returns(AppSettings); // Esto hace que cuando el servicio pida IOptions<AppDbSettings>.Value, obtenga la configuración fake.
+
+        var mockDatabase = new Mock<IMongoDatabase>();
+        mockDatabase
+            .Setup(db => db.GetCollection<TEntity>(collectionName, null))
+            .Returns(MockCollection.Object); // Si alguien pide GetCollection<TEntity> con este nombre de colección, te doy mi colección mock
+
+        MockDbContext.Setup(x => x.Database).Returns(mockDatabase.Object);
+        // Esto conecta todo:
+        //  - Tu DbContext falso (MockDbContext) devuelve la base de datos falsa (mockDatabase).
+        //  - Esa base de datos falsa devuelve la colección falsa (MockCollection).
+    }
+}
+```
+
+- Cuando se hace algo como:
+
+```c#
+public class ChatsServiceTests : MongoServiceTestBase<ChatsService, Chat>
+{
+    public ChatsServiceTests() : base("chats")
+    {
+        // Aquí ya tienes MockCollection, MockDbContext y MockSettings listos.
+        _service = new ChatsService(MockDbContext.Object, MockSettings.Object, ...);
+    }
+}
+```
+
+
+1. MongoServiceTestBase ya creó toda la cadena de mocks.
+2. Cuando el ChatsService pida la colección "chats" en su constructor, recibirá tu MockCollection.
+3. Tú podrás usar lo siguiente para validar que el servicio interactuó como esperabas.
+```c#
+MockCollection.Verify(x => x.InsertOneAsync(...), Times.Once);
+```
+
+##### 8.3.1.1 Explicación detallada de Setup y Returns
+- Primer caso. 
+  - MockSettings es un Mock<IOptions<AppDbSettings>>.
+  - Cuando cualquier código llame a MockSettings.Object.Value, Moq ejecuta el .Setup que configuraste.
+  - El .Returns(AppSettings) hace que devuelva la instancia falsa que creaste, en lugar de null.
+
+```c#
+MockSettings.Setup(x => x.Value).Returns(AppSettings);
+```
+
+- Flujo
+
+```c#
+var settings = MockSettings.Object; // este es un IOptions<AppDbSettings> falso
+var value = settings.Value; // gracias al Setup, devuelve AppSettings fake
+```
+
+- Segundo caso:
+    - mockDatabase es un Mock<IMongoDatabase>.
+    - Le estás diciendo:
+      - "Si alguien llama a GetCollection<TEntity> con este nombre y null como segundo parámetro, devuelve mi colección falsa MockCollection.Object".
+```c#
+mockDatabase
+    .Setup(db => db.GetCollection<TEntity>(collectionName, null))
+    .Returns(MockCollection.Object);
+```
+
+- Flujo
+
+```c#
+var database = mockDatabase.Object; // base de datos fake
+var collection = database.GetCollection<Chat>("chats", null); 
+// gracias al Setup, aquí obtienes MockCollection.Object (la colección fake)
+```
+
+- Tercer caso:
+  - MockDbContext es un Mock<IAppDbContext>.
+  - Cuando alguien pida Database en el contexto falso, devuelve mockDatabase.Object.
+
+```c#
+MockDbContext.Setup(x => x.Database).Returns(mockDatabase.Object);
+```
+
+- Flujo
+
+```c#
+var dbContext = MockDbContext.Object; // contexto fake
+var db = dbContext.Database; // gracias al Setup, devuelve mockDatabase.Object
+```
+
+###### Flujo
+1. El servicio recibe MockDbContext.Object como si fuera un IAppDbContext real.
+2. Cuando el servicio llama el siguiente bloque de código pasa lo siguiente:
+   1. .Database está configurado para devolver mockDatabase.Object.
+   2. mockDatabase.Object.GetCollection<Chat>("chats", null) está configurado para devolver MockCollection.Object.
+   3. Y así el servicio recibe tu colección mockeada.
+
+```c#
+var collection = _dbContext.Database.GetCollection<Chat>("chats", null);
+```
+
+- En otras palabras:
+```c#
+Servicio → DbContext fake → Database fake → Collection fake
+```
+
+### 8.4 Ejemplo de uso con AuthService
+```c#
+using System;
+using Application.Auth;
+using Application.Core;
+using Application.DTOs.Auth;
+using Application.Interfaces;
+using Domain;
+using FluentAssertions;
+using Moq;
+
+namespace Application.Tests.Auth;
+
+public class AuthServiceTests
+{
+
+    private readonly AuthService _authService;
+    private readonly Mock<ITokenGenerator> _mockTokenGenerator;
+    private readonly Mock<IServiceHelper<AuthService>> _mockServiceHelper;
+    private readonly Mock<IUserRepository> _mockUserRepository;
+    private readonly User _fakeUser;
+
+    private const string _plainPassword = "correct-password";
+    private const string _fakeToken = "fake-jwt";
+
+    public AuthServiceTests()
+    {
+        _mockTokenGenerator = new Mock<ITokenGenerator>();
+        _mockServiceHelper = new Mock<IServiceHelper<AuthService>>();
+        _mockUserRepository = new Mock<IUserRepository>();
+
+
+        _fakeUser = new User
+        {
+            Id = "1",
+            Email = "fakeUser@example.com",
+            Password = BCrypt.Net.BCrypt.HashPassword("correct-password")
+        };
+
+        _mockUserRepository
+            .Setup(r => r.GetByEmailAsync(It.Is<string>(e =>
+                string.Equals(e, _fakeUser.Email, StringComparison.OrdinalIgnoreCase)
+            )))
+            .ReturnsAsync(_fakeUser);
+
+        _mockServiceHelper
+            .Setup(x => x.ExecuteSafeAsync(It.IsAny<Func<Task<Result<AuthResultDto>>>>()))
+            .Returns((Func<Task<Result<AuthResultDto>>> func) => func());
+
+        _mockTokenGenerator
+            .Setup(x => x.GenerateToken(It.IsAny<User>()))
+            .Returns(_fakeToken);
+
+        _authService = new AuthService(
+            _mockTokenGenerator.Object,
+            _mockServiceHelper.Object,
+            _mockUserRepository.Object
+        );
+    }
+
+    [Fact]
+    public async Task Login_ReturnsSuccess()
+    {
+        // Arrange
+        var fakeToken = "fake-jwt";
+        var email = _fakeUser.Email;
+        var password = _plainPassword;
+
+        var loginDto = new LoginUserDto
+        {
+            Email = email,
+            Password = password
+        };
+
+        // Act
+        var result = await _authService.Login(loginDto);
+
+        // Assert
+        _mockTokenGenerator.Verify(x => x.GenerateToken(It.Is<User>(u => u.Email == email)), Times.Once);
+        result.Error.Should().Be(null);
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Token.Should().Be(fakeToken);
+        result.Value.User!.Email.Should().Be(email);
+    }
+
+    [Fact]
+    public async Task Login_EmailCaseInsensitive_ShouldReturnSuccess()
+    {
+        // Arrange
+        var emailUpperCase = _fakeUser.Email.ToUpperInvariant();
+        var loginDto = new LoginUserDto
+        {
+            Email = emailUpperCase,
+            Password = _plainPassword
+        };
+
+        // Act
+        var result = await _authService.Login(loginDto);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.User!.Email.Should().Be(_fakeUser.Email); // Debe devolver el email original en minúsculas.
+    }
+
+    [Fact]
+    public async Task Login_ReturnsFailure_WrongPassword()
+    {
+        var loginDto = new LoginUserDto
+        {
+            Email = _fakeUser.Email,
+            Password = "wrong-password"
+        };
+
+        // Act
+        var result = await _authService.Login(loginDto);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Password is incorrect");
+    }
+
+    [Fact]
+    public async Task Login_ReturnsFailure_UserDoesNotExist()
+    {
+        var loginDto = new LoginUserDto
+        {
+            Email = "nonexistent-user@example.com",
+            Password = "123"
+        };
+
+        var result = await _authService.Login(loginDto);
+
+        result.Error.Should().Be("User does not exist");
+        result.Code.Should().Be(400);
+    }
+
+    [Fact]
+    public async Task Login_ServiceHelperCapturesException_FromRepository()
+    {
+        // Arrange
+        var loginDto = new LoginUserDto
+        {
+            Email = _fakeUser.Email,
+            Password = _plainPassword
+        };
+
+        var exceptionMessage = "Database connection failed";
+
+        _mockUserRepository
+            .Setup(x => x.GetByEmailAsync(It.IsAny<string>()))
+            .ThrowsAsync(new Exception(exceptionMessage));
+
+        _mockServiceHelper
+            .Setup(x => x.ExecuteSafeAsync(It.IsAny<Func<Task<Result<AuthResultDto>>>>()))
+            .Returns<Func<Task<Result<AuthResultDto>>>>(async func =>
+            {
+                try
+                {
+                    return await func();
+                }
+                catch (Exception ex)
+                {
+                    return Result<AuthResultDto>.Failure(ex.Message, 500);
+                }
+            });
+
+        // Act
+        var result = await _authService.Login(loginDto);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain(exceptionMessage);
+        result.Code.Should().Be(500);
+    }
+
+
+    [Fact]
+    public async Task Register_ReturnsSuccess()
+    {
+        var registerDto = new RegisterUserDto
+        {
+            Email = "new-user@example.com",
+            Name = "new-user",
+            PictureId = "default",
+            Password = "strong-password",
+            PictureUrl = "http://someurl.com/pic.jpg"
+        };
+
+        // User does not exist
+        _mockUserRepository
+            .Setup(x => x.GetByEmailAsync(It.Is<string>(e => e.Equals(registerDto.Email, StringComparison.InvariantCultureIgnoreCase))))
+            .ReturnsAsync((User?)null);
+
+        // User insertion simulation
+        _mockUserRepository
+            .Setup(x => x.InsertUserAsync(It.IsAny<User>()))
+            .Returns(Task.CompletedTask);
+
+        var result = await _authService.Register(registerDto);
+
+        _mockUserRepository.Verify(x => x.InsertUserAsync(It.IsAny<User>()), Times.Once);
+        _mockTokenGenerator.Verify(x => x.GenerateToken(It.Is<User>(u => u.Email == registerDto.Email)), Times.Once);
+        result.Error.Should().Be(null);
+        result.Value!.User!.Email.Should().Be(registerDto.Email);
+        result.Value!.User!.Name.Should().Be(registerDto.Name);
+        result.Value!.User!.PictureId.Should().Be(registerDto.PictureId);
+        result.Value!.User!.Password.Should().Be(null);
+        result.Value!.User!.PictureUrl.Should().Be(registerDto.PictureUrl);
+        result.Value!.Token.Should().Be(_fakeToken);
+    }
+
+    [Fact]
+    public async Task Register_EmailIsNormalizedToLowercase()
+    {
+        // Arrange
+        var emailUpperCase = "NEWUSER@EXAMPLE.COM";
+        var registerDto = new RegisterUserDto
+        {
+            Email = emailUpperCase,
+            Name = "new-user",
+            Password = "strong-password"
+        };
+
+        _mockUserRepository
+            .Setup(x => x.GetByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync((User?)null);
+
+        _mockUserRepository
+            .Setup(x => x.InsertUserAsync(It.IsAny<User>()))
+            .Returns(Task.CompletedTask);
+
+        User? insertedUser = null;
+        _mockUserRepository
+            .Setup(x => x.InsertUserAsync(It.IsAny<User>()))
+            .Callback<User>(u => insertedUser = u)
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _authService.Register(registerDto);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        insertedUser.Should().NotBeNull();
+        insertedUser!.Email.Should().Be(emailUpperCase.ToLowerInvariant());
+        result.Value!.User!.Email.Should().Be(emailUpperCase.ToLowerInvariant());
+    }
+
+
+    [Fact]
+    public async Task Register_ReturnsFailure_UserAlreadyExists()
+    {
+        var registerDto = new RegisterUserDto
+        {
+            Email = _fakeUser.Email,
+            Name = "new-user",
+            PictureId = "default",
+            Password = _plainPassword,
+            PictureUrl = "http://someurl.com/pic.jpg"
+        };
+
+        var result = await _authService.Register(registerDto);
+
+        result.Error.Should().Be("User already exists");
+        result.Code.Should().Be(400);
+    }
+
+    [Fact]
+    public async Task GetAuthenticatedUser_ReturnsSuccess()
+    {
+        string userId = _fakeUser!.Id!;
+
+        _mockUserRepository
+            .Setup(x => x.GetById(It.IsAny<string>()))
+            .ReturnsAsync(_fakeUser);
+
+        var result = await _authService.GetAuthenticatedUser(userId);
+
+        result.Error.Should().Be(null);
+        result.Value!.User!.Email.Should().Be(_fakeUser.Email);
+        result.Value!.User!.Id.Should().Be(_fakeUser.Id);
+        result.Value!.User!.Password.Should().Be(null);
+    }
+
+    [Fact]
+    public async Task GetAuthenticatedUser_ReturnsFailure()
+    {
+        string userId = "nonexistent-user";
+
+        _mockUserRepository
+            .Setup(x => x.GetById(It.IsAny<string>()))
+            .ReturnsAsync((User?)null);
+
+        var result = await _authService.GetAuthenticatedUser(userId);
+
+        result.Error.Should().Be("User does not exist");
+        result.Code.Should().Be(404);
+    }
+
+    [Fact]
+    public async Task GetAuthenticatedUser_ShouldClearPasswordBeforeReturn()
+    {
+        // Arrange
+        var userId = _fakeUser.Id!;
+
+        _mockUserRepository
+            .Setup(x => x.GetById(It.IsAny<string>()))
+            .ReturnsAsync(_fakeUser);
+
+        // Act
+        var result = await _authService.GetAuthenticatedUser(userId);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.User!.Password.Should().BeNullOrEmpty("Password should be cleared before returning user");
+    }
+
+}
+
+```
+
 
 ## Temas pendientes por documentar
 - EntityFrameworkRelationShips

@@ -2,45 +2,42 @@ using System;
 using Application.Core;
 using Application.DTOs.Reactions;
 using Application.Interfaces;
+using Application.Interfaces.Repositories;
 using Application.Mappers;
 using AutoMapper;
-using Domain.Entities;
 using Domain.Enums;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using Persistence;
-using Persistence.Interfaces;
 
 namespace Application.Services;
 
 public class ReactionsService(
+    IReactionsRepository reactionsRepository,
     IServiceHelper<ReactionsService> serviceHelper,
-    IMapper mapper,
-    IOptions<AppDbSettings> settings,
-    IAppDbContext dbContext
+    IMapper mapper
 ) : IReactionsService
 {
 
-    private readonly IMongoCollection<Reactions> _reactionsCollection =
-        dbContext.Database.GetCollection<Reactions>(settings.Value.ReactionsCollectionName);
-
+    private readonly IReactionsRepository _reactionsRepository = reactionsRepository;
     private readonly IServiceHelper<ReactionsService> _serviceHelper = serviceHelper;
 
     private readonly IMapper _mapper = mapper;
 
-    public Task<Result<ReactionDto>> CreateReaction(CreateReactionDto createReactionDto)
+    public async Task<Result<ReactionDto>> CreateReaction(CreateReactionDto createReactionDto)
     {
-        throw new NotImplementedException();
+        return await _serviceHelper.ExecuteSafeAsync(async () =>
+        {
+            var result = await _reactionsRepository.InsertAsync(createReactionDto);
+
+            var reactionDto = _mapper.Map<ReactionDto>(result);
+
+            return Result<ReactionDto>.Success(reactionDto);
+        });
     }
 
     public async Task<Result<List<ReactionDto>>> GetReactionsByProductIdAndAuthorId(string productId, string authorId)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var reactions = await _reactionsCollection.Find(
-                reaction => reaction.ProductId == productId && reaction.AuthorId == authorId
-            ).ToListAsync();
+            var reactions = await _reactionsRepository.GetByProductIdAndAuthorIdAsync(productId, authorId);
 
             var reactionsDtos = _mapper.Map<List<ReactionDto>>(reactions);
             return Result<List<ReactionDto>>.Success(reactionsDtos);
@@ -51,32 +48,7 @@ public class ReactionsService(
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-
-            var objectIds = reviewIds.Select(id => new ObjectId(id)).ToList();
-
-            var pipeline = new[]
-            {
-            new BsonDocument("$match", new BsonDocument("reviewId", new BsonDocument("$in", new BsonArray(objectIds)))),
-            new BsonDocument("$group", new BsonDocument
-            {
-                { "_id", new BsonDocument
-                    {
-                        { "reaction", "$reaction" },
-                        { "reviewId", "$reviewId" }
-                    }
-                },
-                { "total", new BsonDocument("$sum", 1) }
-            }),
-            new BsonDocument("$project", new BsonDocument
-            {
-                { "_id", 0 },
-                { "reviewId", new BsonDocument("$toString", "$_id.reviewId") },
-                { "reaction", "$_id.reaction" },
-                { "total", 1 }
-            })
-            };
-
-            var results = await _reactionsCollection.Aggregate<ReviewReactionCountDto>(pipeline).ToListAsync();
+            var results = await _reactionsRepository.GetReviewsTotalReactionsAsync(reviewIds);
 
             var mapped = ReactionMapper.MapToReviewReactionCount(results);
 
@@ -84,9 +56,15 @@ public class ReactionsService(
         });
     }
 
-    public Task<Result<ReactionDto>> UpdateReaction(UpdateReactionDto updateReactionDto)
+    public async Task<Result<ReactionDto>> UpdateReaction(string id, UpdateReactionDto updateReactionDto)
     {
-        throw new NotImplementedException();
+        return await _serviceHelper.ExecuteSafeAsync(async () =>
+        {
+            var result = await _reactionsRepository.UpdateAsync(id, updateReactionDto);
+            var reactionDto = _mapper.Map<ReactionDto>(result);
+
+            return Result<ReactionDto>.Success(reactionDto);
+        });
     }
 
 }

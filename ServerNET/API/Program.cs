@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Application.Core;
-using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Application.Repositories;
 using Application.Services;
 using Microsoft.Extensions.Options;

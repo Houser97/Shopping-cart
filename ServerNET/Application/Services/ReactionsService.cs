@@ -1,8 +1,8 @@
 using System;
 using Application.Core;
 using Application.DTOs.Reactions;
-using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Application.Mappers;
 using AutoMapper;
 using Domain.Enums;

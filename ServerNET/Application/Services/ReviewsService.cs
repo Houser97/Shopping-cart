@@ -1,8 +1,8 @@
 using System;
 using Application.Core;
 using Application.DTOs.Reviews;
-using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Application.Shared;
 using AutoMapper;
 using Domain.Entities;

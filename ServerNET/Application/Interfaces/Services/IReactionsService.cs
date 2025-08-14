@@ -3,7 +3,7 @@ using Application.Core;
 using Application.DTOs.Reactions;
 using Domain.Enums;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Services;
 
 public interface IReactionsService
 {

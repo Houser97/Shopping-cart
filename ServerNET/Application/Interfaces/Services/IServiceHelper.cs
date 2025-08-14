@@ -1,7 +1,7 @@
 using System;
 using Application.Core;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Services;
 
 public interface IServiceHelper<T>
 {

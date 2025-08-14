@@ -2,7 +2,7 @@ using System;
 using Application.Core;
 using Application.DTOs.Cart;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Services;
 
 public interface ICartService
 {

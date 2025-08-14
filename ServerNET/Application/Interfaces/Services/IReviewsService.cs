@@ -2,9 +2,8 @@ using System;
 using Application.Core;
 using Application.DTOs.Reviews;
 using Application.Shared;
-using Domain.Entities;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Services;
 
 public interface IReviewsService
 {

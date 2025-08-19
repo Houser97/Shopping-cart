@@ -6,9 +6,9 @@ namespace Application.Interfaces.Services;
 
 public interface ICartService
 {
-    Task<Result<List<CartProductDto>>> GetUserCartProducts(string userId);
-    Task<Result<CartProductDto>> CreateCartProduct(CreateCartProductDto createCartProductDto);
-    Task<Result<CartProductDto>> UpdateCartProduct(string id, UpdateCartProductDto updateCartProductDto);
-    Task<Result<CartProductDto>> DeleteCartProduct(string id);
-    Task<Result<bool>> ClearUserCart(string userId);
+    Task<Result<List<CartProductDto>>> GetUserCartProducts(CancellationToken cancellationToken = default);
+    Task<Result<CartProductDto>> CreateCartProduct(CreateCartProductDto createCartProductDto, CancellationToken cancellationToken = default);
+    Task<Result<CartProductDto>> UpdateCartProduct(string id, UpdateCartProductDto updateCartProductDto, CancellationToken cancellationToken = default);
+    Task<Result<CartProductDto>> DeleteCartProduct(string id, CancellationToken cancellationToken = default);
+    Task<Result<bool>> ClearUserCart(CancellationToken cancellationToken = default);
 }

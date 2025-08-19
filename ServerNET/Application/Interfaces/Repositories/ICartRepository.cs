@@ -7,10 +7,10 @@ namespace Application.Interfaces.Repositories;
 
 public interface ICartRepository
 {
-    Task<Cart> InsertAsync(CreateCartProductDto createCartProductDto);
-    Task<List<CartProductWithDetails>> GetAllByUserIdAsync(string userId);
-    Task<Cart?> GetByProductIdAndUserId(string productId, string userId);
-    Task<Cart> UpdateAsync(string id, UpdateCartProductDto updateCartProductDto);
-    Task<bool> ClearAllAsync(string userId);
-    Task<Cart?> DeleteAsync(string id);
+    Task<CartProductWithDetails> InsertAsync(CreateCartProductDto createCartProductDto, CancellationToken cancellationToken = default);
+    Task<List<CartProductWithDetails>> GetAllByUserIdAsync(string userId, CancellationToken cancellationToken = default);
+    Task<Cart?> GetByProductIdAndUserId(string productId, string userId, CancellationToken cancellationToken = default);
+    Task<CartProductWithDetails?> UpdateAsync(string id, UpdateCartProductDto updateCartProductDto, CancellationToken cancellationToken = default);
+    Task<bool> ClearAllAsync(string userId, CancellationToken cancellationToken = default);
+    Task<Cart?> DeleteByIdAsync(string id, CancellationToken cancellationToken = default);
 }

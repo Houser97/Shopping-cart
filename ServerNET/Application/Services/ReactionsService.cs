@@ -1,23 +1,27 @@
 using System;
 using Application.Core;
 using Application.DTOs.Reactions;
+using Application.Interfaces.Accessors;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.Mappers;
 using AutoMapper;
 using Domain.Enums;
+using MongoDB.Driver;
 
 namespace Application.Services;
 
 public class ReactionsService(
     IReactionsRepository reactionsRepository,
     IServiceHelper<ReactionsService> serviceHelper,
-    IMapper mapper
+    IMapper mapper,
+    IUserAccessor userAccessor
 ) : IReactionsService
 {
 
     private readonly IReactionsRepository _reactionsRepository = reactionsRepository;
     private readonly IServiceHelper<ReactionsService> _serviceHelper = serviceHelper;
+    private readonly IUserAccessor _userAccessor = userAccessor;
 
     private readonly IMapper _mapper = mapper;
 
@@ -25,19 +29,30 @@ public class ReactionsService(
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var result = await _reactionsRepository.InsertAsync(createReactionDto);
+            try
+            {
+                var userId = _userAccessor.GetUserId();
+                createReactionDto.AuthorId = userId;
 
-            var reactionDto = _mapper.Map<ReactionDto>(result);
+                var result = await _reactionsRepository.InsertAsync(createReactionDto);
 
-            return Result<ReactionDto>.Success(reactionDto);
+                var reactionDto = _mapper.Map<ReactionDto>(result);
+
+                return Result<ReactionDto>.Success(reactionDto);
+            }
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            {
+                return Result<ReactionDto>.Failure("Reaction already exists", 400);
+            }
         });
     }
 
-    public async Task<Result<List<ReactionDto>>> GetReactionsByProductIdAndAuthorId(string productId, string authorId)
+    public async Task<Result<List<ReactionDto>>> GetReactionsByProductIdAndAuthorId(string productId)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var reactions = await _reactionsRepository.GetByProductIdAndAuthorIdAsync(productId, authorId);
+            var authorId = _userAccessor.GetUserId();
+            var reactions = await _reactionsRepository.GetByProductIdAndAuthorIdAsync(productId, authorId!);
 
             var reactionsDtos = _mapper.Map<List<ReactionDto>>(reactions);
             return Result<List<ReactionDto>>.Success(reactionsDtos);
@@ -60,6 +75,9 @@ public class ReactionsService(
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
+            var userId = _userAccessor.GetUserId();
+            updateReactionDto.AuthorId = userId;
+
             var result = await _reactionsRepository.UpdateAsync(id, updateReactionDto);
             var reactionDto = _mapper.Map<ReactionDto>(result);
 

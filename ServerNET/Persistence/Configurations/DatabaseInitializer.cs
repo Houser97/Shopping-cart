@@ -17,6 +17,7 @@ public class DatabaseInitializer(
     public async Task InitializeAsync()
     {
         await CreateCartIndexesAsync();
+        await CreateReactionIndexesAsync();
     }
 
     private async Task CreateCartIndexesAsync()
@@ -37,5 +38,24 @@ public class DatabaseInitializer(
 
         await cartCollection.Indexes.CreateOneAsync(indexModel);
 
+    }
+
+    private async Task CreateReactionIndexesAsync()
+    {
+        var reactionsCollection = _dbContext.Database.GetCollection<Reactions>(_settings.Value.ReactionsCollectionName);
+
+        var indexKeys = Builders<Reactions>.IndexKeys
+            .Ascending(r => r.AuthorId)
+            .Ascending(r => r.ReviewId);
+
+        var indexOptions = new CreateIndexOptions
+        {
+            Unique = true,
+            Name = "IDX_Reaction_AuthorId_ReviewId_Unique"
+        };
+
+        var indexModel = new CreateIndexModel<Reactions>(indexKeys, indexOptions);
+
+        await reactionsCollection.Indexes.CreateOneAsync(indexModel);
     }
 }

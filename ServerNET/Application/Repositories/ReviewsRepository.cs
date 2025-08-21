@@ -57,7 +57,7 @@ public class ReviewsRepository(
         return await _reviewsCollection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task<List<ReviewWithDetails>> GetReviewWithDetails(string productId, int page, int limit)
+    public async Task<List<ReviewWithDetails>> GetPagedReviewsWithDetails(string productId, int page, int limit)
     {
         return await _reviewsCollection.Aggregate()
             .Match(review => review.ProductId == productId)

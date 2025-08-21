@@ -1,6 +1,7 @@
 using System;
 using Application.Core;
 using Application.DTOs.Reviews;
+using Application.Interfaces.Accessors;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.Shared;
@@ -15,7 +16,8 @@ public class ReviewsService(
     IServiceHelper<ReviewsService> serviceHelper,
     IProductsService productsService,
     IReactionsService reactionsService,
-    IMapper mapper
+    IMapper mapper,
+    IUserAccessor userAccessor
 ) : IReviewsService
 {
     private readonly IReviewsRepository _reviewsRepository = reviewsRepository;
@@ -23,13 +25,15 @@ public class ReviewsService(
     private readonly IMapper _mapper = mapper;
 
     private readonly IServiceHelper<ReviewsService> _serviceHelper = serviceHelper;
+    private readonly IUserAccessor _userAccessor = userAccessor;
 
     public async Task<Result<ReviewDto>> CreateReview(CreateReviewDto createReviewDto)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
+
             var productId = createReviewDto.ProductId;
-            var authorId = createReviewDto.AuthorId;
+            var authorId = _userAccessor.GetUserId()!;
 
             var productExistsTask = productsService.GetProductById(productId);
             var reviewExistsTask = _reviewsRepository.GetByProductIdAndUserIdAsync(productId, authorId);
@@ -59,17 +63,22 @@ public class ReviewsService(
 
             var reviewDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Success(reviewDto);
+
+
+
         });
     }
 
-    public async Task<Result<ReviewDto>> DeleteReview(string id, string authorId)
+    public async Task<Result<ReviewDto>> DeleteReview(string id)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
+            var authorId = _userAccessor.GetUserId()!;
+
             var review = await _reviewsRepository.DeleteAsync(id, authorId);
 
             if (review == null)
-                return Result<ReviewDto>.Failure("User does not match review author id, or review not found", 404);
+                return Result<ReviewDto>.Failure("Review not found", 404);
 
             var reviewDto = _mapper.Map<ReviewDto>(review);
             return Result<ReviewDto>.Success(reviewDto);
@@ -87,11 +96,12 @@ public class ReviewsService(
         return Result<ReviewDto>.Success(reviewDto);
     }
 
-    public async Task<Result<ReviewDto>> GetReviewByProductIdAndUserId(string productId, string userId)
+    public async Task<Result<ReviewDto>> GetReviewByProductIdAndUserId(string productId)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var review = await _reviewsRepository.GetByProductIdAndUserIdAsync(productId, userId);
+            var userId = _userAccessor.GetUserId();
+            var review = await _reviewsRepository.GetByProductIdAndUserIdAsync(productId, userId!);
 
             if (review == null)
                 return Result<ReviewDto>.Failure($"No review found for productId '{productId}' and userId '{userId}'", 404);
@@ -111,7 +121,7 @@ public class ReviewsService(
 
             var totalReviewsTask = _reviewsRepository.CountByProductIdAsync(productId);
 
-            var reviewsTask = _reviewsRepository.GetReviewWithDetails(productId, page, limit);
+            var reviewsTask = _reviewsRepository.GetPagedReviewsWithDetails(productId, page, limit);
 
             await Task.WhenAll(totalReviewsTask, reviewsTask);
 
@@ -148,6 +158,7 @@ public class ReviewsService(
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
+            updateReviewDto.AuthorId = _userAccessor.GetUserId();
             var updatedReview = await _reviewsRepository.UpdateAsync(id, updateReviewDto);
 
             if (updatedReview is null)

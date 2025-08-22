@@ -26,6 +26,8 @@
       - [3.2.1 Archivo de convenciones](#321-archivo-de-convenciones)
         - [3.2.2 Parte 1. MongoDbConventions.Register()](#322-parte-1-mongodbconventionsregister)
         - [3.2.3 Parte 2. EnumSerializationConvention](#323-parte-2-enumserializationconvention)
+        - [3.2.4 Parte 3. Uso de Enums](#324-parte-3-uso-de-enums)
+          - [3.2.4.1 Enums usando su valor de string en lugar de numérico](#3241-enums-usando-su-valor-de-string-en-lugar-de-numérico)
       - [3.2.2 Ignorar campos no definidos en la entidad Domain de forma manual](#322-ignorar-campos-no-definidos-en-la-entidad-domain-de-forma-manual)
     - [3.3 Herramientas](#33-herramientas)
       - [3.3.1 Aggregation Framework](#331-aggregation-framework)
@@ -160,6 +162,9 @@
         - [8.3.1.1 Explicación detallada de Setup y Returns](#8311-explicación-detallada-de-setup-y-returns)
           - [Flujo](#flujo)
     - [8.4 Ejemplo de uso con AuthService](#84-ejemplo-de-uso-con-authservice)
+    - [8.5 Tests de integración](#85-tests-de-integración)
+      - [8.5.1 Set up](#851-set-up)
+      - [8.5.2 xUnit](#852-xunit)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -836,6 +841,85 @@ public class EnumSerializationConvention : ConventionBase, IClassMapConvention
 - Es una convención personalizada que:
   - Revisa cada propiedad de cada clase (AllMemeberMaps).
   - Si la propiedad es un enum, le asigna un serializador __(EnumSerializer<T>)__ que lo escribe como string.
+
+##### 3.2.4 Parte 3. Uso de Enums
+###### 3.2.4.1 Enums usando su valor de string en lugar de numérico
+1. Definir enum de base de datos en __Domain\Enums\ReactionType.cs__
+   1. En este caso se definen como minúscula para que en la base de datos se guarde igual.
+
+```c#
+using System.Runtime.Serialization;
+
+namespace Domain.Enums;
+
+public enum ReactionType
+{
+    [EnumMember(Value = "love")]
+    love,
+
+    [EnumMember(Value = "like")]
+    like,
+
+    [EnumMember(Value = "dislike")]
+    dislike
+}
+```
+
+2. En DTOs se define que el campo que usa al enum use la parte de string.
+
+```c#
+using System;
+using System.Text.Json.Serialization;
+using Domain.Enums;
+
+namespace Application.DTOs.Reactions;
+
+public class CreateReactionDto
+{
+    public required string ProductId { get; set; }
+    public required string ReviewId { get; set; }
+    public string? AuthorId { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))] // Ayuda a poder mandar el string en la request en lugar del entero del enum
+    public required ReactionType Reaction { get; set; }
+}
+
+
+
+using System;
+using System.Text.Json.Serialization;
+using Domain.Enums;
+
+namespace Application.DTOs.Reactions;
+
+public class UpdateReactionDto
+{
+    public required string ReviewId { get; set; }
+    public string? AuthorId { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))] // Ayuda a poder mandar el string en la request en lugar del entero del enum
+    public required ReactionType Reaction { get; set; }
+}
+
+
+using System;
+using System.Text.Json.Serialization;
+using Domain.Enums;
+
+namespace Application.DTOs.Reactions;
+
+public class ReactionDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string AuthorId { get; set; } = string.Empty;
+    public string ProductId { get; set; } = string.Empty;
+    public string ReviewId { get; set; } = string.Empty;
+
+    [JsonConverter(typeof(JsonStringEnumConverter))] // Ayuda a recibir la reacción como string en lugar de un número al momento de retornar lo insertado
+    public ReactionType Reaction { get; set; }
+}
+
+```
 
 #### 3.2.2 Ignorar campos no definidos en la entidad Domain de forma manual
 - Es una alternativa si no se desea hacen con el archivo de convenciones.
@@ -4679,6 +4763,157 @@ public class AuthServiceTests
 }
 
 ```
+
+### 8.5 Tests de integración
+- En estos tests se valida que la comunicación con la base de datos (queries, agregaciones, indices, mappings) funciona.
+
+#### 8.5.1 Set up
+1. Crear proyecto.
+
+```bash
+dotnet new xunit -n Persistence.IntegrationTests
+```
+
+2. Agregar proyecto al archivo de solución.
+
+```bash
+dotnet sln add Persistence.IntegrationTests
+```
+
+3. Agregar referencia a __Persistence.IntegrationTests__ de:
+   1. Persistence (este es el proyecto que se va a aplicar testing)
+   2. Domain (servicios de Application ocupan Domain)
+
+4. Instalar paquetes en Persistence.Tests:
+   1. Moq
+   2. FluentAssertions
+
+5. Crear fixture para Mongo en __Persistence.IntegrationTests/MongoFixture.cs__ para inicializar una conexión limpia a Mongo antes de correr los tests
+
+```c#
+using MongoDB.Driver;
+
+namespace Persistence.IntegrationTests;
+
+public class MongoFixture : IDisposable
+{
+    public IMongoDatabase Database { get; }
+    private readonly MongoClient _client;
+
+    public MongoFixture()
+    {
+        // Conexión al contenedor en Docker
+        var connectionString = "mongodb://localhost:27017";
+        _client = new MongoClient(connectionString);
+
+        // Usamos un DB random para que los tests no choquen
+        Database = _client.GetDatabase($"TestDb_{Guid.NewGuid()}");
+    }
+
+    public void Dispose()
+    {
+        // Limpiamos la DB después de los tests
+        _client.DropDatabase(Database.DatabaseNamespace.DatabaseName);
+    }
+}
+```
+
+o
+
+```c#
+using MongoDB.Driver;
+using Persistence.Interfaces;
+using Persistence;
+
+namespace Persistence.IntegrationTests;
+
+public class MongoDbFixture : IDisposable
+{
+    public IMongoClient Client { get; }
+    public IAppDbContext DbContext { get; }
+
+    private readonly string _databaseName = "testdb";
+
+    public MongoDbFixture()
+    {
+        // Conexión al MongoDB de docker
+        Client = new MongoClient("mongodb://root:example@localhost:27018/testdb");
+        DbContext = new AppDbContext(Client, _databaseName);
+    }
+
+    public void Dispose()
+    {
+        // Limpiamos la base de datos al terminar los tests
+        Client.DropDatabase(_databaseName);
+    }
+}
+
+```
+
+6. Ejemplo de test básico.
+
+```c#
+using FluentAssertions;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using Xunit;
+
+namespace Persistence.IntegrationTests;
+
+public class RepositoryTests : IClassFixture<MongoFixture>
+{
+    private readonly IMongoDatabase _database;
+
+    public RepositoryTests(MongoFixture fixture)
+    {
+        _database = fixture.Database;
+    }
+
+    [Fact]
+    public async Task Insert_And_Find_Document_Should_Work()
+    {
+        // Arrange
+        var collection = _database.GetCollection<BsonDocument>("Users");
+        var doc = new BsonDocument { { "Name", "Arturo" }, { "Age", 30 } };
+
+        // Act
+        await collection.InsertOneAsync(doc);
+        var result = await collection.Find(new BsonDocument { { "Name", "Arturo" } }).FirstOrDefaultAsync();
+
+        // Assert
+        result.Should().NotBeNull();
+        result["Age"].AsInt32.Should().Be(30);
+    }
+}
+```
+
+7. Crear docker-compose.
+   1. Con este ejemplo la cadena de conexión sería: mongodb://root:example@localhost:27018/testdb
+
+```yml
+version: "3.9"
+
+services:
+  mongodb-test:
+    image: mongo:7.0       # versión oficial de MongoDB
+    container_name: mongodb-test
+    ports:
+      - "27018:27017"      # Exponemos puerto distinto al default por seguridad
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: testdb
+    volumes:
+      - mongodb-test-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodb-test-data:
+
+```
+
+#### 8.5.2 xUnit
+
 
 
 ## Temas pendientes por documentar

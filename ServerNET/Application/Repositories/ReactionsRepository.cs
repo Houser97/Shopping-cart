@@ -60,8 +60,9 @@ public class ReactionsRepository(
         var reaction = new Reactions
         {
             ProductId = createReactionDto.ProductId,
-            AuthorId = createReactionDto.AuthorId,
-            Reaction = createReactionDto.Reaction
+            AuthorId = createReactionDto.AuthorId!,
+            Reaction = createReactionDto.Reaction,
+            ReviewId = createReactionDto.ReviewId
         };
 
         await _reactionsCollection.InsertOneAsync(reaction);

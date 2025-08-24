@@ -5,11 +5,11 @@ namespace Domain.Enums;
 public enum ReactionType
 {
     [EnumMember(Value = "love")]
-    Love,
+    love,
 
     [EnumMember(Value = "like")]
-    Like,
+    like,
 
     [EnumMember(Value = "dislike")]
-    Dislike
+    dislike
 }

@@ -1,76 +1,59 @@
 using System;
-using Application.Aggregates;
 using Application.Core;
 using Application.DTOs.Cart;
-using Application.Interfaces;
+using Application.Interfaces.Accessors;
+using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Entities;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Persistence;
-using Persistence.Interfaces;
 
 namespace Application.Services;
 
 public class CartService(
-    IAppDbContext dbContext,
-    IOptions<AppDbSettings> settings,
+    ICartRepository cartRepository,
     IServiceHelper<CartService> serviceHelper,
-    IMapper mapper
+    IMapper mapper,
+    IUserAccessor userAccessor
 ) : ICartService
 {
-
-    private readonly IMongoCollection<Cart> _cartCollection =
-        dbContext.Database.GetCollection<Cart>(settings.Value.CartCollectionName);
-    private readonly IMongoCollection<Product> _productCollection =
-        dbContext.Database.GetCollection<Product>(settings.Value.ProductsCollectionName);
+    private readonly ICartRepository _cartRepository = cartRepository;
     private readonly IServiceHelper<CartService> _serviceHelper = serviceHelper;
     private readonly IMapper _mapper = mapper;
+    private readonly IUserAccessor _userAccessor = userAccessor;
 
-    public async Task<Result<bool>> ClearUserCart(string userId)
+    public async Task<Result<bool>> ClearUserCart(CancellationToken cancellationToken = default)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            await _cartCollection.DeleteManyAsync(cartProduct => cartProduct.UserId == userId);
-            return Result<bool>.Success(true);
+            var userId = _userAccessor.GetUserId();
+            var result = await _cartRepository.ClearAllAsync(userId!, cancellationToken);
+            return Result<bool>.Success(result);
         });
     }
 
-    public async Task<Result<CartProductDto>> CreateCartProduct(CreateCartProductDto createCartProductDto)
+    public async Task<Result<CartProductDto>> CreateCartProduct(CreateCartProductDto createCartProductDto, CancellationToken cancellationToken = default)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var productId = createCartProductDto.ProductId;
-            var userId = createCartProductDto.UserId;
-
-            var cartProductExists = await _cartCollection.Find(
-                cartProduct => cartProduct.ProductId == productId && cartProduct.UserId == userId
-            ).FirstOrDefaultAsync();
-
-            if (cartProductExists != null)
-                return Result<CartProductDto>.Failure("Product already in cart", 400);
-
-            var cartProduct = new Cart
+            try
             {
-                ProductId = productId,
-                UserId = userId,
-                Quantity = createCartProductDto.Quantity,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _cartCollection.InsertOneAsync(cartProduct);
-
-            var cartProductDto = _mapper.Map<CartProductDto>(cartProduct);
-
-            return Result<CartProductDto>.Success(cartProductDto);
+                createCartProductDto.UserId = _userAccessor.GetUserId();
+                var cartProduct = await _cartRepository.InsertAsync(createCartProductDto, cancellationToken);
+                var cartProductDto = _mapper.Map<CartProductDto>(cartProduct);
+                return Result<CartProductDto>.Success(cartProductDto);
+            }
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            {
+                return Result<CartProductDto>.Failure("Product is already in the cart", 400);
+            }
         });
     }
 
-    public async Task<Result<CartProductDto>> DeleteCartProduct(string id)
+    public async Task<Result<CartProductDto>> DeleteCartProduct(string id, CancellationToken cancellationToken = default)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var cartProduct = await _cartCollection.FindOneAndDeleteAsync(cartProduct => cartProduct.Id == id);
+            var cartProduct = await _cartRepository.DeleteByIdAsync(id, cancellationToken);
 
             if (cartProduct == null)
                 return Result<CartProductDto>.Failure($"Cart product with id: {id} could not be deleted", 400);
@@ -78,28 +61,16 @@ public class CartService(
             var cartProductDto = _mapper.Map<CartProductDto>(cartProduct);
 
             return Result<CartProductDto>.Success(cartProductDto);
-
         });
     }
 
-    public async Task<Result<List<CartProductDto>>> GetUserCartProducts(string userId)
+    public async Task<Result<List<CartProductDto>>> GetUserCartProducts(CancellationToken cancellationToken = default)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var filter = Builders<Cart>.Filter.Eq(cartProduct => cartProduct.UserId, userId);
+            var userId = _userAccessor.GetUserId();
 
-            var aggregation = _cartCollection.Aggregate()
-                .Match(filter)
-                .Lookup<Cart, Product, CartProductWithDetails>(
-                    _productCollection,
-                    cartProduct => cartProduct.ProductId,
-                    product => product.Id,
-                    result => result.Product
-                )
-                .Unwind(cartProduct => cartProduct.Product)
-                .As<CartProductWithDetails>();
-
-            var result = await aggregation.ToListAsync();
+            var result = await _cartRepository.GetAllByUserIdAsync(userId!, cancellationToken);
 
             var cartProductDtos = _mapper.Map<List<CartProductDto>>(result);
 
@@ -107,20 +78,11 @@ public class CartService(
         });
     }
 
-    public async Task<Result<CartProductDto>> UpdateCartProduct(string id, UpdateCartProductDto updateCartProductDto)
+    public async Task<Result<CartProductDto>> UpdateCartProduct(string id, UpdateCartProductDto updateCartProductDto, CancellationToken cancellationToken = default)
     {
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
-            var filter = Builders<Cart>.Filter.Eq(cartProduct => cartProduct.Id, id);
-            var update = Builders<Cart>.Update
-                .Set(cartProduct => cartProduct.Quantity, updateCartProductDto.Quantity);
-
-            var options = new FindOneAndUpdateOptions<Cart>
-            {
-                ReturnDocument = ReturnDocument.After
-            };
-
-            var updatedCartProduct = await _cartCollection.FindOneAndUpdateAsync(filter, update, options);
+            var updatedCartProduct = await _cartRepository.UpdateAsync(id, updateCartProductDto, cancellationToken);
 
             if (updatedCartProduct == null)
                 return Result<CartProductDto>.Failure($"Cart product with id: {id} could not be updated", 400);

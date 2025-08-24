@@ -1,5 +1,5 @@
 using System;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Core;

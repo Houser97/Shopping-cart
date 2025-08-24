@@ -21,16 +21,25 @@
     - [2.4 Proyecto de Infrastructure](#24-proyecto-de-infrastructure)
   - [3. Bases de datos](#3-bases-de-datos)
     - [3.1 MongoDB](#31-mongodb)
+      - [Por qué no inyectar AppDbContext como Singleton](#por-qué-no-inyectar-appdbcontext-como-singleton)
     - [3.2 Configuraciones](#32-configuraciones)
       - [3.2.1 Archivo de convenciones](#321-archivo-de-convenciones)
         - [3.2.2 Parte 1. MongoDbConventions.Register()](#322-parte-1-mongodbconventionsregister)
         - [3.2.3 Parte 2. EnumSerializationConvention](#323-parte-2-enumserializationconvention)
+        - [3.2.4 Parte 3. Uso de Enums](#324-parte-3-uso-de-enums)
+          - [3.2.4.1 Enums usando su valor de string en lugar de numérico](#3241-enums-usando-su-valor-de-string-en-lugar-de-numérico)
       - [3.2.2 Ignorar campos no definidos en la entidad Domain de forma manual](#322-ignorar-campos-no-definidos-en-la-entidad-domain-de-forma-manual)
     - [3.3 Herramientas](#33-herramientas)
       - [3.3.1 Aggregation Framework](#331-aggregation-framework)
         - [3.3.2 Desglose](#332-desglose)
+      - [3.3.2 Pipelines](#332-pipelines)
+        - [3.3.2.1 Recomendaciones de uso](#3321-recomendaciones-de-uso)
     - [3.4 Formas de uso](#34-formas-de-uso)
       - [3.4.1 Forma básica de un servicio](#341-forma-básica-de-un-servicio)
+    - [3.5 DatabaseInitializer](#35-databaseinitializer)
+      - [3.5.1 Creación y gestión de índices únicos en MongoDB con .NET](#351-creación-y-gestión-de-índices-únicos-en-mongodb-con-net)
+        - [Pasos](#pasos)
+        - [Buenas prácticas](#buenas-prácticas)
   - [4. Autenticación](#4-autenticación)
     - [4.1 Creación de clases](#41-creación-de-clases)
       - [4.1.2 DTOs](#412-dtos)
@@ -45,7 +54,6 @@
         - [5.2.1.3 Evitar referencias cíclicas (Errores de serialización)](#5213-evitar-referencias-cíclicas-errores-de-serialización)
         - [5.2.1.4 Uso de proyecciones (Queryable extension)](#5214-uso-de-proyecciones-queryable-extension)
     - [5.3 ServiceHelper](#53-servicehelper)
-      - [5.3.2 Versión Func\<Task\<Result\>\>](#532-versión-functaskresult)
       - [5.3.2 Primera versión, Func\<Task\>](#532-primera-versión-functask)
     - [5.4 PagedResult](#54-pagedresult)
       - [Ejemplo de uso](#ejemplo-de-uso)
@@ -154,6 +162,9 @@
         - [8.3.1.1 Explicación detallada de Setup y Returns](#8311-explicación-detallada-de-setup-y-returns)
           - [Flujo](#flujo)
     - [8.4 Ejemplo de uso con AuthService](#84-ejemplo-de-uso-con-authservice)
+    - [8.5 Tests de integración](#85-tests-de-integración)
+      - [8.5.1 Set up](#851-set-up)
+      - [8.5.2 xUnit](#852-xunit)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -712,7 +723,7 @@ public class AppDbContext
 }
 ```
 
-6. Realizar inyección de dependencia en Program.cs, en donde el servicio __AppDbContext__ será singleton.
+6. Realizar inyección de dependencia en Program.cs, en donde el servicio __AppDbContext__ será Scoped.
    1. De igual manera se coloca __AppDbSettings__ para tener acceso a las configuraciones de base de datos. 
 
 ```c#
@@ -720,12 +731,19 @@ using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure settings inject IOptions<AppDbSettings>
 builder.Services.Configure<AppDbSettings>(
-    builder.Configuration.GetSection("InTouchIoDatabase"));
+    builder.Configuration.GetSection("Database")
+);
 
-// Register AppDbContext as singleton
-builder.Services.AddSingleton<AppDbContext>();
+// MongoClient como Singleton (thread-safe)
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<AppDbSettings>>().Value;
+    return new MongoClient(settings.ConnectionString);
+});
+
+// AppDbContext como Scoped (usa MongoClient pero mantiene contexto del request)
+builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 
 // Add services to the container.
 
@@ -740,6 +758,27 @@ app.MapControllers();
 app.Run();
 
 ```
+
+#### Por qué no inyectar AppDbContext como Singleton
+- Antes se había usado como Singleton, lo cual en EF Core (y en la mayoría de ORMs), el DbContext NO debe ser Singleton, porque:
+    - No es thread-safe.
+      - Riesgo de mezclar datos entre requests si AppDbContext guardaba estado.
+    - Mantiene un change tracker que debe reiniciarse por request.
+    - Puede causar fugas de memoria y datos mezclados entre usuarios.
+- Se hizo el cambio a Scoped pero se tuvo que agregar la configuración para __IMongoClient__.
+  - Aunque antes todo “funcionara bien” con AppDbContext como Singleton, en realidad se estaba usando el patrón Singleton implícito para MongoClient a través de AppDbContext.
+  - El detalle era:
+    - MongoClient está diseñado para ser reutilizado y thread-safe.
+    - Crear un MongoClient nuevo por request es ineficiente porque abre (o intenta abrir) nuevas conexiones de red, y aunque internamente cachee, implica más overhead.
+    - Si AppDbContext es Scoped y cada instancia crea su propio MongoClient, se desperdician recursos.
+    - Al registrarlo como Singleton explícitamente:
+      - Solo se crea una conexión subyacente para toda la app.
+      - Menos uso de memoria y CPU.
+      - Mejor rendimiento y menor latencia.
+
+📌 MongoDB recomienda oficialmente:
+
+“The MongoClient object is designed to be shared across your application. Creating multiple MongoClient instances will lead to connection storms and performance issues.”
 
 ### 3.2 Configuraciones
 #### 3.2.1 Archivo de convenciones
@@ -802,6 +841,85 @@ public class EnumSerializationConvention : ConventionBase, IClassMapConvention
 - Es una convención personalizada que:
   - Revisa cada propiedad de cada clase (AllMemeberMaps).
   - Si la propiedad es un enum, le asigna un serializador __(EnumSerializer<T>)__ que lo escribe como string.
+
+##### 3.2.4 Parte 3. Uso de Enums
+###### 3.2.4.1 Enums usando su valor de string en lugar de numérico
+1. Definir enum de base de datos en __Domain\Enums\ReactionType.cs__
+   1. En este caso se definen como minúscula para que en la base de datos se guarde igual.
+
+```c#
+using System.Runtime.Serialization;
+
+namespace Domain.Enums;
+
+public enum ReactionType
+{
+    [EnumMember(Value = "love")]
+    love,
+
+    [EnumMember(Value = "like")]
+    like,
+
+    [EnumMember(Value = "dislike")]
+    dislike
+}
+```
+
+2. En DTOs se define que el campo que usa al enum use la parte de string.
+
+```c#
+using System;
+using System.Text.Json.Serialization;
+using Domain.Enums;
+
+namespace Application.DTOs.Reactions;
+
+public class CreateReactionDto
+{
+    public required string ProductId { get; set; }
+    public required string ReviewId { get; set; }
+    public string? AuthorId { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))] // Ayuda a poder mandar el string en la request en lugar del entero del enum
+    public required ReactionType Reaction { get; set; }
+}
+
+
+
+using System;
+using System.Text.Json.Serialization;
+using Domain.Enums;
+
+namespace Application.DTOs.Reactions;
+
+public class UpdateReactionDto
+{
+    public required string ReviewId { get; set; }
+    public string? AuthorId { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))] // Ayuda a poder mandar el string en la request en lugar del entero del enum
+    public required ReactionType Reaction { get; set; }
+}
+
+
+using System;
+using System.Text.Json.Serialization;
+using Domain.Enums;
+
+namespace Application.DTOs.Reactions;
+
+public class ReactionDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string AuthorId { get; set; } = string.Empty;
+    public string ProductId { get; set; } = string.Empty;
+    public string ReviewId { get; set; } = string.Empty;
+
+    [JsonConverter(typeof(JsonStringEnumConverter))] // Ayuda a recibir la reacción como string en lugar de un número al momento de retornar lo insertado
+    public ReactionType Reaction { get; set; }
+}
+
+```
 
 #### 3.2.2 Ignorar campos no definidos en la entidad Domain de forma manual
 - Es una alternativa si no se desea hacen con el archivo de convenciones.
@@ -939,6 +1057,31 @@ totalReviews: {
 .ToListAsync();
 ```
 
+#### 3.3.2 Pipelines
+- Se tiene la diferencia de trabajar con expresiones fuertemente tipadas (IAggregateFluent<T>) y con pipelines crudos (BsonDocument).
+
+| Criterio                            | `IAggregateFluent<T>` (Fuertemente tipado)                                                             | `BsonDocument` (Dinámico)                   |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------- |
+| ✔️ Legibilidad y mantenibilidad     | Alta (especialmente con expresiones `Lambda`)                                                          | Menor, especialmente en pipelines complejos |
+| ✔️ Autocompletado y refactorización | Sí, excelente en IDEs como Rider o VS                                                                  | No, es como escribir strings                |
+| ✔️ Complejidad del pipeline         | Limitada: algunas operaciones como `$group`, `$project`, `$unwind` complejos no se expresan fácilmente | Máxima flexibilidad                         |
+| ✔️ Reutilización y composición      | Muy buena                                                                                              | Manual (pero más dinámica)                  |
+| ✔️ Compatibilidad con DTOs          | Alta (directo a clases tipadas)                                                                        | Media (necesitas mapeo o serialización)     |
+
+##### 3.3.2.1 Recomendaciones de uso
+- Usa IAggregateFluent<T> siempre que sea posible, especialmente si trabajas con DTOs y operaciones simples (lookup, unwind, match, sort, limit, etc).
+- Cámbiate a BsonDocument sin miedo cuando:
+    - Necesitas $group con claves compuestas
+    - Haces operaciones estadísticas avanzadas ($sum, $avg, $count)
+    - Proyectas campos con lógica compleja
+
+- Se puede mapear el resultado del pipeline de la siguiente forma:
+
+```c#
+var results = await _reactionsCollection.Aggregate<BsonDocument>(pipeline).ToListAsync();
+var mappedResults = results.Select(b => BsonSerializer.Deserialize<MyDto>(b)).ToList();
+```
+
 ### 3.4 Formas de uso
 #### 3.4.1 Forma básica de un servicio
 ```c#
@@ -974,6 +1117,145 @@ public class ReviewsService(
 }
 ```
 
+### 3.5 DatabaseInitializer
+- Es un archivo que contiene acciones adicionales cuando se levanta la aplicación, tal como la creación de indeces.
+
+#### 3.5.1 Creación y gestión de índices únicos en MongoDB con .NET
+- El objetivo de este enfoque es:
+    - Garantizar la unicidad de combinaciones de campos (ej. ProductId + UserId) en la colección Cart.
+    - Evitar múltiples consultas en servicios para validar existencia de documentos antes de insertar.
+    - Manejar correctamente errores de duplicado de manera centralizada y profesional.
+    - Permitir que el proceso de creación de índices sea automático y seguro al iniciar la aplicación.
+    - Mantener un código limpio, desacoplado y testable, siguiendo buenas prácticas de .NET.
+
+- Estructura que se sigue:
+1. Repositorio (CartRepository)
+    - Encargado de la interacción con MongoDB.
+    - Inserta documentos sin validar duplicados (la base se encarga con índice único).
+    - Retorna el objeto insertado para que el servicio pueda mapearlo a DTO.
+2. Servicio (CartService)
+    - Contiene la lógica de negocio.
+    - Envuelve la llamada al repositorio con ServiceHelper.ExecuteSafeAsync para captura de errores y logging.
+    - Maneja excepciones de duplicado (MongoWriteException con código 11000) y devuelve un Result.Failure amigable para el cliente.
+3. ServiceHelper
+    - Maneja errores no esperados de manera global dentro de los servicios.
+    - Garantiza logging y consistencia de respuesta.
+4. Inicializador de índices (DatabaseInitializer o MongoDbIndexes)
+    - Clase que define y asegura los índices al iniciar la aplicación.    
+    - Se ejecuta una vez al inicio dentro de un scope de Program.cs.  
+    - Permite inyectar IAppDbContext y IOptions<AppDbSettings> para flexibilidad y reutilización.
+
+
+##### Pasos
+1. Crear __Persistence\Configurations\DatabaseInitializer.cs__
+```c#
+using System;
+using Domain.Entities;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using Persistence.Interfaces;
+
+namespace Persistence.Configurations;
+
+public class DatabaseInitializer(
+    IAppDbContext dbContext,
+    IOptions<AppDbSettings> settings
+)
+{
+    private readonly IAppDbContext _dbContext = dbContext;
+    private readonly IOptions<AppDbSettings> _settings = settings;
+
+    public async Task InitializeAsync()
+    {
+        await CreateCartIndexesAsync();
+    }
+
+    private async Task CreateCartIndexesAsync()
+    {
+        var cartCollection = _dbContext.Database.GetCollection<Cart>(_settings.Value.CartCollectionName);
+
+        var indexKeys = Builders<Cart>.IndexKeys
+            .Ascending(c => c.ProductId)
+            .Ascending(c => c.UserId);
+
+        var indexOptions = new CreateIndexOptions
+        {
+            Unique = true,
+            Name = "IDX_Cart_ProductId_UserId_Unique"
+        };
+
+        var indexModel = new CreateIndexModel<Cart>(indexKeys, indexOptions);
+
+        await cartCollection.Indexes.CreateOneAsync(indexModel);
+
+    }
+}
+```
+
+
+- Nota: InitializeAsync es seguro de llamar varias veces; si el índice ya existe, MongoDB no lo recrea ni falla.
+
+
+2. Llamar inicializador desde Program.cs.
+
+```c#
+// Services
+builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IReviewsService, ReviewsService>();
+builder.Services.AddScoped<IReactionsService, ReactionsService>();
+builder.Services.AddScoped<ICartService, CartService>();
+
+// DatabaseInitializer
+builder.Services.AddScoped<DatabaseInitializer>();
+... 
+
+var app = builder.Build();
+
+// DatabaseInitializer
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+    await dbInitializer.InitializeAsync();
+}
+
+// Configure the HTTP request pipeline.
+
+app.MapControllers();
+
+app.Run();
+```
+- Correcto usar CreateScope() porque DatabaseInitializer es scoped.
+- Esto asegura que los índices se crean antes de que la app reciba requests.
+- La alternativa de inyectar IAppDbContext y AppDbSettings manualmente (como lo vimos con Singleton) funciona, pero este enfoque Scoped es más limpio y sigue las prácticas de DI en .NET.
+
+3. Manejo de excepciones de keys duplicadas en servicio correspondiente:
+
+```c#
+public async Task<Result<CartProductDto>> CreateCartProduct(CreateCartProductDto dto)
+{
+    return await _serviceHelper.ExecuteSafeAsync(async () =>
+    {
+        try
+        {
+            var cartProduct = await _cartRepository.InsertAsync(dto);
+            var cartProductDto = _mapper.Map<CartProductDto>(cartProduct);
+            return Result<CartProductDto>.Success(cartProductDto);
+        }
+        catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+        {
+            return Result<CartProductDto>.Failure("El producto ya existe en el carrito.", 400);
+        }
+    });
+}
+```
+
+##### Buenas prácticas
+1. No usar Singleton para dependencias scoped como IAppDbContext.
+2. Evitar doble búsqueda antes de insertar. MongoDB + índice único hace la validación.
+3. Centralizar errores con ServiceHelper para logging y consistencia.
+4. Asegurar índices al inicio de la aplicación, de forma idempotente.
+5. Documentar índices y restricciones en el proyecto para futuros desarrolladores.
+
 ## 4. Autenticación
 ### 4.1 Creación de clases
 #### 4.1.2 DTOs
@@ -1003,7 +1285,7 @@ public class LoginUserDto
 3. Configurar política de autorización como se indica en [1.4.2 Configuración de política de autorización por defecto](#142-configuración-de-política-de-autorización-por-defecto).
 
 ### 4.2 Autenticación con JWT
-1. Instalar versión correspondiente del paquere __Microsoft.AspNetCore.Authentication.JwtBearer @Microsoft.__ según la versión de .NET que se esté ocupando. Se instala en:
+1. Instalar versión correspondiente del paquete __Microsoft.AspNetCore.Authentication.JwtBearer @Microsoft.__ según la versión de .NET que se esté ocupando. Se instala en:
    1. API
    2. Application
 2. Instalar paquete __BCrypt.Net-Next @Chris McKee, Ryan D. Emerl, Damien Miller__, el cual contiene el servicio que autentica y compara/crea contraseñas. Se instala en:
@@ -1214,6 +1496,7 @@ public class UserAccessor(IHttpContextAccessor httpContextAccessor, AppDbContext
 
 ```c#
 // Se desea solo sea scoped a la petición http. De igual, se debe a que se usa HTTP Context en el código
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserAccessor, UserAccessor>();
 ```
 
@@ -1676,9 +1959,6 @@ catch (NotFoundException ex)
     return Result<TResult>.Failure(ex.Message, 404);
 }
 ```
-
-
-#### 5.3.2 Versión Func<Task<Result<T>>>
 
 #### 5.3.2 Primera versión, Func<Task<TResult>>
 
@@ -4597,6 +4877,157 @@ public class AuthServiceTests
 }
 
 ```
+
+### 8.5 Tests de integración
+- En estos tests se valida que la comunicación con la base de datos (queries, agregaciones, indices, mappings) funciona.
+
+#### 8.5.1 Set up
+1. Crear proyecto.
+
+```bash
+dotnet new xunit -n Persistence.IntegrationTests
+```
+
+2. Agregar proyecto al archivo de solución.
+
+```bash
+dotnet sln add Persistence.IntegrationTests
+```
+
+3. Agregar referencia a __Persistence.IntegrationTests__ de:
+   1. Persistence (este es el proyecto que se va a aplicar testing)
+   2. Domain (servicios de Application ocupan Domain)
+
+4. Instalar paquetes en Persistence.Tests:
+   1. Moq
+   2. FluentAssertions
+
+5. Crear fixture para Mongo en __Persistence.IntegrationTests/MongoFixture.cs__ para inicializar una conexión limpia a Mongo antes de correr los tests
+
+```c#
+using MongoDB.Driver;
+
+namespace Persistence.IntegrationTests;
+
+public class MongoFixture : IDisposable
+{
+    public IMongoDatabase Database { get; }
+    private readonly MongoClient _client;
+
+    public MongoFixture()
+    {
+        // Conexión al contenedor en Docker
+        var connectionString = "mongodb://localhost:27017";
+        _client = new MongoClient(connectionString);
+
+        // Usamos un DB random para que los tests no choquen
+        Database = _client.GetDatabase($"TestDb_{Guid.NewGuid()}");
+    }
+
+    public void Dispose()
+    {
+        // Limpiamos la DB después de los tests
+        _client.DropDatabase(Database.DatabaseNamespace.DatabaseName);
+    }
+}
+```
+
+o
+
+```c#
+using MongoDB.Driver;
+using Persistence.Interfaces;
+using Persistence;
+
+namespace Persistence.IntegrationTests;
+
+public class MongoDbFixture : IDisposable
+{
+    public IMongoClient Client { get; }
+    public IAppDbContext DbContext { get; }
+
+    private readonly string _databaseName = "testdb";
+
+    public MongoDbFixture()
+    {
+        // Conexión al MongoDB de docker
+        Client = new MongoClient("mongodb://root:example@localhost:27018/testdb");
+        DbContext = new AppDbContext(Client, _databaseName);
+    }
+
+    public void Dispose()
+    {
+        // Limpiamos la base de datos al terminar los tests
+        Client.DropDatabase(_databaseName);
+    }
+}
+
+```
+
+6. Ejemplo de test básico.
+
+```c#
+using FluentAssertions;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using Xunit;
+
+namespace Persistence.IntegrationTests;
+
+public class RepositoryTests : IClassFixture<MongoFixture>
+{
+    private readonly IMongoDatabase _database;
+
+    public RepositoryTests(MongoFixture fixture)
+    {
+        _database = fixture.Database;
+    }
+
+    [Fact]
+    public async Task Insert_And_Find_Document_Should_Work()
+    {
+        // Arrange
+        var collection = _database.GetCollection<BsonDocument>("Users");
+        var doc = new BsonDocument { { "Name", "Arturo" }, { "Age", 30 } };
+
+        // Act
+        await collection.InsertOneAsync(doc);
+        var result = await collection.Find(new BsonDocument { { "Name", "Arturo" } }).FirstOrDefaultAsync();
+
+        // Assert
+        result.Should().NotBeNull();
+        result["Age"].AsInt32.Should().Be(30);
+    }
+}
+```
+
+7. Crear docker-compose.
+   1. Con este ejemplo la cadena de conexión sería: mongodb://root:example@localhost:27018/testdb
+
+```yml
+version: "3.9"
+
+services:
+  mongodb-test:
+    image: mongo:7.0       # versión oficial de MongoDB
+    container_name: mongodb-test
+    ports:
+      - "27018:27017"      # Exponemos puerto distinto al default por seguridad
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: testdb
+    volumes:
+      - mongodb-test-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodb-test-data:
+
+```
+
+#### 8.5.2 xUnit
+
 
 
 ## Temas pendientes por documentar

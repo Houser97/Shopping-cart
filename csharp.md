@@ -2518,7 +2518,7 @@ public class MappingProfiles : Profile
  
 ```bash
 dotnet add package FluentValidation
-dotnet add package FluentValidation.AspNetCore # ASP.NET Core, al tener el paquete FluentValidation.AspNetCore, valida automáticamente los modelos decorados con [ApiController].
+dotnet add package FluentValidation.AspNetCore # ASP.NET Core, al tener el paquete FluentValidation.AspNetCore, valida automáticamente los modelos decorados con [ApiController]. Se instala solo en API
 ```
 
 2. Configuración en __Program.cs__.
@@ -2537,7 +2537,121 @@ builder.Services.AddControllers()
 
 ```
 
+- Lo anterior solo funciona con versiones abajo de la 12. La siguiente configuración debe usarse para las nuevas versiones.
+
+```c#
+// Registrar FluentValidation (nuevo enfoque)
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
+
+// Registrar validadores de tu ensamblado
+builder.Services.AddValidatorsFromAssemblyContaining<BaseAuthDto>();
+```
+
 ##### 6.2.2.1 Ejemplo de uso
+###### Ejemplo 1. Usado en proyecto InTouchIO para Auth
+1. Crear DTO base de autenticación
+
+__Application/DTOs/Auth/BaseAuthDto.cs__
+```c#
+using System;
+
+namespace Application.DTOs.Auth;
+
+public class BaseAuthDto
+{
+    public string Email { get; set; } = null!;
+    public string Password { get; set; } = null!;
+}
+```
+
+2. Crear BaseAuthValidator con normalización de email.
+
+__Application/Auth/Validators/BaseAuthValidator.cs__
+```c#
+using System;
+using Application.DTOs.Auth;
+using FluentValidation;
+
+namespace Application.Auth.Validators;
+
+public class BaseAuthValidator<T> : AbstractValidator<T> where T : BaseAuthDto
+{
+    public BaseAuthValidator()
+    {
+        RuleFor(x => x.Email)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage("Email is required")
+            .EmailAddress().WithMessage("Invalid email format")
+            .Custom((email, context) =>
+            {
+                var normalized = BaseAuthValidator<T>.NormalizeEmail(email);
+                context.InstanceToValidate.Email = normalized;
+            }); ;
+
+        RuleFor(x => x.Password)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage("Password is required")
+            .MinimumLength(5).WithMessage("Password should have al least y characters");
+    }
+
+    private static string NormalizeEmail(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return string.Empty;
+
+        email = email.Trim().ToLowerInvariant();
+
+        var parts = email.Split('@');
+        if (parts.Length == 2 && (parts[1] == "gmail.com" || parts[1] == "googlemail.com"))
+        {
+            parts[0] = parts[0].Replace(".", ""); // quitamos puntos del username
+            email = $"{parts[0]}@{parts[1]}";
+        }
+
+        return email;
+    }
+}
+
+```
+
+3. Heredar a validaciones:
+
+```c#
+using System;
+using Application.DTOs.Auth;
+
+namespace Application.Auth.Validators;
+
+public class LoginUserValidator : BaseAuthValidator<LoginUserDto>
+{
+    public LoginUserValidator()
+    {
+
+    }
+
+}
+```
+
+```c#
+using System;
+using Application.DTOs.Auth;
+using FluentValidation;
+
+namespace Application.Auth.Validators;
+
+public class RegisterUserValidator : BaseAuthValidator<RegisterUserDto>
+{
+    public RegisterUserValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Name must not be empty")
+            .MinimumLength(3).WithMessage("Name should have at least 3 letters");
+    }
+}
+```
+
+###### Ejemplo 2
 1. Crear DTO.
 
 ```c#

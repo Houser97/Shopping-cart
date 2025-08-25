@@ -31,6 +31,10 @@ public class ProductsService(
         return await _serviceHelper.ExecuteSafeAsync(async () =>
         {
             var productWithReviews = await _productsRepository.GetProductByIdAsync(id);
+
+            if (productWithReviews is null)
+                return Result<ProductDto>.Failure($"Product with id: {id} not found", 404);
+
             var productDto = mapper.Map<ProductDto>(productWithReviews);
             return Result<ProductDto>.Success(productDto);
         });

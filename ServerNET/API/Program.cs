@@ -15,6 +15,9 @@ using MongoDB.Driver;
 using Persistence;
 using Persistence.Configurations;
 using Persistence.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Application.DTOs.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +106,12 @@ builder.Services
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
+
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
+
+builder.Services.AddValidatorsFromAssemblyContaining<BaseAuthDto>();
 
 var app = builder.Build();
 

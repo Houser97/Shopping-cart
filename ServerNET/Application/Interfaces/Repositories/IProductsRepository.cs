@@ -6,5 +6,5 @@ namespace Application.Interfaces.Repositories;
 public interface IProductsRepository
 {
     Task<List<ProductWithReviews>> GetProductsAsync();
-    Task<ProductWithReviews> GetProductByIdAsync(string id);
+    Task<ProductWithReviews?> GetProductByIdAsync(string id);
 }

@@ -46,7 +46,7 @@ public class ProductsRepository(
             );
     }
 
-    public async Task<ProductWithReviews> GetProductByIdAsync(string id)
+    public async Task<ProductWithReviews?> GetProductByIdAsync(string id)
     {
         return await BuildBaseProductAggregation(_productsCollection)
             .Match(p => p.Id == id)

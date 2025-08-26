@@ -1,17 +1,19 @@
+using System;
 using Application.DTOs.Products;
-using Application.Services;
-using Microsoft.AspNetCore.Http;
+using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController(ProductsService productsService) : ControllerBase
+    public class ProductsController(IProductsService productsService) : ControllerBase
     {
-        private readonly ProductsService _productsService = productsService;
+        private readonly IProductsService _productsService = productsService;
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductDto>>> GetProducts()
         {
             var result = await _productsService.GetProductsAsync();
@@ -23,6 +25,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProductDto>> GetProductById(string id)
         {
             var result = await _productsService.GetProductById(id);

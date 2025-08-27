@@ -56,7 +56,7 @@ public class CartService(
             var cartProduct = await _cartRepository.DeleteByIdAsync(id, cancellationToken);
 
             if (cartProduct == null)
-                return Result<CartProductDto>.Failure($"Cart product with id: {id} could not be deleted", 400);
+                return Result<CartProductDto>.Failure($"Cart product with id: {id} not found", 404);
 
             var cartProductDto = _mapper.Map<CartProductDto>(cartProduct);
 
@@ -85,7 +85,7 @@ public class CartService(
             var updatedCartProduct = await _cartRepository.UpdateAsync(id, updateCartProductDto, cancellationToken);
 
             if (updatedCartProduct == null)
-                return Result<CartProductDto>.Failure($"Cart product with id: {id} could not be updated", 400);
+                return Result<CartProductDto>.Failure($"Cart product with id: {id} could not be updated", 404);
 
             var cartProductDto = _mapper.Map<CartProductDto>(updatedCartProduct);
 

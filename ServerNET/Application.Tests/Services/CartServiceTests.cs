@@ -6,7 +6,6 @@ using Application.Interfaces.Accessors;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.Services;
-using Application.Tests.Builders;
 using Application.Tests.Builders.Cart;
 using Application.Tests.Builders.Products;
 using Application.Tests.Helpers;

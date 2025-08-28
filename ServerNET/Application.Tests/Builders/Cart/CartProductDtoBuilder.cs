@@ -1,9 +1,8 @@
 using System;
 using Application.DTOs.Cart;
 
-namespace Application.Tests.Builders;
+namespace Application.Tests.Builders.Cart;
 
-#pragma warning disable IDE0044
 public class CartProductDtoBuilder
 {
     private string _id = Guid.NewGuid().ToString();

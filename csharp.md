@@ -165,6 +165,11 @@
     - [8.5 Tests de integración](#85-tests-de-integración)
       - [8.5.1 Set up](#851-set-up)
       - [8.5.2 xUnit](#852-xunit)
+    - [8.6 Testing MongoDB, librerías externas](#86-testing-mongodb-librerías-externas)
+      - [8.6.1 Testing de llaves duplicadas](#861-testing-de-llaves-duplicadas)
+        - [Uso de reflection](#uso-de-reflection)
+          - [Alternativas](#alternativas)
+        - [Ejemplo](#ejemplo-1)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 
@@ -5028,6 +5033,169 @@ volumes:
 
 #### 8.5.2 xUnit
 
+### 8.6 Testing MongoDB, librerías externas
+#### 8.6.1 Testing de llaves duplicadas
+- Este error sucede cuando se intenta por ejemplo insertar en base de datos con campos que ya existen en la base de datos. Los campos de interés se les definieron índices para poder lanzar excepciones de MongoWriteException.
+
+1. Create archivo __ServerNET\Application.Tests\Helpers\MongoTestHelpers.cs__
+
+```c#
+using System;
+using System.Net;
+using System.Reflection;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Core.Clusters;
+using MongoDB.Driver.Core.Connections;
+using MongoDB.Driver.Core.Servers;
+
+namespace Application.Tests.Helpers;
+
+public static class MongoTestHelpers
+{
+    public static MongoWriteException CreateDuplicateKeyException()
+    {
+        // Fake connectionId
+        var connectionId = new ConnectionId(new ServerId(new ClusterId(1), new DnsEndPoint("localhost", 27017)), 1);
+
+        // Crear WriteError (usando constructor interno)
+        var writeErrorCtor = typeof(WriteError)
+            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+            .First();
+
+        var writeError = (WriteError)writeErrorCtor.Invoke(
+        [
+            ServerErrorCategory.DuplicateKey,
+            11000,
+            "E11000 duplicate key error collection",
+            new BsonDocument("details", "duplicate key")
+        ]);
+
+        // WriteConcernError es opcional, puede ir null
+        return new MongoWriteException(connectionId, writeError, null, null);
+    }
+}
+```
+
+##### Uso de reflection
+- La clase WriteError del driver de MongoDB tiene un constructor internal, no público.
+- Eso significa que, normalmente, tú no puedes crear instancias de WriteError en tu código de test.
+- Pero en tu servicio necesitas simular un MongoWriteException con DuplicateKey, y ese constructor pide un WriteError válido.
+
+- En código productivo, sí es mala idea: rompe el encapsulamiento y puede dejarte atado a cambios internos de la librería.
+- En tests unitarios, está mucho más aceptado, porque:
+  - No hay API pública para crear este tipo de excepción.
+  - Estás testeando cómo tu servicio reacciona a esa excepción.
+  - Si Mongo cambia sus internals, simplemente ajustas el helper de test (como MongoTestHelpers.CreateDuplicateKeyException()).
+
+1. Usamos BindingFlags.Instance | BindingFlags.NonPublic para localizar constructores internos.
+
+```c#
+var writeErrorCtor = typeof(WriteError)
+    .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+    .First();
+```
+
+2. Lo invocamos pasando los parámetros correctos:
+
+```c#
+var writeError = (WriteError)writeErrorCtor.Invoke(new object[] {
+    ServerErrorCategory.DuplicateKey,
+    11000,
+    "duplicate key",
+    new BsonDocument("details", "duplicate key")
+});
+```
+
+###### Alternativas
+1. Tests de integración: en lugar de mockear, levantas una instancia real de MongoDB y ejecutas un InsertAsync con datos duplicados. Eso genera el DuplicateKey de forma natural.
+    - Pros: sin reflection, más realista.
+    - Contras: más lento, dependes de MongoDB.
+
+2. Abstraer la excepción: en tu repo, atrapar MongoWriteException y convertirla en una excepción propia (DuplicateKeyException : Exception).
+    - En los tests, ya no tienes que simular Mongo directamente, sino que puedes lanzar tu excepción custom.
+    - Pros: más simple.
+    - Contras: pierdes un poco de fidelidad al comportamiento exacto de Mongo.
+
+##### Ejemplo
+```c#
+using System;
+using Application.Aggregates;
+using Application.Core;
+using Application.DTOs.Cart;
+using Application.Interfaces.Accessors;
+using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
+using Application.Services;
+using Application.Tests.Helpers;
+using AutoMapper;
+using Moq;
+
+namespace Application.Tests.Services;
+
+public class CartServiceTests
+{
+    private readonly Mock<ICartRepository> _cartRepositoryMock;
+    private readonly Mock<IServiceHelper<CartService>> _serviceHelperMock;
+    private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IUserAccessor> _userAccessorMock;
+    private readonly CartService _cartService;
+
+    public CartServiceTests()
+    {
+        _cartRepositoryMock = new Mock<ICartRepository>();
+        _serviceHelperMock = new Mock<IServiceHelper<CartService>>();
+        _mapperMock = new Mock<IMapper>();
+        _userAccessorMock = new Mock<IUserAccessor>();
+
+        _userAccessorMock
+            .Setup(x => x.GetUserId())
+            .Returns("fake-user-id");
+
+        _serviceHelperMock
+            .Setup(x => x.ExecuteSafeAsync(It.IsAny<Func<Task<Result<List<CartProductDto>>>>>()))
+            .Returns((Func<Task<Result<List<CartProductDto>>>> func) => func());
+
+        _cartService = new CartService(
+            _cartRepositoryMock.Object,
+            _serviceHelperMock.Object,
+            _mapperMock.Object,
+            _userAccessorMock.Object
+        );
+    }
+
+    [Fact]
+    public async Task CreateCartProduct_WhenDuplicateKey_Throws_ReturnsFailure()
+    {
+        // Arrange
+        var fakeCreateProductDto = new CreateCartProductDto
+        {
+            UserId = "fake-user-id",
+            ProductId = "fake-product-id",
+            Quantity = 5
+        };
+
+        var duplicateKeyEx = MongoTestHelpers.CreateDuplicateKeyException();
+
+        _cartRepositoryMock
+            .Setup(x => x.InsertAsync(It.IsAny<CreateCartProductDto>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(duplicateKeyEx);
+
+        _serviceHelperMock
+            .Setup(x => x.ExecuteSafeAsync(It.IsAny<Func<Task<Result<CartProductDto>>>>()))
+            .Returns((Func<Task<Result<CartProductDto>>> func) => func());
+
+        // Act
+        var result = await _cartService.CreateCartProduct(fakeCreateProductDto);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Equal("Product is already in the cart", result.Error);
+        Assert.Equal(400, result.Code);
+    }
+
+}
+```
 
 
 ## Temas pendientes por documentar

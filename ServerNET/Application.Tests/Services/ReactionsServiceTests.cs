@@ -305,4 +305,67 @@ public class ReactionsServiceTests
         result.Code.Should().Be(400);
     }
 
+    [Fact]
+    public async Task UpdateReaction_ValidDto_ReturnsSuccess()
+    {
+        // Arrange - Reaction Id
+        var reactionId = "reaction-id";
+
+        //Arrange - UpdateReactionDto
+        var updateReactionDto = new UpdateReactionDtoBuilder()
+            .WithAuthorId(UserId)
+            .Build();
+
+        //Arrange - Entity
+        var reaction = new ReactionBuilder()
+            .WithReviewId(updateReactionDto.ReviewId)
+            .WithReaction(updateReactionDto.Reaction)
+            .WithAuthorId(updateReactionDto.AuthorId!)
+            .Build();
+
+        //Arrange - Dto
+        var reactionDto = new ReactionDtoBuilder()
+            .WithId(reaction.Id)
+            .WithAuthorId(reaction.AuthorId)
+            .WithReviewId(reaction.ReviewId)
+            .WithProductId(reaction.ProductId)
+            .WithReaction(reaction.Reaction)
+            .Build();
+
+        _reactionsRepositoryMock
+            .Setup(x => x.UpdateAsync(
+                It.Is<string>(s => s == reactionId),
+                It.Is<UpdateReactionDto>(u =>
+                    u.AuthorId == updateReactionDto.AuthorId &&
+                    u.ReviewId == updateReactionDto.ReviewId &&
+                    u.Reaction == updateReactionDto.Reaction
+                )
+            ))
+            .ReturnsAsync(reaction);
+
+        _mapperMock
+            .Setup(x => x.Map<ReactionDto>(reaction))
+            .Returns(reactionDto);
+
+        //Act
+        var result = await _reactionsService.UpdateReaction(reactionId, updateReactionDto);
+
+        //Assert
+        _reactionsRepositoryMock
+            .Verify(x => x.UpdateAsync(
+                It.Is<string>(s => s == reactionId),
+                It.Is<UpdateReactionDto>(u =>
+                    u.AuthorId == updateReactionDto.AuthorId &&
+                    u.ReviewId == updateReactionDto.ReviewId &&
+                    u.Reaction == updateReactionDto.Reaction
+                )
+            ), Times.Once());
+
+        _mapperMock
+            .Verify(x => x.Map<ReactionDto>(reaction), Times.Once());
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(reactionDto, options => options.WithoutStrictOrdering());
+    }
+
 }

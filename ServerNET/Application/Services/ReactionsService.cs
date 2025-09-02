@@ -79,6 +79,10 @@ public class ReactionsService(
             updateReactionDto.AuthorId = userId;
 
             var result = await _reactionsRepository.UpdateAsync(id, updateReactionDto);
+
+            if (result == null)
+                return Result<ReactionDto>.Failure("Reaction not found or not owned by user", 404);
+
             var reactionDto = _mapper.Map<ReactionDto>(result);
 
             return Result<ReactionDto>.Success(reactionDto);

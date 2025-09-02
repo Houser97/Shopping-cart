@@ -47,7 +47,7 @@ public class ReviewsRepository(
         return await _reviewsCollection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task<Review> GetByProductIdAndUserIdAsync(string productId, string userId)
+    public async Task<Review?> GetByProductIdAndUserIdAsync(string productId, string userId)
     {
         var filter = Builders<Review>.Filter.And(
             Builders<Review>.Filter.Eq(review => review.ProductId, productId),

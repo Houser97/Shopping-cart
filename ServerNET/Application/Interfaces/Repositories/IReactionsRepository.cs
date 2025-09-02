@@ -9,5 +9,5 @@ public interface IReactionsRepository
     Task<List<Reactions>> GetByProductIdAndAuthorIdAsync(string productId, string authorId);
     Task<List<ReviewReactionCountDto>> GetReviewsTotalReactionsAsync(List<string> reviewIds);
     Task<Reactions> InsertAsync(CreateReactionDto createReactionDto);
-    Task<Reactions> UpdateAsync(string id, UpdateReactionDto updateReactionDto);
+    Task<Reactions?> UpdateAsync(string id, UpdateReactionDto updateReactionDto);
 }

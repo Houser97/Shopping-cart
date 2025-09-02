@@ -70,7 +70,7 @@ public class ReactionsRepository(
         return reaction;
     }
 
-    public async Task<Reactions> UpdateAsync(string id, UpdateReactionDto updateReactionDto)
+    public async Task<Reactions?> UpdateAsync(string id, UpdateReactionDto updateReactionDto)
     {
         var filter = Builders<Reactions>.Filter.Eq(r => r.Id, id);
         var update = Builders<Reactions>.Update.Set(r => r.Reaction, updateReactionDto.Reaction);

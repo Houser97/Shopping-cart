@@ -8,7 +8,7 @@ namespace Application.Interfaces.Repositories;
 public interface IReviewsRepository
 {
     Task<Review> GetByIdAsync(string id);
-    Task<Review> GetByProductIdAndUserIdAsync(string productId, string userId);
+    Task<Review?> GetByProductIdAndUserIdAsync(string productId, string userId);
     Task<List<ReviewWithDetails>> GetPagedReviewsWithDetails(string productId, int page, int limit);
     Task<long> CountByProductIdAsync(string productId);
     Task InsertAsync(Review review);

@@ -48,7 +48,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task GetReactionsByProductIdAndAuthorId_ReturnsExpectedReactions()
+    public async Task GetReactionsByProductIdAndAuthorId_ShouldReturnExpectedReactions()
     {
         // Arrange
         string productId = "fake-product-id";
@@ -106,7 +106,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task GetReactionsByProductIdAndAuthorId_WhenProductIdNotFound_ReturnsEmptyResult()
+    public async Task GetReactionsByProductIdAndAuthorId_WhenProductIdNotFound_ShouldReturnEmptyResult()
     {
         // Arrange
         string productId = "id-product-not-fount";
@@ -149,7 +149,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task GetReviewsTotalReactions_ShouldReturnMappedReactionCounts_WhenReviewIdsAreValid()
+    public async Task GetReviewsTotalReactions_ShouldReturnMappedReactionCounts()
     {
         //Arrange
         var reviewIds = new List<string> { "id-1", "id-2" };
@@ -189,7 +189,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task GetReviewsTotalReactions_ShouldReturnEmpty_WhenReviewsNotFound()
+    public async Task GetReviewsTotalReactions_WhenReviewsNotFound_ShouldReturnEmpty()
     {
         // Arrage
         var reviewsIds = new List<string> { "id-1", "id-2" };
@@ -216,7 +216,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task CreateReaction_ReturnsSuccess()
+    public async Task CreateReaction_ShouldReturnSuccess()
     {
         //Arrange - CreateReactionDto
         var createReactionDto = new CreateReactionDtoBuilder()
@@ -271,7 +271,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task CreateReaction_WhenReactionAlreadyExists_Throws_ReturnsFailure()
+    public async Task CreateReaction_WhenReactionAlreadyExists_Throws_ShouldReturnFailure()
     {
         //Arrange - CreateReactionDto
         var createReactionDto = new CreateReactionDtoBuilder()
@@ -306,7 +306,7 @@ public class ReactionsServiceTests
     }
 
     [Fact]
-    public async Task UpdateReaction_ValidDto_ReturnsSuccess()
+    public async Task UpdateReaction_ValidDto_ShouldReturnSuccess()
     {
         // Arrange - Reaction Id
         var reactionId = "reaction-id";
@@ -366,6 +366,47 @@ public class ReactionsServiceTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(reactionDto, options => options.WithoutStrictOrdering());
+    }
+
+    [Fact]
+    public async Task UpdateReaction_WhenReactionNotFound_ShouldReturnFailure()
+    {
+        // Arrange - Reaction Id
+        var reactionId = "reaction-id";
+
+        //Arrange - UpdateReactionDto
+        var updateReactionDto = new UpdateReactionDtoBuilder()
+            .WithAuthorId(UserId)
+            .Build();
+
+        _reactionsRepositoryMock
+            .Setup(x => x.UpdateAsync(
+                It.Is<string>(s => s == reactionId),
+                It.Is<UpdateReactionDto>(u =>
+                    u.AuthorId == updateReactionDto.AuthorId &&
+                    u.ReviewId == updateReactionDto.ReviewId &&
+                    u.Reaction == updateReactionDto.Reaction
+                )
+            ))
+            .ReturnsAsync((Reactions?)null);
+
+        //Act
+        var result = await _reactionsService.UpdateReaction(reactionId, updateReactionDto);
+
+        //Assert
+        _reactionsRepositoryMock
+            .Verify(x => x.UpdateAsync(
+                It.Is<string>(s => s == reactionId),
+                It.Is<UpdateReactionDto>(u =>
+                    u.AuthorId == updateReactionDto.AuthorId &&
+                    u.ReviewId == updateReactionDto.ReviewId &&
+                    u.Reaction == updateReactionDto.Reaction
+                )
+            ), Times.Once());
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Reaction not found or not owned by user");
+        result.Code.Should().Be(404);
     }
 
 }

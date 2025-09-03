@@ -5,12 +5,12 @@ namespace Application.Tests.Builders.Reactions;
 
 public class ReactionBuilder
 {
-    private string _id { get; set; } = Guid.NewGuid().ToString();
-    private string _authorId { get; set; } = Guid.NewGuid().ToString();
-    private string _productId { get; set; } = Guid.NewGuid().ToString();
-    private string _reviewId { get; set; } = Guid.NewGuid().ToString();
-    private ReactionType _reaction { get; set; } = ReactionType.love;
-    private DateTime _createdAt { get; set; } = DateTime.UtcNow;
+    private string _id = Guid.NewGuid().ToString();
+    private string _authorId = Guid.NewGuid().ToString();
+    private string _productId = Guid.NewGuid().ToString();
+    private string _reviewId = Guid.NewGuid().ToString();
+    private ReactionType _reaction = ReactionType.love;
+    private DateTime _createdAt = DateTime.UtcNow;
 
     public ReactionBuilder WithId(string id)
     {

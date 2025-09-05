@@ -483,5 +483,164 @@ public class ReviewsServiceTests
         result.Code.Should().Be(expectedCode);
     }
 
+    [Fact]
+    public async Task UpdateReview_ShouldReturnSuccess_WhenDtoIsValid()
+    {
+        // Arrange
+        string reviewId = "review-id";
+
+        // Arrange - Dto
+        var updateReviewDto = new UpdateReviewDtoBuilder()
+            .Build();
+
+        // Arrange - updated review entity
+        var review = new ReviewBuilder()
+            .WithAuthorId(UserId)
+            .WithComment(updateReviewDto.Comment)
+            .WithRating(updateReviewDto.Rating)
+            .Build();
+
+        // Arrange - Expected result (ReviewDto)
+        var reviewDto = new ReviewDtoBuilder()
+            .WithAuthor(
+                new ReviewUserDtoBuilder()
+                    .WithId(UserId)
+                    .Build())
+            .WithComment(review.Comment)
+            .WithRating(review.Rating)
+            .Build();
+
+        _reviewsRepositoryMock
+            .Setup(x => x.UpdateAsync(
+                It.Is<string>(s => s == reviewId),
+                It.Is<UpdateReviewDto>(u =>
+                    u.AuthorId == UserId &&
+                    u.Comment == updateReviewDto.Comment &&
+                    u.Rating == updateReviewDto.Rating
+                )
+            ))
+            .ReturnsAsync(review)
+            .Verifiable();
+
+        _mapperMock
+            .Setup(x => x.Map<ReviewDto>(It.IsAny<Review>()))
+            .Returns(reviewDto)
+            .Verifiable();
+
+        //Act
+        var result = await _reviewsService.UpdateReview(reviewId, updateReviewDto);
+
+        //Assert
+        _reviewsRepositoryMock.VerifyAll();
+        _mapperMock.VerifyAll();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(reviewDto);
+    }
+
+    [Fact]
+    public async Task UpdateReview_ShouldReturnNotFound_WhenReviewDoesNotExist()
+    {
+        // Arrange
+        string reviewId = "review-id";
+
+        // Arrange - Dto
+        var updateReviewDto = new UpdateReviewDtoBuilder()
+            .Build();
+
+        _reviewsRepositoryMock
+            .Setup(x => x.UpdateAsync(
+                It.Is<string>(s => s == reviewId),
+                It.Is<UpdateReviewDto>(u =>
+                    u.AuthorId == updateReviewDto.AuthorId &&
+                    u.Comment == updateReviewDto.Comment &&
+                    u.Rating == updateReviewDto.Rating
+                )
+            ))
+            .ReturnsAsync((Review?)null)
+            .Verifiable();
+
+        //Act
+        var result = await _reviewsService.UpdateReview(reviewId, updateReviewDto);
+
+        // Assert
+        _reviewsRepositoryMock.VerifyAll();
+        _mapperMock.Verify(x => x.Map<ReviewDto>(It.IsAny<Review>()), Times.Never);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be($"Review with id: {reviewId} not found");
+        result.Code.Should().Be(404);
+    }
+
+    [Fact]
+    public async Task DeleteReview_ReturnsSuccess_WhenReviewExists()
+    {
+        //Arrange
+        string reviewId = "id";
+
+        //Arrange - Deleted review entity
+        var review = new ReviewBuilder()
+            .WithId(reviewId)
+            .Build();
+
+        //Arrange - Expected result (reviewDto)
+        var reviewDto = new ReviewDtoBuilder()
+            .WithAuthor(
+                new ReviewUserDtoBuilder()
+                    .WithId(UserId)
+                    .Build()
+            )
+            .Build();
+
+        _reviewsRepositoryMock
+            .Setup(x => x.DeleteAsync(
+                It.Is<string>(s => s == reviewId),
+                It.Is<string>(a => a == UserId)
+            ))
+            .ReturnsAsync(review)
+            .Verifiable();
+
+        _mapperMock
+            .Setup(x => x.Map<ReviewDto>(It.IsAny<Review>()))
+            .Returns(reviewDto)
+            .Verifiable();
+
+        //Act
+        var result = await _reviewsService.DeleteReview(reviewId);
+
+        //Assert
+        _reviewsRepositoryMock.VerifyAll();
+        _mapperMock.VerifyAll();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(reviewDto);
+    }
+
+    [Fact]
+    public async Task DeleteReview_ShouldReturnNotFound_WhenReviewDoesNotExist()
+    {
+        //Arrange
+        string reviewId = "id";
+
+        _reviewsRepositoryMock
+            .Setup(x => x.DeleteAsync(
+                It.Is<string>(s => s == reviewId),
+                It.Is<string>(a => a == UserId)
+            ))
+            .ReturnsAsync((Review?)null);
+
+        //Act
+        var result = await _reviewsService.DeleteReview(reviewId);
+
+        //Assert
+        _reviewsRepositoryMock
+            .Verify(x => x.DeleteAsync(
+                It.Is<string>(s => s == reviewId),
+                It.Is<string>(a => a == UserId)
+            ), Times.Once);
+        _mapperMock.Verify(x => x.Map<ReviewDto>(It.IsAny<Review>()), Times.Never);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Review not found");
+        result.Code.Should().Be(404);
+    }
 
 }

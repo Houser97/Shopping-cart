@@ -144,6 +144,9 @@
   - [8. Testing](#8-testing)
     - [8.1 xUnit](#81-xunit)
       - [8.1.1 Setup](#811-setup)
+      - [8.1.2 Elementos](#812-elementos)
+        - [Fact vs Theory](#fact-vs-theory)
+        - [InlineData](#inlinedata)
     - [8.2 Moq](#82-moq)
       - [8.2.1 Funcionalidades](#821-funcionalidades)
         - [8.2.1.1 Setup](#8211-setup)
@@ -4110,6 +4113,132 @@ dotnet sln add Application.Tests
    1. Moq
    2. FluentAssertions
 
+#### 8.1.2 Elementos
+##### Fact vs Theory
+- Se puede ver a [Theory] como un “test plantilla” que recibe inputs, y [Fact] como un test concreto y fijo.
+
+  - [Fact] significa: "este test no necesita parámetros, es un caso único y fijo".
+  - [Theory] significa: "este test puede ejecutarse varias veces con distintos valores (datos de entrada)".
+
+##### InlineData
+- [InlineData] es la forma más común de inyectar datos directamente en el test.
+- Ejemplo sencillo:
+
+```c#
+[Theory]
+[InlineData(2, 2, 4)]
+[InlineData(3, 5, 8)]
+[InlineData(10, 20, 30)]
+public void Add_ShouldReturnSum_WhenTwoNumbersAreAdded(int a, int b, int expected)
+{
+    var result = a + b;
+
+    Assert.Equal(expected, result);
+}
+
+```
+
+🔎 ¿Qué pasa aquí?
+
+- El test Add_ShouldReturnSum_WhenTwoNumbersAreAdded se ejecuta tres veces, una por cada [InlineData].
+- Primera ejecución: a=2, b=2, expected=4.
+- Segunda ejecución: a=3, b=5, expected=8.
+- Tercera ejecución: a=10, b=20, expected=30.
+
+👉 En resumen: [Theory] convierte el test en “paramétrico” y [InlineData] define las combinaciones de datos.
+
+
+📌 3. Ventajas
+
+1. Menos duplicación → En lugar de escribir tres tests separados con Fact, escribes uno que se repite con distintos inputs.
+2. Más legible → Ves de un vistazo todos los casos que quieres cubrir.
+3. Fácil de extender → Solo agregas otra línea [InlineData(...)] y ya tienes un nuevo caso.
+
+
+- Ejemplo con test de creación de reviews.
+
+__Servicio__
+```c#
+public async Task<Result<ReviewDto>> CreateReview(CreateReviewDto createReviewDto)
+{
+    return await _serviceHelper.ExecuteSafeAsync(async () =>
+    {
+
+        var productId = createReviewDto.ProductId;
+        var authorId = _userAccessor.GetUserId()!;
+
+        var productExistsTask = productsService.GetProductById(productId);
+        var reviewExistsTask = _reviewsRepository.GetByProductIdAndUserIdAsync(productId, authorId);
+
+        await Task.WhenAll(productExistsTask, reviewExistsTask);
+
+        var productExists = await productExistsTask;
+        var reviewExists = await reviewExistsTask;
+
+        if (productExists.Value == null || !productExists.IsSuccess)
+            return Result<ReviewDto>.Failure("Product does not exist", 400);
+
+        if (reviewExists is not null)
+            return Result<ReviewDto>.Failure("Review already exists", 400);
+
+        var review = new Review
+        {
+            ProductId = productId,
+            AuthorId = authorId,
+            Comment = createReviewDto.Comment,
+            Rating = createReviewDto.Rating,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        await _reviewsRepository.InsertAsync(review);
+
+        var reviewDto = _mapper.Map<ReviewDto>(review);
+        return Result<ReviewDto>.Success(reviewDto);
+
+
+
+    });
+}
+```
+
+__Test__
+```c#
+[Theory]
+[InlineData(false, null, "Product does not exist", 400)]
+[InlineData(true, "existingReview", "Review already exists", 400)]
+public async Task CreateReview_ShouldReturnFailure_InDifferentScenarios(
+    bool productExists, string? reviewExists, string expectedError, int expectedCode)
+{
+    var dto = new CreateReviewDtoBuilder().WithAuthorId(UserId).Build();
+
+    if (productExists)
+    {
+        var product = new ProductDtoBuilder().Build();
+        _productsServiceMock
+            .Setup(x => x.GetProductById(dto.ProductId))
+            .ReturnsAsync(Result<ProductDto>.Success(product));
+    }
+    else
+    {
+        _productsServiceMock
+            .Setup(x => x.GetProductById(dto.ProductId))
+            .ReturnsAsync(Result<ProductDto>.Failure("Not found", 404));
+    }
+
+    _reviewsRepositoryMock
+        .Setup(x => x.GetByProductIdAndUserIdAsync(dto.ProductId, dto.AuthorId!))
+        .ReturnsAsync(reviewExists == null ? null : new Review());
+
+    // Act
+    var result = await _reviewsService.CreateReview(dto);
+
+    // Assert
+    result.IsSuccess.Should().BeFalse();
+    result.Error.Should().Be(expectedError);
+    result.Code.Should().Be(expectedCode);
+}
+```
 
 ### 8.2 Moq
 - Es una librería que permite crear objetos falsos (mocks) para simular dependencias externas, como bases de datos, servicios HTTP, etc.

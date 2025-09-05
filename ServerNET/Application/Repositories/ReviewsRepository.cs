@@ -31,7 +31,7 @@ public class ReviewsRepository(
         return await _reviewsCollection.CountDocumentsAsync(r => r.ProductId == productId);
     }
 
-    public async Task<Review> DeleteAsync(string id, string userId)
+    public async Task<Review?> DeleteAsync(string id, string userId)
     {
         var filter = Builders<Review>.Filter.And(
             Builders<Review>.Filter.Eq(r => r.Id, id),
@@ -95,7 +95,7 @@ public class ReviewsRepository(
         await _reviewsCollection.InsertOneAsync(review);
     }
 
-    public async Task<Review> UpdateAsync(string id, UpdateReviewDto updateReviewDto)
+    public async Task<Review?> UpdateAsync(string id, UpdateReviewDto updateReviewDto)
     {
         var Comment = updateReviewDto.Comment;
         var Rating = updateReviewDto.Rating;

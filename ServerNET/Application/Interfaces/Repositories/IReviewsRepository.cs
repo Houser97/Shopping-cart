@@ -12,7 +12,7 @@ public interface IReviewsRepository
     Task<List<ReviewWithDetails>> GetPagedReviewsWithDetails(string productId, int page, int limit);
     Task<long> CountByProductIdAsync(string productId);
     Task InsertAsync(Review review);
-    Task<Review> UpdateAsync(string id, UpdateReviewDto updateReviewDto);
-    Task<Review> DeleteAsync(string id, string userId);
+    Task<Review?> UpdateAsync(string id, UpdateReviewDto updateReviewDto);
+    Task<Review?> DeleteAsync(string id, string userId);
 
 }

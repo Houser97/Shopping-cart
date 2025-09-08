@@ -1,5 +1,10 @@
 import { Meta } from "./product-db.response";
 
+interface ReviewDBResponseData {
+    reviews: ReviewDB[];
+    totalReactions: { [key: string]: any };
+}
+
 export interface ReviewDBResponse {
     page: number;
     limit: number;
@@ -7,13 +12,12 @@ export interface ReviewDBResponse {
     totalPages: number;
     next: string | null;
     prev: string | null;
-    reviews: ReviewDB[];
+    data: ReviewDBResponseData;
     userReactions: { [key: string]: any };
-    totalReactions: { [key: string]: any };
 }
 
 export interface ReviewDB {
-    _id: string;
+    id: string;
     productId: string;
     authorId: string;
     rating: number;

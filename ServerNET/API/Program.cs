@@ -123,6 +123,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+    .AllowCredentials()
+    .WithOrigins("http://localhost:5173", "https://localhost:3000"));
 
 app.UseAuthentication();
 app.UseAuthorization();

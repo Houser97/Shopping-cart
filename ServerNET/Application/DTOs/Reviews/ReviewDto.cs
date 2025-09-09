@@ -7,6 +7,7 @@ namespace Application.DTOs.Reviews;
 public class ReviewDto
 {
     public string Id { get; set; } = string.Empty;
+    public string AuthorId { get; set; } = string.Empty;
     public string ProductId { get; set; } = string.Empty;
     public string Comment { get; set; } = string.Empty;
     public int Rating { get; set; }

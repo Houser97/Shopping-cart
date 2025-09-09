@@ -1,5 +1,6 @@
 using Application.DTOs.Reactions;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -14,6 +15,7 @@ namespace API.Controllers
         private readonly IReactionsService _reactionsService = reactionsService;
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult> GetReviewsTotalReactions()
         {
             var reviewIds = new List<string> { "669098c2d320479fd751770b", "6697405a916b46594c94b2ee", "684753490c18edfeb4cdef42", "66c23ca1b99b41183ab91210" };
@@ -26,6 +28,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{productId}")]
+        [AllowAnonymous]
         public async Task<ActionResult> GetReactionsByProductIdAndUserId(string productId)
         {
             var result = await _reactionsService.GetReactionsByProductIdAndAuthorId(productId);

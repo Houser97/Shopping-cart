@@ -12,7 +12,7 @@ export class ReviewDbDatasource extends ReviewDatasource {
 
     async getReviews(productId: string): Promise<GetReviewsType> {
         const { data } = await shoppingApi.get<ReviewDBResponse>(`/reviews/product/${productId}`);
-        const { totalReactions, reviews: reviewsDB } = data;
+        const { totalReactions, reviews: reviewsDB } = data.data;
 
         const reviews = reviewsDB.map(ReviewMapper.fromDbCastToDetailedReview);
 

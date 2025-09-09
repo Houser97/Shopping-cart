@@ -10,6 +10,7 @@ public class ProductDto
     public decimal Price { get; set; }
     public double? Rating { get; set; }
     public int TotalReviews { get; set; }
+    public List<string> Images { get; set; } = [];
     public List<Review> Reviews { get; set; } = [];
 
 }

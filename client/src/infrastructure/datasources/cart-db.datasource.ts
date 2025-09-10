@@ -8,13 +8,13 @@ import { CartMapper } from "../mappers/cart.mapper";
 export class CartDbDatasource extends CartDatasource {
 
     async getProducts(): Promise<ProductCartObject> {
-        const { data } = await shoppingApi.get<ProductCartDBResponse[]>('/cart/products');
+        const { data } = await shoppingApi.get<ProductCartDBResponse[]>('/cart');
         return CartMapper.toProductCartObject(data);
     }
 
     async createProduct(userId: string, productId: string, quantity: number): Promise<ProductCart> {
         try {
-            const { data } = await shoppingApi.post<ProductCartDBResponse>('/cart/products', {
+            const { data } = await shoppingApi.post<ProductCartDBResponse>('/cart', {
                 userId,
                 productId,
                 quantity
@@ -28,7 +28,7 @@ export class CartDbDatasource extends CartDatasource {
 
     async updateProduct(id: string, quantity: number): Promise<ProductCart> {
         try {
-            const { data } = await shoppingApi.put(`/cart/products/${id}`, { quantity });
+            const { data } = await shoppingApi.put(`/cart/${id}`, { quantity });
             return data;
         } catch (error) {
             throw CustomError.formatError(error);
@@ -37,7 +37,7 @@ export class CartDbDatasource extends CartDatasource {
 
     async deleteProduct(id: string): Promise<ProductCart> {
         try {
-            const { data } = await shoppingApi.delete<ProductCartDBResponse>(`/cart/products/${id}`);
+            const { data } = await shoppingApi.delete<ProductCartDBResponse>(`/cart/${id}`);
             return CartMapper.toProductCart(data);
         } catch (error) {
             throw CustomError.formatError(error);
@@ -46,7 +46,7 @@ export class CartDbDatasource extends CartDatasource {
 
     async handlePayment(): Promise<boolean> {
         try {
-            const { data } = await shoppingApi.delete<boolean>('/cart/products');
+            const { data } = await shoppingApi.delete<boolean>('/cart');
             return data;
         } catch (error) {
             throw CustomError.formatError(error);

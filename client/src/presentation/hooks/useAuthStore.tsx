@@ -25,13 +25,13 @@ export const useAuthStore = () => {
     const startRegister = async ({ email, password, username }) => {
         dispatch(onChecking());
         try {
-            const { data } = await shoppingApi.post('/auth/register', { email, pwd: password, username });
+            const { data } = await shoppingApi.post('/auth/register', { email, password, name: username });
             localStorage.setItem('token', data.token);
             localStorage.setItem('token-init-date', new Date().getTime().toString());
             dispatch(onLogin(data.user));
 
         } catch (error) {
-            dispatch(onLogout(error.response.data?.error || 'Missing register message'));
+            dispatch(onLogout(error.response.data?.message || 'Missing register message'));
         }
     }
 
@@ -39,11 +39,11 @@ export const useAuthStore = () => {
     const checkAuthToken = async () => {
         const token = localStorage.getItem('token');
         if (!token) return dispatch(onLogout(''));
-
+        
         try {
-            const { data } = await shoppingApi.get('/auth');
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('token-init-date', new Date().getTime().toString());
+            const { data } = await shoppingApi.get('/auth/status');
+            // localStorage.setItem('token', data.token);
+            // localStorage.setItem('token-init-date', new Date().getTime().toString());
             dispatch(onLogin(data.user));
         } catch (error) {
             startLogout();

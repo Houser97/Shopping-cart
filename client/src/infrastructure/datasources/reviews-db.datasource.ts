@@ -21,7 +21,7 @@ export class ReviewDbDatasource extends ReviewDatasource {
 
     async getReviewByProductIdAndUserId(productId: string): Promise<Review> {
         try {
-            const { data } = await shoppingApi.get(`/reviews/${productId}`);
+            const { data } = await shoppingApi.get(`/reviews/user/${productId}`);
             if (!data) return ReviewMapper.emptyReview();
             return ReviewMapper.fromDbCastToReview(data);
         } catch (error) {

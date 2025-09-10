@@ -7,9 +7,10 @@ export class CustomError extends Error {
     }
 
     static formatError(error: any) {
+        console.log(error)
         if (error.response) {
             const { status, data } = error.response;
-            return new CustomError(status, data.error);
+            return new CustomError(status, data.message);
         }
         return new CustomError(500, error.message);
     }

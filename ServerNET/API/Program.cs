@@ -50,10 +50,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// builder.Services.AddAuthorizationBuilder()
+//     .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+//     .RequireAuthenticatedUser()
+//     .Build());
+
 builder.Services.AddAuthorizationBuilder()
-    .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-    .RequireAuthenticatedUser()
-    .Build());
+    .SetDefaultPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build());
 
 builder.Services.AddSingleton<ITokenGenerator, JwtTokenGenerator>();
 
@@ -127,9 +132,14 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
     .AllowCredentials()
     .WithOrigins("http://localhost:5173", "https://localhost:3000"));
 
+// Static fields
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

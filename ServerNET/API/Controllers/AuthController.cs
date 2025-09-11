@@ -52,6 +52,7 @@ namespace API.Controllers
         }
 
         [HttpGet("status")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetStatus()
         {
             var result = await _authService.GetAuthenticatedUser();

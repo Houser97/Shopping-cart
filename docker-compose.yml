@@ -1,0 +1,10 @@
+services:
+  shopping-cart:
+    build:
+      context: .
+      args:
+        VITE_API: ${VITE_API}
+    ports:
+      - 5000:8080
+    env_file:
+      - .env

@@ -453,6 +453,6 @@ public class CartServiceTests
         _cartRepositoryMock
             .Verify(x => x.ClearAllAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once());
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be(true);
+        result.Value.Should().BeTrue();
     }
 }

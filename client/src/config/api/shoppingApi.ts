@@ -1,6 +1,10 @@
 import axios from 'axios';
 // const url = 'http://localhost:3002/api'
-const url = 'https://shopping-cart-a2.onrender.com/api'
+// const url = 'https://shopping-cart-a2.onrender.com/api'
+// const url = 'https://localhost:5001/api'
+// const url = 'http://localhost:5000/api';
+const url = import.meta.env.VITE_API;
+
 const shoppingApi = axios.create({
     baseURL: url
 });

@@ -44,5 +44,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /usr/src/app
 COPY --from=server-build /app/publish ./
 COPY --from=client-build /usr/src/client/dist ./wwwroot
+ENV ASPNETCORE_URLS=http://+:$PORT
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "API.dll"]

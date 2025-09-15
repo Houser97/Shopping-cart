@@ -25,6 +25,11 @@ export class ReviewDbDatasource extends ReviewDatasource {
             if (!data) return ReviewMapper.emptyReview();
             return ReviewMapper.fromDbCastToReview(data);
         } catch (error) {
+            if (error.response) {
+                if (error.response.status == 404) {
+                    return ReviewMapper.emptyReview();
+                }   
+            }
             throw CustomError.formatError(error);
         }
     }

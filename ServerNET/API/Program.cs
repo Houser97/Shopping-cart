@@ -48,17 +48,34 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings?.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings!.Key))
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+            {
+                // Previene que ASP.NET meta su respuesta vacía
+                context.HandleResponse();
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(new
+                {
+                    success = false,
+                    message = "Debes iniciar sesión para acceder a este recurso."
+                }.ToString()!); // aquí podrías usar JsonSerializer
+            }
+    };
 });
 
-// builder.Services.AddAuthorizationBuilder()
-//     .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-//     .RequireAuthenticatedUser()
-//     .Build());
-
 builder.Services.AddAuthorizationBuilder()
-    .SetDefaultPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build());
+    .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build());
+
+// builder.Services.AddAuthorizationBuilder()
+//     .SetDefaultPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+//         .RequireAuthenticatedUser()
+//         .Build());
 
 builder.Services.AddSingleton<ITokenGenerator, JwtTokenGenerator>();
 
@@ -140,6 +157,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapFallbackToFile("index.html");
+app.MapFallbackToFile("index.html").AllowAnonymous();
 
 app.Run();

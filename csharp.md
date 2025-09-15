@@ -141,6 +141,7 @@
           - [Uso común](#uso-común)
           - [Qué pasa si no se usan constraints](#qué-pasa-si-no-se-usan-constraints)
     - [7.8 Limpieza de procesos dotnet](#78-limpieza-de-procesos-dotnet)
+    - [7.8 Variables de entorno React VITE](#78-variables-de-entorno-react-vite)
   - [8. Testing](#8-testing)
     - [8.1 xUnit](#81-xunit)
       - [8.1.1 Setup](#811-setup)
@@ -173,8 +174,11 @@
         - [Uso de reflection](#uso-de-reflection)
           - [Alternativas](#alternativas)
         - [Ejemplo](#ejemplo-1)
+  - [9. Dockerización](#9-dockerización)
+    - [9.1 Dockerización de servidor para despliegue (Backend y frontend)](#91-dockerización-de-servidor-para-despliegue-backend-y-frontend)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
+- [Pendientes:](#pendientes)
 
 
 
@@ -4072,6 +4076,9 @@ dotnet build --no-incremental
 
 ```
 
+### 7.8 Variables de entorno React VITE
+https://stackoverflow.com/questions/78114219/property-env-does-not-exist-on-type-importmeta-ts2339
+
 ## 8. Testing
 ### 8.1 xUnit
 - Se tienen varias librerías para hacer testing. En este ejemplo se ven las siguientes:
@@ -5326,6 +5333,11 @@ public class CartServiceTests
 }
 ```
 
+## 9. Dockerización
+### 9.1 Dockerización de servidor para despliegue (Backend y frontend)
+1. Crear dockerfile
+   1. El docker file se divide en diferentes fases (multi stage build) para reducir el tamaño de la imagen.
+
 
 ## Temas pendientes por documentar
 - EntityFrameworkRelationShips
@@ -5339,3 +5351,10 @@ public class CartServiceTests
 
 
 https://github.com/TryCatchLearn/Reactivities/blob/main/Application/Activities/Queries/GetActivityDetails.cs
+
+
+
+
+
+# Pendientes:
+    - Corregir mensajes de errores en el frontend. Actualmente no hay mensaje cuando se intenta acceder a recursos protegidos por JWT

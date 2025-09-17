@@ -176,6 +176,10 @@
         - [Ejemplo](#ejemplo-1)
   - [9. Dockerización](#9-dockerización)
     - [9.1 Dockerización de servidor para despliegue (Backend y frontend)](#91-dockerización-de-servidor-para-despliegue-backend-y-frontend)
+    - [9.2 Docker compose](#92-docker-compose)
+    - [9.3 Subir imagen en docker hub](#93-subir-imagen-en-docker-hub)
+    - [9.4 Despliegue usando docker](#94-despliegue-usando-docker)
+      - [9.4.1 Render](#941-render)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 - [Pendientes:](#pendientes)
@@ -5337,6 +5341,156 @@ public class CartServiceTests
 ### 9.1 Dockerización de servidor para despliegue (Backend y frontend)
 1. Crear dockerfile
    1. El docker file se divide en diferentes fases (multi stage build) para reducir el tamaño de la imagen.
+   2. Se agrega la sección de testing para evitar que la imagen se cree en caso de que algún test no pase.
+   3. Se sirve el frontend desde el servidor al colocar el build del frontend en: ./wwwroot
+
+```dockerfile
+# ---------------------------
+# Stage 1: Client build
+# ---------------------------
+FROM node:22-alpine AS client-build
+WORKDIR /usr/src/client
+COPY client/package*.json ./
+RUN npm ci
+COPY client/ ./
+ARG VITE_API
+ENV VITE_API=$VITE_API
+RUN npm run build
+
+# ---------------------------
+# Stage 2: Server base
+# ---------------------------
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS server-base
+WORKDIR /usr/src/server
+COPY ServerNET/API/API.csproj API/
+COPY ServerNET/Application/Application.csproj Application/
+COPY ServerNET/Domain/Domain.csproj Domain/
+COPY ServerNET/Persistence/Persistence.csproj Persistence/
+COPY ServerNET/Infrastructure/Infrastructure.csproj Infrastructure/
+COPY ServerNET/Application.Tests/Application.Tests.csproj Application.Tests/
+RUN dotnet restore API/API.csproj
+
+# ---------------------------
+# Stage 3: Run tests
+# ---------------------------
+FROM server-base AS test
+COPY ServerNET/ ./
+RUN dotnet test
+
+# ---------------------------
+# Stage 4: Publish API
+# ---------------------------
+FROM test AS server-build
+WORKDIR /usr/src/server/API
+RUN dotnet publish API.csproj -c Release -o /app/publish
+
+# ---------------------------
+# Stage 5: Final runtime
+# ---------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+WORKDIR /usr/src/app
+COPY --from=server-build /app/publish ./
+COPY --from=client-build /usr/src/client/dist ./wwwroot
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "API.dll"]
+
+```
+
+### 9.2 Docker compose
+1. Se crea el archivo docker-compose.yaml en el root del proyecto.
+
+```yaml
+services:
+  shopping-cart:
+    build:
+      context: .
+      args:
+        VITE_API: ${VITE_API}
+    ports:
+      - 5000:8080
+    env_file:
+      - .env
+```
+
+2. Se crea el archivo .env para definir las variables definidas en __appsettings.json__ del proyecto ASP.NET Core. La variables de entorno deben iniciar con el nombre de la sección que las engloba en appsettings.json:
+
+```
+# Mongo
+Database__ConnectionString=
+Database__DatabaseName=
+Database__CartCollectionName=
+Database__UsersCollectionName=
+Database__ProductsCollectionName=
+Database__ReviewsCollectionName=
+Database__ReactionsCollectionName=
+Database__RatingsCollectionName=
+
+# JWT
+Jwt__Key=
+Jwt__Issuer=
+Jwt__Audience=
+Jwt__ExpiresInMinutes=
+
+# Cloudinary
+API_KEY_CLOUDINARY=
+API_SECRET_CLOUDINARY=
+CLOUDINARY_PRESET=
+CLOUD_NAME=
+
+# Client
+VITE_API=http://localhost:5000/api
+```
+
+- Ejemplo de cómo luce appsettings.json:
+
+```json
+{
+  "Database": {
+    "ConnectionString": "",
+    "DatabaseName": "Shopping-Cart",
+    "CartCollectionName": "productcarts",
+    "UsersCollectionName": "users",
+    "ProductsCollectionName": "products",
+    "ReviewsCollectionName": "reviews",
+    "ReactionsCollectionName": "reactions",
+    "RatingsCollectionName": "ratings"
+  },
+  "Jwt": {
+    "Key": "",
+    "Issuer": "ShoppingCartApp",
+    "Audience": "ShoppingCartUsers",
+    "ExpiresInMinutes": 60
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+```
+
+### 9.3 Subir imagen en docker hub
+1. Iniciar sesión en consola:
+```bash
+docker login
+```
+
+2. Crear un repositorio en docker hub desde el navegador.
+3. Crear imagen desde la consola local, en donde se debe colocar al inicio el nombre del usuario seguido del nombre del registro separado por /.
+   1. Desde acá se deben pasar las variables de entorno usadas para el frontend, ya que Vite no “lee” la variable en runtime, sino en build time.
+
+```bash
+docker build --build-arg VITE_API= -t houser97/shopping-cart:1.0.2 .
+```
+
+### 9.4 Despliegue usando docker
+#### 9.4.1 Render
+1. Se crea nuevo servicio web.
+2. Se indica que se desea crear con imagen de docker.
+3. Se coloca la imagen de docker que se desea usar.
+    - docker.io/houser97/shopping-cart:1.0.3
 
 
 ## Temas pendientes por documentar

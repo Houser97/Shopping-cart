@@ -58,11 +58,13 @@ builder.Services.AddAuthentication(options =>
 
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 context.Response.ContentType = "application/json";
-                return context.Response.WriteAsync(new
+                var result = JsonSerializer.Serialize(new
                 {
                     success = false,
-                    message = "Debes iniciar sesión para acceder a este recurso."
-                }.ToString()!); // aquí podrías usar JsonSerializer
+                    message = "Unauthorized. Please log in."
+                });
+
+                return context.Response.WriteAsync(result);
             }
     };
 });

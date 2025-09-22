@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "tw": "npx tailwindcss -i ./src/index.css -o ./src/output.css --watch"
+    "tw": "npx tailwindcss -i ./src/index.css -o ./src/output.css --watch",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.1",

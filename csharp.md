@@ -180,6 +180,8 @@
     - [9.3 Subir imagen en docker hub](#93-subir-imagen-en-docker-hub)
     - [9.4 Despliegue usando docker](#94-despliegue-usando-docker)
       - [9.4.1 Render](#941-render)
+  - [10. GIT](#10-git)
+    - [10.1 Versionamiento](#101-versionamiento)
   - [Temas pendientes por documentar](#temas-pendientes-por-documentar)
     - [Shopping Cart](#shopping-cart)
 - [Pendientes:](#pendientes)
@@ -5482,7 +5484,13 @@ docker login
    1. Desde acá se deben pasar las variables de entorno usadas para el frontend, ya que Vite no “lee” la variable en runtime, sino en build time.
 
 ```bash
-docker build --build-arg VITE_API= -t houser97/shopping-cart:1.0.2 .
+docker build --build-arg VITE_API=/api -t houser97/shopping-cart:1.0.0 .
+```
+
+4. Hacer push de la imagen.
+
+```bash
+docker push houser97/shopping-cart:1.0.0
 ```
 
 ### 9.4 Despliegue usando docker
@@ -5491,6 +5499,20 @@ docker build --build-arg VITE_API= -t houser97/shopping-cart:1.0.2 .
 2. Se indica que se desea crear con imagen de docker.
 3. Se coloca la imagen de docker que se desea usar.
     - docker.io/houser97/shopping-cart:1.0.3
+
+## 10. GIT
+### 10.1 Versionamiento
+- Agregar nuevo release y tag con mini changelog
+
+```bash
+git tag -a v4.0.0 -m "Release 4.0.0
+
+- Migrated backend from Node.js to ASP.NET Core
+- Improved API structure and maintainability
+- Prepared foundation for future scalability and testing
+"
+git push origin v4.0.0
+```
 
 
 ## Temas pendientes por documentar

@@ -4082,8 +4082,33 @@ dotnet build --no-incremental
 
 ```
 
-### 7.8 Variables de entorno React VITE
+### 7.8 Variables de entorno React VITE 
 https://stackoverflow.com/questions/78114219/property-env-does-not-exist-on-type-importmeta-ts2339
+
+
+1. Crear archivo .env
+   1. Las variables de entorno VITE deben iniciar con __VITE__ seguido de guión bajo.
+
+```
+VITE_API=https://localhost:5001/api
+```
+
+2. Usar la variabe de entorno.
+
+```ts
+const url = import.meta.env.VITE_API;
+```
+
+#### 7.8.1 Versiones de VITE V4
+- [Referencia](https://stackoverflow.com/questions/78114219/property-env-does-not-exist-on-type-importmeta-ts2339)
+- En el proyecto actual se tiene la versión: "vite": "^4.4.5". Por lo que se tiene el siguiente error al intentar usar variables de entorno: __Property 'env' does not exist on type 'ImportMeta'.ts(2339)__
+
+1. Crear archivo __client/src/vite-env.d.ts__
+
+```ts
+/// <reference types="vite/client" />
+/// <reference types="vite/types/importMeta.d.ts" />
+```
 
 ## 8. Testing
 ### 8.1 xUnit

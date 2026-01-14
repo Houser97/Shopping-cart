@@ -2,7 +2,7 @@ import { FormEvent, PropsWithChildren } from "react"
 
 interface Props extends PropsWithChildren {
     handleSubmit: (event: FormEvent<HTMLFormElement>) => {},
-    errorMessage: string | string[]
+    errorMessage: string[]
 }
 
 export const AuthLayout = ({ children, handleSubmit, errorMessage }: Props) => {
@@ -14,7 +14,12 @@ export const AuthLayout = ({ children, handleSubmit, errorMessage }: Props) => {
                 {children}
                 {errorMessage &&
                     <ul className='list-disc list-inside text-base text-justify sm:text-xl'>
-                        <li className='list-disc list-inside w-full'>{errorMessage}</li>
+                        {
+                            errorMessage.map((element, index) => {
+                                return <li key={index} className='list-disc list-inside w-full'>{element}</li>
+                            })
+                        }
+                        
                     </ul>
                 }
             </form>

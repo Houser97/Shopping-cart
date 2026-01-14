@@ -29,9 +29,14 @@ export const useAuthStore = () => {
             localStorage.setItem('token', data.token);
             localStorage.setItem('token-init-date', new Date().getTime().toString());
             dispatch(onLogin(data.user));
-
         } catch (error) {
-            dispatch(onLogout(error.response.data?.message || 'Missing register message'));
+            const errors = error.response.data?.errors;
+            
+            const allErrors = errors 
+                ? Object.values(errors).flat()
+                : 'Registration failed';
+            
+            dispatch(onLogout(allErrors));
         }
     }
 

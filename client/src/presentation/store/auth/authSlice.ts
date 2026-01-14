@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export interface AuthState {
     user: Record<string, any>,
-    errorMessage: string | undefined,
+    errorMessage: string[] | undefined,
     status: string
 }
 

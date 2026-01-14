@@ -14,7 +14,9 @@ public class RegisterUserValidator : BaseAuthValidator<RegisterUserDto>
 
         RuleFor(x => x.Password)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("Password is required")
+            .NotEmpty().WithMessage("Password is required");
+
+        RuleFor(x => x.Password)
             .MinimumLength(5).WithMessage("Password should have at least 5 characters")
             .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter")
             .Matches(@"\d").WithMessage("Password must contain at least one number")

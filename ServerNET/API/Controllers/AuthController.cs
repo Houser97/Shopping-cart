@@ -1,3 +1,4 @@
+using API.Responses;
 using Application.DTOs.Auth;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +23,7 @@ namespace API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(new { message = result.Error });
+                return BadRequest(new ErrorResponse(result.Error ?? "Login failed"));
             }
 
             return Ok(new
@@ -36,14 +37,11 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
         {
-            Console.WriteLine(registerUserDto);
             var result = await _authService.Register(registerUserDto);
-
             if (!result.IsSuccess)
             {
-                return BadRequest(new { message = result.Error });
+                return BadRequest(new ErrorResponse(result.Error ?? "Registration failed"));
             }
-
             return Ok(new
             {
                 user = result.Value!.User,
@@ -59,7 +57,7 @@ namespace API.Controllers
 
             if (!result.IsSuccess)
             {
-                return Unauthorized();
+                return Unauthorized(new ErrorResponse(result.Error ?? "Unauthorized"));
             }
 
             return Ok(new

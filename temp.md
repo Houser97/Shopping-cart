@@ -450,3 +450,179 @@ describe('searchBar', () => {
 
 # Código fuente
 https://cursos.devtalles.com/courses/take/react-de-cero/texts/66167041-codigo-fuente
+
+
+# Sección 16.
+## Temas
+1. Pruebas sobre ContextAPI
+2. Pruebas sobre router
+3. Pruebas con query params
+4. Pruebas de redirecciones y componentes
+5. Mocks y espías
+6. Pruebas con TanStack
+7. Pruebas sobre custom hooks
+8. Mucho más
+
+## 1. Variables de entorno para testing .env.test
+1. Se crea el archivo .env.test.
+   1. Vite reconoce que se está en testing, por lo que en automático toma ese archivo.
+2. En esta sección que considera que el backend también se encuentra en un entorno de testing, por lo que para levantarlo se usa el siguiente comando.
+
+```bash
+PORT=PUERTO_TESTING npm run start:dev
+```
+
+```ts
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+describe('HeroApi', () => {
+    test('Should be configured pointing to the testing server', () => {
+        expect(heroApi).toBeDefined();
+        expect(heroApi.defaults.baseURL).toBe(`${BASE_URL}/api/heroes`);
+        expect(BASE_URL).toContain('3001');
+    })
+})
+```
+
+## 2. getHeroAction
+- https://cursos.devtalles.com/courses/take/react-de-cero/lessons/66914469-test-getheroaction
+- Esta es una prueba que depende del backend, por lo que se puede evaluar directamente con la respuesta que da el backend.
+
+```ts
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+describe('getHeroAction', () => {
+    test('Should fetch hero data and return with complete image url', () => {
+        // Acá se debe evaluar contra el objeto dado por la respuesta. Se muestra otra forma de hacerlo en el test de getSummaryAction
+    })
+
+    test('Should throw error if hero is not found', async () => {
+        const idSlug = 'basd';
+
+        const result = await getHeroAction(idSlug).catch((error) => {
+            expect(error).toBeDefined();
+            expect(error.message).toBe('Request failed with status code 404');
+        });
+
+        expect(result).toBeUndefined();
+    })
+})
+```
+
+## 3. getSummaryAction
+- Acá se evalúa el contenido de la respuesta del backend siendo más genérico con cada campo: expect.objectContaining({
+    intelligence: expect.any(number),
+    ...
+})
+- Solo se deben evaluar las propiedades que sí se consumen en la aplicación, ya que las demás si el backend decide eliminarlas no dispara un error en el testing.
+```ts
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+describe('getSummaryAction', () => {
+    test('Should fetch hero data and return with complete image url', () => {
+        // Acá se debe evaluar contra el objeto dado por la respuesta. Se muestra otra forma de hacerlo en el test de getsummaryAction
+    })
+
+})
+```
+
+## 4. getHeroesByPageAction
+- Acá se usa el mock de axios
+- http://cursos.devtalles.com/courses/take/react-de-cero/lessons/66919824-test-getheroesbypageaction
+- https://cursos.devtalles.com/courses/take/react-de-cero/lessons/66920427-parte-2-test-getheroesbypageaction
+- Acá lo interesante es que se valida que la request se llame con los valores deseados, ya que por ejemplo se puede pasar parámetros que no son números. Adicionalmente, se usar history del mock de axios.
+
+## 5. Pruebas sobre useHeroSummary, el cual usa tanstack.
+- https://cursos.devtalles.com/courses/take/react-de-cero/lessons/66920856-test-useherosummary
+- https://cursos.devtalles.com/courses/take/react-de-cero/lessons/66921428-parte-2-test-useherosummary
+
+```ts
+
+vi.mock('path/to/component', () => ({
+    getSummaryAction: vi.fn()
+}))
+
+// Segunda opción de tener un mock. En este caso, facilita la manipulación del mock
+const mockGetSummaryAction = vi.mocked(getSummaryAction);
+
+// Se debe tener un queryClient
+const tanStackCustomProvider = () => {
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queris: {
+                retry: false
+            }
+        }
+    });
+
+    return ({ children }: PropsWithChildren) => (
+        <QueryClientProvider client = {queryClient}>{children}</QueryClientProvider>
+    );
+}
+
+
+describe('useHeroSummary', () => {
+    test('Should return the initial state (isLoading)', () => {
+        const { result } = renderhook(() => useHeroSummary(), {
+            wrapper: tanStackCustomProvider(),
+        })
+
+        // si se imprime el result se puede ver que según falla debido a que puede haber dependencias cíclicas, sin embargo, no afecta a la prueba.
+
+        expect(result.current.isLoading).toBeTruthy();
+        expect(result.current.isError).toBeFalsy();
+        expect(result.current.data).toBeUndefined();
+    });
+
+    test('Should return success state with data when api call succeeds', async () => {
+        const mockSummaryData = {
+            totalHeroes: 10,
+            strongestHero: {
+                id: '1',
+                name: 'Superman'
+            },
+            smartestHero: {
+                id: '2',
+                name: 'Batman'
+            },
+            heroCount: 18,
+            villainCount: 7
+        } as SummaryInformationResponse
+
+        mockGetSummaryAction.mockResolvedValue(mockSummaryData);
+
+        const { result } = renderhook(() => useHeroSummary(), {
+            wrapper: tanStackCustomProvider(),
+        })
+
+        await waitFor(() => {
+            expect(result.current.isSuccess).toBe(true)
+        });
+
+        expect(result.current.isError).toBeFalsy();
+        expect(mockGetSummaryAction).toHaveBeenCalled();
+        // expect(mockGetSummaryAction).toHaveBeenCalledWith(); este es útil para ver en consola con qué params se llamó.
+    });
+
+    test('Should return error state when API call fails', async () => {
+        const mockError = new Error('Failed to fetch summary');
+        mockGetSummaryAction.getRejectedValue(mockError);
+
+        const { result } = renderhook(() => useHeroSummary(), {
+            wrapper: tanStackCustomProvider(),
+        })
+
+        await waitFor(() => {
+            expect(result.current.isSuccess).toBe(true)
+        });
+
+        expect(result.current.isLoading).toBeFalsy();
+        expect(result.current.isError).toBeDefined();
+        expect(mockGetSummaryAction).toHaveBeenCalled();
+        expect(result.current.error?.messsage).toBe('Failed to fetch summary');
+    });
+});
+```

@@ -545,7 +545,7 @@ vi.mock('path/to/component', () => ({
     getSummaryAction: vi.fn()
 }))
 
-// Segunda opción de tener un mock. En este caso, facilita la manipulación del mock
+// Segunda opción de tener un mock. En este caso, facilita la manipulación del mock así como validar que se llame con ciertos argumentos.
 const mockGetSummaryAction = vi.mocked(getSummaryAction);
 
 // Se debe tener un queryClient
@@ -565,6 +565,12 @@ const tanStackCustomProvider = () => {
 
 
 describe('useHeroSummary', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        queryClient.clear();
+    })
+
     test('Should return the initial state (isLoading)', () => {
         const { result } = renderhook(() => useHeroSummary(), {
             wrapper: tanStackCustomProvider(),
@@ -625,4 +631,212 @@ describe('useHeroSummary', () => {
         expect(result.current.error?.messsage).toBe('Failed to fetch summary');
     });
 });
+```
+
+## 6. FavoriteHero Context
+- https://cursos.devtalles.com/courses/take/react-de-cero/lessons/66943142-test-favoritehero-context
+- Se debe crear un componente que dependa del contexto.
+  - Ayuda a usar el contexto y poder aplicar los tests sobre ese mismo componente.
+- localStorage ya se puede usar en las últimas versiones para testing.
+  - Es una implementación propia para node, no es el mismo del navegador.
+  - También se puede crear un mock del local storage para validar que se llame con los argumentos deseados.
+
+
+```ts
+import { use } from 'react';
+
+const mockHero = {
+    id: '1',
+    name: 'batman'
+} as Hero
+
+const TestComponent = () => {
+    const { favoriteCount, favorites, isFavorite, toggleFavorite } = use(FavoriteHeroContext);
+
+    return (
+        <div>
+            <div data-testid="favorite-count">{favoriteCount}</div>
+
+            <div data-testid="favorite-list">
+                {favorites.map((hero) => (
+                    <div key={hero.id} data-testid={`hero-${hero.id}`}>
+                        {hero.name}
+                    </div>
+                ))}
+            </div>
+
+            <button data-testid="toggle-favorite"
+            onClick={() => toggleFavorite(mockHero)}>
+                Toggle Favorite
+            </button>
+
+            <div data-testid="is-favorite">{isFavorite(mockHero).toString()}</div>
+        </div>
+    )
+}
+
+// Útil por si se quiere alguna inicialización o mock acá. De igual forma, por si se quieren mandar argumentos por acá.
+const renderContextTest = () => {
+
+    return render(
+        <FavoriteHeroProvider>
+            <TestComponent />
+        </FavoriteHeroProvider>
+    )
+}
+
+describe('FavoriteHeroContext', () => {
+    beforeEach(() => {
+        localStorage.clear();
+    })
+
+    test('Should initialize with default values', () => {
+        renderContextTest();
+
+        expect(screen.getByTestId("favorite-count").textContent).toBe('0');
+        expect(screen.getByTestId("favorite-list").children.length).toBe(0);
+    })
+
+    test('Should add hero to favorites when toggleFavorite is called with new Hero', () => {
+        renderContextTest();
+        const button = screen.getByTestId('favorites');
+
+        fireEvent.click(button);
+
+        expect(screen.getByTestId("favorite-count").textContent).toBe('1');
+        expect(screen.getByTestId("is-favorite").textContent).toBe('true');
+        expect(screen.getByTestId("hero-1").textContent).toBe('batman');
+        expect(localStorage.getItem("favorites")).toBe('[{"id":"1", "name":"batman"}]');
+    });
+
+    test('Should remove hero to favorites when toggleFavorite is called', () => {
+
+        
+        localStorage.setItem('favorites', JSON.stringify([mockHero]));
+
+
+        renderContextTest();
+        const button = screen.getByTestId('favorites');
+
+        fireEvent.click(button);
+
+        expect(screen.getByTestId("favorite-count").textContent).toBe('0');
+        expect(screen.getByTestId("is-favorite").textContent).toBe('false');
+        //expect(screen.getByTestId("hero-1")).toBe('undefined'); Cuando se usa getByTestId se supone que sí existe, por lo que se usa queryByTestId
+        expect(screen.queryByTestId("hero-1")).toBeNull(); 
+    })
+})
+```
+### 6.1 Mock sobr eobjetos globales (mock de localStorage)
+
+```ts
+import { use } from 'react';
+
+const mockHero = {
+    id: '1',
+    name: 'batman'
+} as Hero
+
+// mock de localStorage
+const localStorageMock = {
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    clear: vi.fn(),
+}
+Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock
+});
+
+const TestComponent = () => {
+    const { favoriteCount, favorites, isFavorite, toggleFavorite } = use(FavoriteHeroContext);
+
+    return (
+        <div>
+            <div data-testid="favorite-count">{favoriteCount}</div>
+
+            <div data-testid="favorite-list">
+                {favorites.map((hero) => (
+                    <div key={hero.id} data-testid={`hero-${hero.id}`}>
+                        {hero.name}
+                    </div>
+                ))}
+            </div>
+
+            <button data-testid="toggle-favorite"
+            onClick={() => toggleFavorite(mockHero)}>
+                Toggle Favorite
+            </button>
+
+            <div data-testid="is-favorite">{isFavorite(mockHero).toString()}</div>
+        </div>
+    )
+}
+
+// Útil por si se quiere alguna inicialización o mock acá. De igual forma, por si se quieren mandar argumentos por acá.
+const renderContextTest = () => {
+
+    return render(
+        <FavoriteHeroProvider>
+            <TestComponent />
+        </FavoriteHeroProvider>
+    )
+}
+
+describe('FavoriteHeroContext', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        queryClient.clear();
+    })
+
+
+    test('Should initialize with default values', () => {
+        renderContextTest();
+
+        expect(screen.getByTestId("favorite-count").textContent).toBe('0');
+        expect(screen.getByTestId("favorite-list").children.length).toBe(0);
+    })
+
+    test('Should add hero to favorites when toggleFavorite is called with new Hero', () => {
+        renderContextTest();
+        const button = screen.getByTestId('favorites');
+
+        fireEvent.click(button);
+
+        expect(screen.getByTestId("favorite-count").textContent).toBe('1');
+        expect(screen.getByTestId("is-favorite").textContent).toBe('true');
+        expect(screen.getByTestId("hero-1").textContent).toBe('batman');
+        // expect(localStorage.getItem("favorites")).toBe('[{"id":"1", "name":"batman"}]');
+        
+        expect(localStorageMock.setItem).toHaveBeelCalled();
+        expect(localStorageMock.setItem).toHaveBeelCalledWith(
+            'favorites',
+            '[{"id":"1", "name":"batman"}]'
+        )
+    }
+
+    test('Should remove hero to favorites when toggleFavorite is called', () => {
+
+        
+        localStorageMock.getItem.mockReturnValue(JSON.stringify([mockHero]));
+
+
+        renderContextTest();
+        const button = screen.getByTestId('favorites');
+
+        fireEvent.click(button);
+
+        expect(screen.getByTestId("favorite-count").textContent).toBe('0');
+        expect(screen.getByTestId("is-favorite").textContent).toBe('false');
+        //expect(screen.getByTestId("hero-1")).toBe('undefined'); Cuando se usa getByTestId se supone que sí existe, por lo que se usa queryByTestId
+        expect(screen.queryByTestId("hero-1")).toBeNull(); 
+
+
+        expect(localStorageMock.setItem).toHaveBeelCalled();
+        expect(localStorageMock.setItem).toHaveBeelCalledWith(
+            'favorites',
+            '[]'
+        )
+    })
+})
 ```

@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
-    globals: true
+    globals: true // Permite extender la información que es globalmente compartida en una app de Vite.
   }
 });
